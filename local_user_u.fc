@@ -1,0 +1,33 @@
+### These paths rules are missing
+# source: systemd-analyze unit-paths  --user
+/etc/systemd/user(/.*)?						gen_context(system_u:object_r:systemd_unit_file_t,s0)
+/etc/xdg/systemd/user(/.*)?					gen_context(system_u:object_r:systemd_unit_file_t,s0)
+/usr/local/lib/systemd/user(/.*)?				gen_context(system_u:object_r:systemd_unit_file_t,s0)
+/usr/local/share/systemd/user(/.*)?				gen_context(system_u:object_r:systemd_unit_file_t,s0)
+/usr/share/systemd/user(/.*)?					gen_context(system_u:object_r:systemd_unit_file_t,s0)
+/var/lib/flatpak/exports/share/systemd/user(/.*)?		gen_context(system_u:object_r:systemd_unit_file_t,s0)
+/var/run/systemd/user(/.*)?					gen_context(system_u:object_r:systemd_unit_file_t,s0)
+
+# You need to disable usepasswd for this to work
+/var/run/user/%{USERID}/bus(/.*)?				gen_context(system_u:object_r:system_dbusd_var_run_t,s0)
+/var/run/user/%{USERID}/gnupg					gen_context(system_u:object_r:gpg_secret_t,s0)
+/var/run/user/%{USERID}/gnupg/.*				gen_context(system_u:object_r:gpg_agent_tmp_t,s0)
+/var/run/user/%{USERID}/pipewire-.*				gen_context(system_u:object_r:pulseaudio_var_lib_t,s2)
+/var/run/user/%{USERID}/pulse(/.*)?				gen_context(system_u:object_r:pulseaudio_var_lib_t,s0)
+/var/run/user/%{USERID}/systemd(/.*)?				gen_context(system_u:object_r:systemd_logind_var_run_t,s0)
+/var/run/user/%{USERID}/systemd/generator(/.*)?			gen_context(system_u:object_r:systemd_unit_file_t,s0)
+/var/run/user/%{USERID}/systemd/generator\.early(/.*)?		gen_context(system_u:object_r:systemd_unit_file_t,s0)
+/var/run/user/%{USERID}/systemd/generator\.late(/.*)?		gen_context(system_u:object_r:systemd_unit_file_t,s0)
+/var/run/user/%{USERID}/systemd/transient(/.*)?			gen_context(system_u:object_r:systemd_unit_file_t,s0)
+/var/run/user/%{USERID}/systemd/units(/.*)?			gen_context(system_u:object_r:systemd_unit_file_t,s0)
+/var/run/user/%{USERID}/systemd/user(/.*)?			gen_context(system_u:object_r:systemd_unit_file_t,s0)
+/var/run/user/%{USERID}/systemd/user\.control(/.*)?		gen_context(system_u:object_r:systemd_unit_file_t,s0)
+/var/run/user/%{USERID}/transient(/.*)?				gen_context(system_u:object_r:systemd_unit_file_t,s0)
+
+HOME_DIR/\.config/systemd/user\.control(/.*)?			gen_context(system_u:object_r:systemd_unit_file_t,s0)
+HOME_DIR/\.local/share/flatpak/exports/share/systemd/user(/.*)?	gen_context(system_u:object_r:systemd_unit_file_t,s0)
+HOME_DIR/\.local/share/systemd/user(/.*)?			gen_context(system_u:object_r:systemd_unit_file_t,s0)
+
+### Local modification
+# source: --user ssh-agent.service
+/var/run/user/[^/]*/ssh-agent\.socket				gen_context(system_u:object_r:ssh_agent_tmp_t,s0)
