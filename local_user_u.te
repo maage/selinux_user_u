@@ -69,6 +69,7 @@ allow login_userdomain init_var_run_t:service status;
 #manage_dirs_pattern(user_t, user_tmp_t, tmp_t)
 require {
 	type pangp_server_t;
+	type user_home_dir_t;
 }
 allow pangp_server_t user_home_dir_t:dir search;
 
