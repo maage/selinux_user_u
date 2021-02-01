@@ -65,9 +65,9 @@ allow login_userdomain init_var_run_t:service status;
 #   scontext=user_u:user_r:user_t:s0 tcontext=system_u:object_r:tmp_t:s0
 #   tclass=dir permissive=0 "
 #   allow user_t tmp_t:dir relabelto;
-userdom_user_tmp_filetrans(user_t, tmp_t, dir, "tmp")
-manage_dirs_pattern(user_t, user_tmp_t, tmp_t)
-allow user_t tmp_t:dir { relabelfrom relabelto };
+#userdom_user_tmp_filetrans(user_t, tmp_t, dir, "tmp")
+#manage_dirs_pattern(user_t, user_tmp_t, tmp_t)
+allow pangp_server_t user_home_dir_t:dir search;
 
 ### Allow: login/logout w/ my systemd_logind_var_run_t/systemd_unit_file_t fc
 # systemctl --user daemon-reexec: does not still work, it does not start systemd user instance
