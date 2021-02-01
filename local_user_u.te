@@ -73,19 +73,20 @@ require {
 }
 allow pangp_server_t user_home_dir_t:dir search;
 require {
-        type pangp_user_ui_t;
-        type bin_t;
-        type var_lib_t;
-        type sysfs_t;
-        class file { execute_no_trans read };
-        class netlink_kobject_uevent_socket create;
         class dir read;
+        class file { execute_no_trans open read };
+        class netlink_kobject_uevent_socket { create getattr setopt };
+        type bin_t;
+        type pangp_user_ui_t;
+        type sysfs_t;
+        type udev_var_run_t;
+        type var_lib_t;
 }
-
 allow pangp_user_ui_t bin_t:file execute_no_trans;
-allow pangp_user_ui_t self:netlink_kobject_uevent_socket create;
+allow pangp_user_ui_t self:netlink_kobject_uevent_socket { create getattr setopt };
 allow pangp_user_ui_t sysfs_t:dir read;
-allow pangp_user_ui_t var_lib_t:file read;
+allow pangp_user_ui_t udev_var_run_t:file read;
+allow pangp_user_ui_t var_lib_t:file { open read };
 
 ### Allow: login/logout w/ my systemd_logind_var_run_t/systemd_unit_file_t fc
 # systemctl --user daemon-reexec: does not still work, it does not start systemd user instance
