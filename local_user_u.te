@@ -67,6 +67,9 @@ allow login_userdomain init_var_run_t:service status;
 #   allow user_t tmp_t:dir relabelto;
 #userdom_user_tmp_filetrans(user_t, tmp_t, dir, "tmp")
 #manage_dirs_pattern(user_t, user_tmp_t, tmp_t)
+require {
+	type pangp_server_t;
+}
 allow pangp_server_t user_home_dir_t:dir search;
 
 ### Allow: login/logout w/ my systemd_logind_var_run_t/systemd_unit_file_t fc
