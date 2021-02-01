@@ -48,22 +48,6 @@ require {
 }
 allow login_userdomain init_var_run_t:service status;
 
-### Allow: login/logout w/ my systemd_logind_var_run_t/systemd_unit_file_t fc
-# systemctl --user daemon-reexec: does not still work, it does not start systemd user instance
-require {
-	type gpg_t;
-	type gpg_agent_t;
-	type gpg_agent_tmp_t;
-	type gpg_secret_t;
-	type pulseaudio_t;
-	type pulseaudio_var_lib_t;
-	type system_dbusd_var_run_t;
-	type systemd_logind_t;
-	type systemd_logind_var_run_t;
-	type systemd_unit_file_t;
-	type xdm_t;
-}
-
 ### Allow: systemd to create private /tmp
 # systemd[5942]: Unable to fix SELinux security context of /tmp/systemd-private-01b649bd470f43c3bbdf61b9e0857e0c-xxx.service-vEYR3v/tmp (/tmp): Permission denied
 # ls -laZ /tmp/systemd-private-01b649bd470f43c3bbdf61b9e0857e0c-xxx.service-vEYR3v
@@ -82,6 +66,23 @@ require {
 #   tclass=dir permissive=0 "
 #   allow user_t tmp_t:dir relabelto;
 userdom_user_tmp_filetrans(user_t, tmp_t, dir, "tmp")
+manage_dirs_pattern(user_t, user_tmp_t, tmp_t)
+
+### Allow: login/logout w/ my systemd_logind_var_run_t/systemd_unit_file_t fc
+# systemctl --user daemon-reexec: does not still work, it does not start systemd user instance
+require {
+	type gpg_t;
+	type gpg_agent_t;
+	type gpg_agent_tmp_t;
+	type gpg_secret_t;
+	type pulseaudio_t;
+	type pulseaudio_var_lib_t;
+	type system_dbusd_var_run_t;
+	type systemd_logind_t;
+	type systemd_logind_var_run_t;
+	type systemd_unit_file_t;
+	type xdm_t;
+}
 
 ## /run/user/<uid>/bus
 manage_sock_files_pattern({ login_userdomain systemd_logind_t }, user_tmp_t, system_dbusd_var_run_t)
