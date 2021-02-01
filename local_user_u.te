@@ -68,25 +68,28 @@ allow login_userdomain init_var_run_t:service status;
 #userdom_user_tmp_filetrans(user_t, tmp_t, dir, "tmp")
 #manage_dirs_pattern(user_t, user_tmp_t, tmp_t)
 require {
+        class file { getattr map open };
 	type pangp_server_t;
 	type user_home_dir_t;
 }
 allow pangp_server_t user_home_dir_t:dir search;
+allow pangp_server_t var_lib_t:file getattr;
 require {
         class dir read;
         class file { execute_no_trans open read };
         class netlink_kobject_uevent_socket { create getattr setopt };
+        class netlink_kobject_uevent_socket bind;
         type bin_t;
         type pangp_user_ui_t;
         type sysfs_t;
         type udev_var_run_t;
         type var_lib_t;
 }
-allow pangp_user_ui_t bin_t:file execute_no_trans;
-allow pangp_user_ui_t self:netlink_kobject_uevent_socket { create getattr setopt };
+allow pangp_user_ui_t bin_t:file { execute_no_trans map };
+allow pangp_user_ui_t self:netlink_kobject_uevent_socket { bind create getattr setopt };
 allow pangp_user_ui_t sysfs_t:dir read;
-allow pangp_user_ui_t udev_var_run_t:file read;
-allow pangp_user_ui_t var_lib_t:file { open read };
+allow pangp_user_ui_t udev_var_run_t:file { open read };
+allow pangp_user_ui_t var_lib_t:file { map open read };
 
 ### Allow: login/logout w/ my systemd_logind_var_run_t/systemd_unit_file_t fc
 # systemctl --user daemon-reexec: does not still work, it does not start systemd user instance
