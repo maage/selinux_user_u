@@ -64,6 +64,25 @@ require {
 	type xdm_t;
 }
 
+### Allow: systemd to create private /tmp
+# systemd[5942]: Unable to fix SELinux security context of /tmp/systemd-private-01b649bd470f43c3bbdf61b9e0857e0c-xxx.service-vEYR3v/tmp (/tmp): Permission denied
+# ls -laZ /tmp/systemd-private-01b649bd470f43c3bbdf61b9e0857e0c-xxx.service-vEYR3v
+#total 0
+#drwx------.  3 user user user_u:object_r:user_tmp_t:s0  60  1. 2. 08:46 .
+#drwxrwxrwt. 35 root  root  system_u:object_r:tmp_t:s0     760  1. 2. 08:48 ..
+#drwxrwxrwt.  2 user user user_u:object_r:user_tmp_t:s0  40  1. 2. 08:46 tmp
+#============= user_t ==============
+#allow user_t tmp_t:dir relabelto;
+#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:tmp_t:s0"
+#  class="dir" perms="relabelto"
+#  comm="systemd" exe="" path=""
+#  message="helmi 01 08:46:15 user-hp-eb-lan audit[5942]: AVC avc:  denied  {
+#   relabelto } for  pid=5942 comm="systemd" name="tmp" dev="tmpfs" ino=3901
+#   scontext=user_u:user_r:user_t:s0 tcontext=system_u:object_r:tmp_t:s0
+#   tclass=dir permissive=0 "
+#   allow user_t tmp_t:dir relabelto;
+userdom_user_tmp_filetrans(user_t, tmp_t, dir, 'tmp')
+
 ## /run/user/<uid>/bus
 manage_sock_files_pattern({ login_userdomain systemd_logind_t }, user_tmp_t, system_dbusd_var_run_t)
 
