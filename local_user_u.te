@@ -49,6 +49,21 @@ require {
 allow login_userdomain init_var_run_t:service status;
 
 ### Allow to run container
+require {
+	class cap_userns { kill sys_ptrace };
+	class dbus send_msg;
+	class dir search;
+	class file { getattr ioctl open read };
+	class process { noatsecure rlimitinh siginh signull transition };
+	type container_runtime_t;
+	type container_t;
+	type user_t;
+}
+#allow container_runtime_t container_t:process transition;
+#allow user_t container_runtime_t:dbus send_msg;
+#allow user_t self:cap_userns kill;
+#allow user_t self:cap_userns sys_ptrace;
+container_read_state(user_t)
 container_stream_connect(user_t)
 container_runtime_exec(user_t)
 
@@ -72,22 +87,22 @@ container_runtime_exec(user_t)
 #userdom_user_tmp_filetrans(user_t, tmp_t, dir, "tmp")
 #manage_dirs_pattern(user_t, user_tmp_t, tmp_t)
 require {
-        class file { getattr map open };
+	class file { getattr map open };
 	type pangp_server_t;
 	type user_home_dir_t;
 }
 allow pangp_server_t user_home_dir_t:dir search;
 allow pangp_server_t var_lib_t:file getattr;
 require {
-        class dir read;
-        class file { execute_no_trans open read };
-        class netlink_kobject_uevent_socket { create getattr setopt };
-        class netlink_kobject_uevent_socket bind;
-        type bin_t;
-        type pangp_user_ui_t;
-        type sysfs_t;
-        type udev_var_run_t;
-        type var_lib_t;
+	class dir read;
+	class file { execute_no_trans open read };
+	class netlink_kobject_uevent_socket { create getattr setopt };
+	class netlink_kobject_uevent_socket bind;
+	type bin_t;
+	type pangp_user_ui_t;
+	type sysfs_t;
+	type udev_var_run_t;
+	type var_lib_t;
 }
 allow pangp_user_ui_t bin_t:file { execute_no_trans map };
 allow pangp_user_ui_t self:netlink_kobject_uevent_socket { bind create getattr setopt };
