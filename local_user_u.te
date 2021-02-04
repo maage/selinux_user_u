@@ -54,6 +54,7 @@ require {
         class dbus send_msg;
         class dir search;
         class file { getattr ioctl open read };
+        class process { noatsecure rlimitinh siginh signull transition };
         type container_runtime_t;
         type container_t;
         type user_t;
