@@ -52,14 +52,13 @@ allow login_userdomain init_var_run_t:service status;
 require {
         type user_t;
         type container_runtime_t;
+        class dbus send_msg;
         class dir search;
-        class file read;
-        class file open;
-        class file { getattr ioctl };
+        class file { getattr ioctl open read };
 }
+allow user_t container_runtime_t:dbus send_msg;
 allow user_t container_runtime_t:dir search;
-allow user_t container_runtime_t:file { open read };
-allow user_t container_runtime_t:file { getattr ioctl };
+allow user_t container_runtime_t:file { getattr ioctl open read };
 
 ### Allow: systemd to create private /tmp
 # systemd[5942]: Unable to fix SELinux security context of /tmp/systemd-private-01b649bd470f43c3bbdf61b9e0857e0c-xxx.service-vEYR3v/tmp (/tmp): Permission denied
