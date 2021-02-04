@@ -48,6 +48,14 @@ require {
 }
 allow login_userdomain init_var_run_t:service status;
 
+### Allow to run container
+require {
+        type user_t;
+        type container_runtime_t;
+        class dir search;
+}
+allow user_t container_runtime_t:dir search;
+
 ### Allow: systemd to create private /tmp
 # systemd[5942]: Unable to fix SELinux security context of /tmp/systemd-private-01b649bd470f43c3bbdf61b9e0857e0c-xxx.service-vEYR3v/tmp (/tmp): Permission denied
 # ls -laZ /tmp/systemd-private-01b649bd470f43c3bbdf61b9e0857e0c-xxx.service-vEYR3v
