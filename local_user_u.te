@@ -50,6 +50,7 @@ allow login_userdomain init_var_run_t:service status;
 
 ### Allow to run container
 require {
+        class cap_userns { kill sys_ptrace };
         class dbus send_msg;
         class dir search;
         class file { getattr ioctl open read };
@@ -59,6 +60,8 @@ require {
 }
 allow container_runtime_t container_t:process transition;
 allow user_t container_runtime_t:dbus send_msg;
+allow user_t self:cap_userns kill;
+allow user_t self:cap_userns sys_ptrace;
 container_read_state(user_t)
 
 ### Allow: systemd to create private /tmp
