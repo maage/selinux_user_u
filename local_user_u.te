@@ -65,7 +65,7 @@ allow user_t container_runtime_t:dbus send_msg;
 #allow user_t self:cap_userns sys_ptrace;
 container_read_state(user_t)
 container_stream_connect(user_t)
-container_runtime_run(user_t)
+container_runtime_run(user_t, user_u)
 container_runtime_exec(user_t)
 
 ### Allow: systemd to create private /tmp
