@@ -33,3 +33,20 @@ allow user_t user_tmp_t:file mounton;
 
 # because: --unshare-user-try
 dontaudit user_t self:cap_userns dac_override;
+
+require {
+	type config_home_t;
+	type user_t;
+	class dir mounton;
+}
+
+#============= user_t ==============
+# audit(1615464744.819:7719):
+#  scontext="user_u:user_r:user_t:s0" tcontext="user_u:object_r:config_home_t:s0"
+#  class="dir" perms="mounton"
+#  comm="bwrap" exe="" path=""
+#  message="type=AVC msg=audit(1615464744.819:7719): avc:  denied  { mounton }
+#   for  pid=838026 comm="bwrap" path="/newroot/etc/dconf" dev="tmpfs" ino=19
+#   scontext=user_u:user_r:user_t:s0 tcontext=user_u:object_r:config_home_t:s0
+#   tclass=dir permissive=0"
+allow user_t config_home_t:dir mounton;
