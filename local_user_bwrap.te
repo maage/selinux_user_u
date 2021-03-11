@@ -33,3 +33,20 @@ require {
 #   scontext=user_u:user_r:user_t:s0 tcontext=system_u:object_r:tmp_t:s0
 #   tclass=dir permissive=0"
 allow user_t tmp_t:dir mounton;
+
+require {
+	type user_t;
+	type tmpfs_t;
+	class filesystem mount;
+}
+
+#============= user_t ==============
+# audit(1615449620.351:7059):
+#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:tmpfs_t:s0"
+#  class="filesystem" perms="mount"
+#  comm="bwrap" exe="" path=""
+#  message="type=AVC msg=audit(1615449620.351:7059): avc:  denied  { mount } for
+#   pid=822929 comm="bwrap" name="/" dev="tmpfs" ino=1
+#   scontext=user_u:user_r:user_t:s0 tcontext=system_u:object_r:tmpfs_t:s0
+#   tclass=filesystem permissive=0"
+allow user_t tmpfs_t:filesystem mount;
