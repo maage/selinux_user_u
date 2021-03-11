@@ -68,3 +68,20 @@ require {
 #   for  pid=830266 comm="bwrap" scontext=user_u:user_r:user_t:s0
 #   tcontext=system_u:object_r:security_t:s0 tclass=filesystem permissive=0"
 allow user_t security_t:filesystem remount;
+
+require {
+	type config_home_t;
+	type user_t;
+	class file mounton;
+}
+
+#============= user_t ==============
+# audit(1615463213.209:7561):
+#  scontext="user_u:user_r:user_t:s0" tcontext="user_u:object_r:config_home_t:s0"
+#  class="file" perms="mounton"
+#  comm="bwrap" exe="" path=""
+#  message="type=AVC msg=audit(1615463213.209:7561): avc:  denied  { mounton }
+#   for  pid=836256 comm="bwrap" path="/newroot/etc/dconf/profile/user"
+#   dev="tmpfs" ino=47 scontext=user_u:user_r:user_t:s0
+#   tcontext=user_u:object_r:config_home_t:s0 tclass=file permissive=0"
+allow user_t config_home_t:file mounton;
