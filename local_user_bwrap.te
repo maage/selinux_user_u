@@ -83,3 +83,49 @@ require {
 #   scontext=user_u:user_r:user_t:s0 tcontext=system_u:object_r:proc_t:s0
 #   tclass=filesystem permissive=0"
 allow user_t proc_t:filesystem mount;
+
+
+
+
+require {
+	type user_t;
+	type user_tmp_t;
+	class cap_userns dac_override;
+	class file mounton;
+}
+
+#============= user_t ==============
+# audit(1615449802.734:7118):
+#  scontext="user_u:user_r:user_t:s0" tcontext="user_u:user_r:user_t:s0"
+#  class="cap_userns" perms="dac_override"
+#  comm="bwrap" exe="" path=""
+#  message="type=AVC msg=audit(1615449802.734:7118): avc:  denied  { dac_override
+#   } for  pid=823325 comm="bwrap" capability=1
+#   scontext=user_u:user_r:user_t:s0 tcontext=user_u:user_r:user_t:s0
+#   tclass=cap_userns permissive=0"
+# audit(1615449802.734:7119):
+#  scontext="user_u:user_r:user_t:s0" tcontext="user_u:user_r:user_t:s0"
+#  class="cap_userns" perms="dac_override"
+#  comm="bwrap" exe="" path=""
+#  message="type=AVC msg=audit(1615449802.734:7119): avc:  denied  { dac_override
+#   } for  pid=823325 comm="bwrap" capability=1
+#   scontext=user_u:user_r:user_t:s0 tcontext=user_u:user_r:user_t:s0
+#   tclass=cap_userns permissive=0"
+# audit(1615449802.734:7120):
+#  scontext="user_u:user_r:user_t:s0" tcontext="user_u:user_r:user_t:s0"
+#  class="cap_userns" perms="dac_override"
+#  comm="bwrap" exe="" path=""
+#  message="type=AVC msg=audit(1615449802.734:7120): avc:  denied  { dac_override
+#   } for  pid=823325 comm="bwrap" capability=1
+#   scontext=user_u:user_r:user_t:s0 tcontext=user_u:user_r:user_t:s0
+#   tclass=cap_userns permissive=0"
+allow user_t self:cap_userns dac_override;
+# audit(1615449802.735:7121):
+#  scontext="user_u:user_r:user_t:s0" tcontext="user_u:object_r:user_tmp_t:s0"
+#  class="file" perms="mounton"
+#  comm="bwrap" exe="" path=""
+#  message="type=AVC msg=audit(1615449802.735:7121): avc:  denied  { mounton }
+#   for  pid=823325 comm="bwrap" path="/newroot/dev/null" dev="tmpfs" ino=2
+#   scontext=user_u:user_r:user_t:s0 tcontext=user_u:object_r:user_tmp_t:s0
+#   tclass=file permissive=0"
+allow user_t user_tmp_t:file mounton;
