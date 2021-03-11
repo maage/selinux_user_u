@@ -178,3 +178,6 @@ require {
 #   for  pid=823610 comm="bwrap" scontext=user_u:user_r:user_t:s0
 #   tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=0"
 allow user_t tmpfs_t:filesystem unmount;
+
+
+
