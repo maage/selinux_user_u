@@ -27,3 +27,19 @@ allow user_t user_tmp_t:file mounton;
 
 # because: --unshare-user-try
 dontaudit user_t self:cap_userns dac_override;
+
+require {
+	type user_t;
+	type tmpfs_t;
+	class filesystem remount;
+}
+
+#============= user_t ==============
+# audit(1615451882.606:7319):
+#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:tmpfs_t:s0"
+#  class="filesystem" perms="remount"
+#  comm="bwrap" exe="" path=""
+#  message="type=AVC msg=audit(1615451882.606:7319): avc:  denied  { remount }
+#   for  pid=825377 comm="bwrap" scontext=user_u:user_r:user_t:s0
+#   tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=0"
+allow user_t tmpfs_t:filesystem remount;
