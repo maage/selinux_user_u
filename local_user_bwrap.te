@@ -146,3 +146,19 @@ require {
 #   scontext=user_u:user_r:user_t:s0 tcontext=system_u:object_r:devpts_t:s0
 #   tclass=filesystem permissive=0"
 allow user_t devpts_t:filesystem mount;
+
+require {
+	type user_t;
+	type fs_t;
+	class filesystem unmount;
+}
+
+#============= user_t ==============
+# audit(1615449907.890:7149):
+#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:fs_t:s0"
+#  class="filesystem" perms="unmount"
+#  comm="bwrap" exe="" path=""
+#  message="type=AVC msg=audit(1615449907.890:7149): avc:  denied  { unmount }
+#   for  pid=823552 comm="bwrap" scontext=user_u:user_r:user_t:s0
+#   tcontext=system_u:object_r:fs_t:s0 tclass=filesystem permissive=0"
+allow user_t fs_t:filesystem unmount;
