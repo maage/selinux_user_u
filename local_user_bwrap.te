@@ -36,3 +36,19 @@ dontaudit user_t self:cap_userns dac_override;
 
 
 
+
+require {
+	type sysfs_t;
+	type user_t;
+	class filesystem remount;
+}
+
+#============= user_t ==============
+# audit(1615454777.828:7392):
+#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:sysfs_t:s0"
+#  class="filesystem" perms="remount"
+#  comm="bwrap" exe="" path=""
+#  message="type=AVC msg=audit(1615454777.828:7392): avc:  denied  { remount }
+#   for  pid=830188 comm="bwrap" scontext=user_u:user_r:user_t:s0
+#   tcontext=system_u:object_r:sysfs_t:s0 tclass=filesystem permissive=0"
+allow user_t sysfs_t:filesystem remount;
