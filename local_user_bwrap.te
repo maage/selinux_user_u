@@ -220,3 +220,20 @@ require {
 #   scontext=user_u:user_r:user_t:s0
 #   tcontext=system_u:object_r:mozilla_exec_t:s0 tclass=process2 permissive=0"
 allow user_t mozilla_exec_t:process2 { nnp_transition nosuid_transition };
+
+require {
+	type user_t;
+	type mozilla_exec_t;
+	class process transition;
+}
+
+#============= user_t ==============
+# audit(1615451049.452:7259):
+#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:mozilla_exec_t:s0"
+#  class="process" perms="transition"
+#  comm="bwrap" exe="" path=""
+#  message="type=AVC msg=audit(1615451049.452:7259): avc:  denied  { transition }
+#   for  pid=824729 comm="bwrap" path="/usr/bin/bash" dev="dm-0" ino=18250661
+#   scontext=user_u:user_r:user_t:s0
+#   tcontext=system_u:object_r:mozilla_exec_t:s0 tclass=process permissive=0"
+allow user_t mozilla_exec_t:process transition;
