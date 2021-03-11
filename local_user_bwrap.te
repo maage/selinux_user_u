@@ -52,3 +52,19 @@ require {
 #   for  pid=830188 comm="bwrap" scontext=user_u:user_r:user_t:s0
 #   tcontext=system_u:object_r:sysfs_t:s0 tclass=filesystem permissive=0"
 allow user_t sysfs_t:filesystem remount;
+
+require {
+	type user_t;
+	type security_t;
+	class filesystem remount;
+}
+
+#============= user_t ==============
+# audit(1615454811.005:7407):
+#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:security_t:s0"
+#  class="filesystem" perms="remount"
+#  comm="bwrap" exe="" path=""
+#  message="type=AVC msg=audit(1615454811.005:7407): avc:  denied  { remount }
+#   for  pid=830266 comm="bwrap" scontext=user_u:user_r:user_t:s0
+#   tcontext=system_u:object_r:security_t:s0 tclass=filesystem permissive=0"
+allow user_t security_t:filesystem remount;
