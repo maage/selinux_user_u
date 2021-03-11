@@ -129,3 +129,20 @@ allow user_t self:cap_userns dac_override;
 #   scontext=user_u:user_r:user_t:s0 tcontext=user_u:object_r:user_tmp_t:s0
 #   tclass=file permissive=0"
 allow user_t user_tmp_t:file mounton;
+
+require {
+	type user_t;
+	type devpts_t;
+	class filesystem mount;
+}
+
+#============= user_t ==============
+# audit(1615449860.160:7135):
+#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:devpts_t:s0"
+#  class="filesystem" perms="mount"
+#  comm="bwrap" exe="" path=""
+#  message="type=AVC msg=audit(1615449860.160:7135): avc:  denied  { mount } for
+#   pid=823474 comm="bwrap" name="/" dev="devpts" ino=1
+#   scontext=user_u:user_r:user_t:s0 tcontext=system_u:object_r:devpts_t:s0
+#   tclass=filesystem permissive=0"
+allow user_t devpts_t:filesystem mount;
