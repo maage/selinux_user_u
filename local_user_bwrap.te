@@ -6,6 +6,7 @@ require {
 	class file mounton;
 	class filesystem { mount remount unmount };
 	type config_home_t;
+	type data_home_t;
 	type devpts_t;
 	type fs_t;
 	type proc_t;
@@ -19,6 +20,7 @@ require {
 }
 
 allow user_t config_home_t:file mounton;
+allow user_t data_home_t:file mounton;
 allow user_t devpts_t:filesystem mount;
 allow user_t fs_t:filesystem { remount unmount };
 allow user_t proc_t:filesystem mount;
@@ -31,23 +33,3 @@ allow user_t user_tmp_t:file mounton;
 
 # because: --unshare-user-try
 dontaudit user_t self:cap_userns dac_override;
-
-require {
-	type user_t;
-	type data_home_t;
-	class file mounton;
-}
-
-#============= user_t ==============
-# audit(1615464384.695:7659):
-#  scontext="user_u:user_r:user_t:s0" tcontext="user_u:object_r:data_home_t:s0"
-#  class="file" perms="mounton"
-#  comm="bwrap" exe="" path=""
-#  message="type=AVC msg=audit(1615464384.695:7659): avc:  denied  { mounton }
-#   for  pid=837489 comm="bwrap" path="/newroot/home/user/.config/dconf/user"
-#   dev="dm-2" ino=1201594 scontext=user_u:user_r:user_t:s0
-#   tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0"
-allow user_t data_home_t:file mounton;
-
-
-
