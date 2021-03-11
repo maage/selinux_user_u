@@ -50,3 +50,20 @@ require {
 #   scontext=user_u:user_r:user_t:s0 tcontext=user_u:object_r:config_home_t:s0
 #   tclass=dir permissive=0"
 allow user_t config_home_t:dir mounton;
+
+require {
+	type user_t;
+	type etc_t;
+	class file mounton;
+}
+
+#============= user_t ==============
+# audit(1615464774.360:7733):
+#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:etc_t:s0"
+#  class="file" perms="mounton"
+#  comm="bwrap" exe="" path=""
+#  message="type=AVC msg=audit(1615464774.360:7733): avc:  denied  { mounton }
+#   for  pid=838080 comm="bwrap" path="/newroot/etc/dconf/profile/user"
+#   dev="dm-0" ino=13853839 scontext=user_u:user_r:user_t:s0
+#   tcontext=system_u:object_r:etc_t:s0 tclass=file permissive=0"
+allow user_t etc_t:file mounton;
