@@ -237,3 +237,25 @@ require {
 #   scontext=user_u:user_r:user_t:s0
 #   tcontext=system_u:object_r:mozilla_exec_t:s0 tclass=process permissive=0"
 allow user_t mozilla_exec_t:process transition;
+
+require {
+	type mozilla_exec_t;
+	type user_t;
+	class process transition;
+}
+
+#============= user_t ==============
+# audit(1615451074.334:7273):
+#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:mozilla_exec_t:s0"
+#  class="process" perms="transition"
+#  comm="bwrap" exe="" path=""
+#  message="type=AVC msg=audit(1615451074.334:7273): avc:  denied  { transition }
+#   for  pid=824780 comm="bwrap" path="/usr/bin/bash" dev="dm-0" ino=18250661
+#   scontext=user_u:user_r:user_t:s0
+#   tcontext=system_u:object_r:mozilla_exec_t:s0 tclass=process permissive=0"
+#!!!! This avc is a constraint violation.  You would need to modify the attributes of either the source or target types to allow this access.
+#Constraint rule: 
+#	constrain process { transition noatsecure siginh rlimitinh dyntransition } ((u1 == u2 -Fail-)  or (t1 == can_change_process_identity -Fail-)  and (t2 == process_user_target -Fail-)  or (t1 == cron_source_domain -Fail-)  and (t2 == cron_job_domain -Fail-)  or (u2 == system_u)  or (t1 == can_system_change -Fail-)  and (u2 == system_u)  or (t1 == process_uncond_exempt -Fail-) ); Constraint DENIED
+
+#	Possible cause is the source user (user_u) and target user (system_u) are different.
+allow user_t mozilla_exec_t:process transition;
