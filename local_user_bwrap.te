@@ -63,3 +63,6 @@ allow user_t device_t:filesystem remount;
 #   scontext=user_u:user_r:user_t:s0 tcontext=user_u:user_r:utempter_t:s0
 #   tclass=process2 permissive=0"
 allow user_t utempter_t:process2 { nnp_transition nosuid_transition };
+
+
+
