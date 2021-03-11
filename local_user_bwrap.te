@@ -187,3 +187,19 @@ allow user_t tmpfs_t:filesystem unmount;
 
 
 
+
+require {
+	type security_t;
+	type user_t;
+	class filesystem remount;
+}
+
+#============= user_t ==============
+# audit(1615450535.739:7230):
+#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:security_t:s0"
+#  class="filesystem" perms="remount"
+#  comm="bwrap" exe="" path=""
+#  message="type=AVC msg=audit(1615450535.739:7230): avc:  denied  { remount }
+#   for  pid=824391 comm="bwrap" scontext=user_u:user_r:user_t:s0
+#   tcontext=system_u:object_r:security_t:s0 tclass=filesystem permissive=0"
+allow user_t security_t:filesystem remount;
