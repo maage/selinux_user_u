@@ -203,3 +203,20 @@ require {
 #   for  pid=824391 comm="bwrap" scontext=user_u:user_r:user_t:s0
 #   tcontext=system_u:object_r:security_t:s0 tclass=filesystem permissive=0"
 allow user_t security_t:filesystem remount;
+
+require {
+	type user_t;
+	type mozilla_exec_t;
+	class process2 { nnp_transition nosuid_transition };
+}
+
+#============= user_t ==============
+# audit(1615451017.876:7244):
+#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:mozilla_exec_t:s0"
+#  class="process2" perms="{ nnp_transition nosuid_transition }"
+#  comm="bwrap" exe="" path=""
+#  message="type=AVC msg=audit(1615451017.876:7244): avc:  denied  {
+#   nnp_transition nosuid_transition } for  pid=824665 comm="bwrap"
+#   scontext=user_u:user_r:user_t:s0
+#   tcontext=system_u:object_r:mozilla_exec_t:s0 tclass=process2 permissive=0"
+allow user_t mozilla_exec_t:process2 { nnp_transition nosuid_transition };
