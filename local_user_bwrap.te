@@ -1,261 +1,27 @@
 policy_module(local_user_bwrap, 1.0.0)
 
 require {
-	type root_t;
-	type user_t;
+	class cap_userns dac_override;
 	class dir mounton;
-}
-
-#============= user_t ==============
-# audit(1615449010.209:6999):
-#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:root_t:s0"
-#  class="dir" perms="mounton"
-#  comm="bwrap" exe="" path=""
-#  message="type=AVC msg=audit(1615449010.209:6999): avc:  denied  { mounton }
-#   for  pid=822394 comm="bwrap" path="/" dev="dm-0" ino=256
-#   scontext=user_u:user_r:user_t:s0 tcontext=system_u:object_r:root_t:s0
-#   tclass=dir permissive=0"
-allow user_t root_t:dir mounton;
-
-require {
-	type tmp_t;
-	type user_t;
-	class dir mounton;
-}
-
-#============= user_t ==============
-# audit(1615449547.921:7033):
-#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:tmp_t:s0"
-#  class="dir" perms="mounton"
-#  comm="bwrap" exe="" path=""
-#  message="type=AVC msg=audit(1615449547.921:7033): avc:  denied  { mounton }
-#   for  pid=822863 comm="bwrap" path="/tmp" dev="tmpfs" ino=1
-#   scontext=user_u:user_r:user_t:s0 tcontext=system_u:object_r:tmp_t:s0
-#   tclass=dir permissive=0"
-allow user_t tmp_t:dir mounton;
-
-require {
-	type user_t;
-	type tmpfs_t;
-	class filesystem mount;
-}
-
-#============= user_t ==============
-# audit(1615449620.351:7059):
-#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:tmpfs_t:s0"
-#  class="filesystem" perms="mount"
-#  comm="bwrap" exe="" path=""
-#  message="type=AVC msg=audit(1615449620.351:7059): avc:  denied  { mount } for
-#   pid=822929 comm="bwrap" name="/" dev="tmpfs" ino=1
-#   scontext=user_u:user_r:user_t:s0 tcontext=system_u:object_r:tmpfs_t:s0
-#   tclass=filesystem permissive=0"
-allow user_t tmpfs_t:filesystem mount;
-
-require {
-	type user_t;
+	class file mounton;
+	class filesystem { mount remount unmount };
+	type devpts_t;
 	type fs_t;
-	class filesystem remount;
-}
-
-#============= user_t ==============
-# audit(1615449660.829:7073):
-#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:fs_t:s0"
-#  class="filesystem" perms="remount"
-#  comm="bwrap" exe="" path=""
-#  message="type=AVC msg=audit(1615449660.829:7073): avc:  denied  { remount }
-#   for  pid=822977 comm="bwrap" scontext=user_u:user_r:user_t:s0
-#   tcontext=system_u:object_r:fs_t:s0 tclass=filesystem permissive=0"
-allow user_t fs_t:filesystem remount;
-
-require {
-	type user_t;
 	type proc_t;
-	class filesystem mount;
-}
-
-#============= user_t ==============
-# audit(1615449714.258:7087):
-#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:proc_t:s0"
-#  class="filesystem" perms="mount"
-#  comm="bwrap" exe="" path=""
-#  message="type=AVC msg=audit(1615449714.258:7087): avc:  denied  { mount } for
-#   pid=823195 comm="bwrap" name="/" dev="proc" ino=1
-#   scontext=user_u:user_r:user_t:s0 tcontext=system_u:object_r:proc_t:s0
-#   tclass=filesystem permissive=0"
-allow user_t proc_t:filesystem mount;
-
-
-
-
-require {
+	type root_t;
+	type security_t;
+	type tmp_t;
+	type tmpfs_t;
 	type user_t;
 	type user_tmp_t;
-	class cap_userns dac_override;
-	class file mounton;
 }
 
-#============= user_t ==============
-# audit(1615449802.734:7118):
-#  scontext="user_u:user_r:user_t:s0" tcontext="user_u:user_r:user_t:s0"
-#  class="cap_userns" perms="dac_override"
-#  comm="bwrap" exe="" path=""
-#  message="type=AVC msg=audit(1615449802.734:7118): avc:  denied  { dac_override
-#   } for  pid=823325 comm="bwrap" capability=1
-#   scontext=user_u:user_r:user_t:s0 tcontext=user_u:user_r:user_t:s0
-#   tclass=cap_userns permissive=0"
-# audit(1615449802.734:7119):
-#  scontext="user_u:user_r:user_t:s0" tcontext="user_u:user_r:user_t:s0"
-#  class="cap_userns" perms="dac_override"
-#  comm="bwrap" exe="" path=""
-#  message="type=AVC msg=audit(1615449802.734:7119): avc:  denied  { dac_override
-#   } for  pid=823325 comm="bwrap" capability=1
-#   scontext=user_u:user_r:user_t:s0 tcontext=user_u:user_r:user_t:s0
-#   tclass=cap_userns permissive=0"
-# audit(1615449802.734:7120):
-#  scontext="user_u:user_r:user_t:s0" tcontext="user_u:user_r:user_t:s0"
-#  class="cap_userns" perms="dac_override"
-#  comm="bwrap" exe="" path=""
-#  message="type=AVC msg=audit(1615449802.734:7120): avc:  denied  { dac_override
-#   } for  pid=823325 comm="bwrap" capability=1
-#   scontext=user_u:user_r:user_t:s0 tcontext=user_u:user_r:user_t:s0
-#   tclass=cap_userns permissive=0"
-allow user_t self:cap_userns dac_override;
-# audit(1615449802.735:7121):
-#  scontext="user_u:user_r:user_t:s0" tcontext="user_u:object_r:user_tmp_t:s0"
-#  class="file" perms="mounton"
-#  comm="bwrap" exe="" path=""
-#  message="type=AVC msg=audit(1615449802.735:7121): avc:  denied  { mounton }
-#   for  pid=823325 comm="bwrap" path="/newroot/dev/null" dev="tmpfs" ino=2
-#   scontext=user_u:user_r:user_t:s0 tcontext=user_u:object_r:user_tmp_t:s0
-#   tclass=file permissive=0"
-allow user_t user_tmp_t:file mounton;
-
-require {
-	type user_t;
-	type devpts_t;
-	class filesystem mount;
-}
-
-#============= user_t ==============
-# audit(1615449860.160:7135):
-#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:devpts_t:s0"
-#  class="filesystem" perms="mount"
-#  comm="bwrap" exe="" path=""
-#  message="type=AVC msg=audit(1615449860.160:7135): avc:  denied  { mount } for
-#   pid=823474 comm="bwrap" name="/" dev="devpts" ino=1
-#   scontext=user_u:user_r:user_t:s0 tcontext=system_u:object_r:devpts_t:s0
-#   tclass=filesystem permissive=0"
 allow user_t devpts_t:filesystem mount;
-
-require {
-	type user_t;
-	type fs_t;
-	class filesystem unmount;
-}
-
-#============= user_t ==============
-# audit(1615449907.890:7149):
-#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:fs_t:s0"
-#  class="filesystem" perms="unmount"
-#  comm="bwrap" exe="" path=""
-#  message="type=AVC msg=audit(1615449907.890:7149): avc:  denied  { unmount }
-#   for  pid=823552 comm="bwrap" scontext=user_u:user_r:user_t:s0
-#   tcontext=system_u:object_r:fs_t:s0 tclass=filesystem permissive=0"
-allow user_t fs_t:filesystem unmount;
-
-require {
-	type tmpfs_t;
-	type user_t;
-	class filesystem unmount;
-}
-
-#============= user_t ==============
-# audit(1615449942.256:7163):
-#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:tmpfs_t:s0"
-#  class="filesystem" perms="unmount"
-#  comm="bwrap" exe="" path=""
-#  message="type=AVC msg=audit(1615449942.256:7163): avc:  denied  { unmount }
-#   for  pid=823610 comm="bwrap" scontext=user_u:user_r:user_t:s0
-#   tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=0"
-allow user_t tmpfs_t:filesystem unmount;
-
-
-
-
-
-
-
-
-
-
-require {
-	type security_t;
-	type user_t;
-	class filesystem remount;
-}
-
-#============= user_t ==============
-# audit(1615450535.739:7230):
-#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:security_t:s0"
-#  class="filesystem" perms="remount"
-#  comm="bwrap" exe="" path=""
-#  message="type=AVC msg=audit(1615450535.739:7230): avc:  denied  { remount }
-#   for  pid=824391 comm="bwrap" scontext=user_u:user_r:user_t:s0
-#   tcontext=system_u:object_r:security_t:s0 tclass=filesystem permissive=0"
-allow user_t security_t:filesystem remount;
-
-require {
-	type user_t;
-	type mozilla_exec_t;
-	class process2 { nnp_transition nosuid_transition };
-}
-
-#============= user_t ==============
-# audit(1615451017.876:7244):
-#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:mozilla_exec_t:s0"
-#  class="process2" perms="{ nnp_transition nosuid_transition }"
-#  comm="bwrap" exe="" path=""
-#  message="type=AVC msg=audit(1615451017.876:7244): avc:  denied  {
-#   nnp_transition nosuid_transition } for  pid=824665 comm="bwrap"
-#   scontext=user_u:user_r:user_t:s0
-#   tcontext=system_u:object_r:mozilla_exec_t:s0 tclass=process2 permissive=0"
-allow user_t mozilla_exec_t:process2 { nnp_transition nosuid_transition };
-
-require {
-	type user_t;
-	type mozilla_exec_t;
-	class process transition;
-}
-
-#============= user_t ==============
-# audit(1615451049.452:7259):
-#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:mozilla_exec_t:s0"
-#  class="process" perms="transition"
-#  comm="bwrap" exe="" path=""
-#  message="type=AVC msg=audit(1615451049.452:7259): avc:  denied  { transition }
-#   for  pid=824729 comm="bwrap" path="/usr/bin/bash" dev="dm-0" ino=18250661
-#   scontext=user_u:user_r:user_t:s0
-#   tcontext=system_u:object_r:mozilla_exec_t:s0 tclass=process permissive=0"
-allow user_t mozilla_exec_t:process transition;
-
-require {
-	type mozilla_exec_t;
-	type user_t;
-	class process transition;
-}
-
-#============= user_t ==============
-# audit(1615451074.334:7273):
-#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:mozilla_exec_t:s0"
-#  class="process" perms="transition"
-#  comm="bwrap" exe="" path=""
-#  message="type=AVC msg=audit(1615451074.334:7273): avc:  denied  { transition }
-#   for  pid=824780 comm="bwrap" path="/usr/bin/bash" dev="dm-0" ino=18250661
-#   scontext=user_u:user_r:user_t:s0
-#   tcontext=system_u:object_r:mozilla_exec_t:s0 tclass=process permissive=0"
-#!!!! This avc is a constraint violation.  You would need to modify the attributes of either the source or target types to allow this access.
-#Constraint rule: 
-#	constrain process { transition noatsecure siginh rlimitinh dyntransition } ((u1 == u2 -Fail-)  or (t1 == can_change_process_identity -Fail-)  and (t2 == process_user_target -Fail-)  or (t1 == cron_source_domain -Fail-)  and (t2 == cron_job_domain -Fail-)  or (u2 == system_u)  or (t1 == can_system_change -Fail-)  and (u2 == system_u)  or (t1 == process_uncond_exempt -Fail-) ); Constraint DENIED
-
-#	Possible cause is the source user (user_u) and target user (system_u) are different.
-allow user_t mozilla_exec_t:process transition;
+allow user_t fs_t:filesystem { remount unmount };
+allow user_t proc_t:filesystem mount;
+allow user_t root_t:dir mounton;
+allow user_t tmp_t:dir mounton;
+allow user_t tmpfs_t:filesystem { mount unmount };
+allow user_t user_tmp_t:file mounton;
+# allow user_t self:cap_userns dac_override;
+# allow user_t security_t:filesystem remount;
