@@ -23,5 +23,7 @@ allow user_t root_t:dir mounton;
 allow user_t tmp_t:dir mounton;
 allow user_t tmpfs_t:filesystem { mount unmount };
 allow user_t user_tmp_t:file mounton;
-# allow user_t self:cap_userns dac_override;
 # allow user_t security_t:filesystem remount;
+
+# because: --unshare-user-try
+dontaudit user_t self:cap_userns dac_override;
