@@ -67,3 +67,6 @@ require {
 #   dev="dm-0" ino=13853839 scontext=user_u:user_r:user_t:s0
 #   tcontext=system_u:object_r:etc_t:s0 tclass=file permissive=0"
 allow user_t etc_t:file mounton;
+
+
+
