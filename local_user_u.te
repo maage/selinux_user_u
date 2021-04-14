@@ -48,26 +48,6 @@ require {
 }
 allow login_userdomain init_var_run_t:service status;
 
-### Allow to run container
-require {
-	class cap_userns { kill sys_ptrace };
-	class dbus send_msg;
-	class dir search;
-	class file { getattr ioctl open read };
-	class process { noatsecure rlimitinh siginh signull transition };
-	type container_runtime_t;
-	type container_t;
-	type user_t;
-}
-#allow container_runtime_t container_t:process transition;
-allow user_t container_runtime_t:dbus send_msg;
-allow user_t self:cap_userns kill;
-allow user_t self:cap_userns sys_ptrace;
-container_read_state(user_t)
-container_stream_connect(user_t)
-container_runtime_run(user_t, user_r)
-container_runtime_exec(user_t)
-
 ### Allow: systemd to create private /tmp
 # systemd[5942]: Unable to fix SELinux security context of /tmp/systemd-private-01b649bd470f43c3bbdf61b9e0857e0c-xxx.service-vEYR3v/tmp (/tmp): Permission denied
 # ls -laZ /tmp/systemd-private-01b649bd470f43c3bbdf61b9e0857e0c-xxx.service-vEYR3v
@@ -299,13 +279,6 @@ tunable_policy(`local_user_u_journalctl',`
 ### chrome uses this
 # $ setsebool -P selinuxuser_udp_server 1
 
-### Bug???: smartd
-require {
-	class capability net_admin;
-	type fsdaemon_t;
-}
-allow fsdaemon_t self:capability net_admin;
-
 ### gnome-software /var/cache/app-info
 require {
 	class dir { read search };
@@ -326,13 +299,6 @@ require {
 	type pulseaudio_t;
 }
 allow pulseaudio_t login_userdomain:unix_stream_socket { read write };
-
-### regression
-require {
-	class process setsched;
-	type geoclue_t;
-}
-allow geoclue_t self:process setsched;
 
 ### /usr/lib/systemd/systemd-user-runtime-dir
 require {
