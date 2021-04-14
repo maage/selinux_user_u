@@ -48,56 +48,14 @@ require {
 }
 allow login_userdomain init_var_run_t:service status;
 
-### Allow: systemd to create private /tmp
-# systemd[5942]: Unable to fix SELinux security context of /tmp/systemd-private-01b649bd470f43c3bbdf61b9e0857e0c-xxx.service-vEYR3v/tmp (/tmp): Permission denied
-# ls -laZ /tmp/systemd-private-01b649bd470f43c3bbdf61b9e0857e0c-xxx.service-vEYR3v
-#total 0
-#drwx------.  3 user user user_u:object_r:user_tmp_t:s0  60  1. 2. 08:46 .
-#drwxrwxrwt. 35 root  root  system_u:object_r:tmp_t:s0     760  1. 2. 08:48 ..
-#drwxrwxrwt.  2 user user user_u:object_r:user_tmp_t:s0  40  1. 2. 08:46 tmp
-#============= user_t ==============
-#allow user_t tmp_t:dir relabelto;
-#  scontext="user_u:user_r:user_t:s0" tcontext="system_u:object_r:tmp_t:s0"
-#  class="dir" perms="relabelto"
-#  comm="systemd" exe="" path=""
-#  message="helmi 01 08:46:15 user-hp-eb-lan audit[5942]: AVC avc:  denied  {
-#   relabelto } for  pid=5942 comm="systemd" name="tmp" dev="tmpfs" ino=3901
-#   scontext=user_u:user_r:user_t:s0 tcontext=system_u:object_r:tmp_t:s0
-#   tclass=dir permissive=0 "
-#   allow user_t tmp_t:dir relabelto;
-#userdom_user_tmp_filetrans(user_t, tmp_t, dir, "tmp")
-#manage_dirs_pattern(user_t, user_tmp_t, tmp_t)
-require {
-	class file { getattr map open };
-	type pangp_server_t;
-	type user_home_dir_t;
-}
-allow pangp_server_t user_home_dir_t:dir search;
-allow pangp_server_t var_lib_t:file getattr;
-require {
-	class dir read;
-	class file { execute_no_trans open read };
-	class netlink_kobject_uevent_socket { create getattr setopt };
-	class netlink_kobject_uevent_socket bind;
-	type bin_t;
-	type pangp_user_ui_t;
-	type sysfs_t;
-	type udev_var_run_t;
-	type var_lib_t;
-}
-allow pangp_user_ui_t bin_t:file { execute_no_trans map };
-allow pangp_user_ui_t self:netlink_kobject_uevent_socket { bind create getattr setopt };
-allow pangp_user_ui_t sysfs_t:dir read;
-allow pangp_user_ui_t udev_var_run_t:file { getattr open read };
-allow pangp_user_ui_t var_lib_t:file { getattr map open read };
-#
 ### Allow: login/logout w/ my systemd_logind_var_run_t/systemd_unit_file_t fc
 # systemctl --user daemon-reexec: does not still work, it does not start systemd user instance
 require {
-	type gpg_t;
 	type gpg_agent_t;
 	type gpg_agent_tmp_t;
 	type gpg_secret_t;
+	type gpg_t;
+	type init_t;
 	type pulseaudio_t;
 	type pulseaudio_var_lib_t;
 	type system_dbusd_var_run_t;
@@ -141,6 +99,10 @@ manage_sock_files_pattern({ login_userdomain systemd_logind_t }, systemd_logind_
 manage_dirs_pattern(systemd_logind_t, user_tmp_t, systemd_unit_file_t)
 manage_files_pattern(systemd_logind_t, systemd_unit_file_t, systemd_unit_file_t)
 manage_lnk_files_pattern(systemd_logind_t, systemd_unit_file_t, systemd_unit_file_t)
+
+# /run/systemd/user
+filetrans_pattern({ init_t systemd_logind_t }, init_var_run_t, systemd_unit_file_t, dir, "user")
+
 
 ### Allow some: ps: /proc/<pid>
 require {
