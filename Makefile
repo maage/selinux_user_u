@@ -4,3 +4,5 @@ hop:
 	./create.sh
 
 include /usr/share/selinux/devel/Makefile
+
+.PHONY: hop
