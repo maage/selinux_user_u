@@ -9,18 +9,25 @@ require {
 	class dir mounton;
 	class file mounton;
 	class filesystem mount_fs_perms;
+	type bpf_t;
+	type cgroup_t;
 	type config_home_t;
+	type configfs_t;
 	type data_home_t;
+	type debugfs_t;
 	type device_t;
 	type devpts_t;
 	type etc_t;
 	type fs_t;
+	type fusefs_t;
 	type proc_t;
+	type pstore_t;
 	type root_t;
 	type security_t;
 	type sysfs_t;
 	type tmp_t;
 	type tmpfs_t;
+	type tracefs_t;
 	type user_tmp_t;
 }
 
@@ -33,13 +40,20 @@ allow user_t data_home_t:file mounton;
 allow user_t etc_t:file mounton;
 allow user_t user_tmp_t:file mounton;
 
+allow user_t bpf_t:filesystem remount;
+allow user_t cgroup_t:filesystem remount;
+allow user_t configfs_t:filesystem remount;
+allow user_t debugfs_t:filesystem remount;
 allow user_t device_t:filesystem remount;
 allow user_t devpts_t:filesystem mount;
 allow user_t fs_t:filesystem mount_fs_perms;
+allow user_t fusefs_t:filesystem remount;
 allow user_t proc_t:filesystem mount;
+allow user_t pstore_t:filesystem remount;
 allow user_t security_t:filesystem remount;
 allow user_t sysfs_t:filesystem remount;
 allow user_t tmpfs_t:filesystem mount_fs_perms;
+allow user_t tracefs_t:filesystem remount;
 
 
 #### because: --unshare-user-try
