@@ -369,6 +369,7 @@ require {
 	class dir watch;
 	type fonts_t;
 	type fwupd_cache_t;
+	type home_root_t;
 	type lib_t;
 	type locale_t;
 	type root_t;
@@ -381,6 +382,7 @@ require {
 allow user_dbusd_t var_lib_t:dir watch;
 allow user_t fonts_t:dir watch;
 allow user_t fwupd_cache_t:dir watch;
+allow user_t home_root_t:dir watch;
 allow user_t lib_t:dir watch;
 allow user_t locale_t:dir watch;
 allow user_t root_t:dir watch;
@@ -437,4 +439,4 @@ require {
 	type user_home_dir_t;
 	class file { create map open read unlink write };
 }
-allow user_t user_home_dir_t:file write;
+allow user_t user_home_dir_t:file { read write };
