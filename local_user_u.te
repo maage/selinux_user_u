@@ -367,6 +367,7 @@ allow login_userdomain self:cap_userns sys_ptrace;
 ### watch
 require {
 	class dir watch;
+	type fonts_t;
 	type fwupd_cache_t;
 	type lib_t;
 	type system_conf_t;
@@ -376,6 +377,7 @@ require {
 	type var_run_t;
 }
 allow user_dbusd_t var_lib_t:dir watch;
+allow user_t fonts_t:dir watch;
 allow user_t fwupd_cache_t:dir watch;
 allow user_t lib_t:dir watch;
 allow user_t system_conf_t:dir watch;
