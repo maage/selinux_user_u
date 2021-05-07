@@ -395,3 +395,11 @@ require {
 allow user_t init_var_run_t:file read;
 allow user_t pulseaudio_var_lib_t:file create;
 allow user_t session_dbusd_tmp_t:sock_file write;
+
+### use journalctl
+require {
+	class dir { watch write };
+	type journalctl_t;
+	type user_home_dir_t;
+}
+allow journalctl_t user_home_dir_t:dir write;
