@@ -1,3 +1,5 @@
+policy_module(local_f34_regression, 1.0.0)
+
 ### watch
 require {
 	type NetworkManager_etc_t;
