@@ -363,3 +363,21 @@ allow syslogd_t self:cap_userns sys_ptrace;
 allow login_userdomain journalctl_t:process ptrace;
 allow login_userdomain self:cap_userns sys_ptrace;
 ')
+
+### watch
+require {
+	class dir watch;
+	type fwupd_cache_t;
+	type lib_t;
+	type system_conf_t;
+	type systemd_logind_var_run_t;
+	type user_dbusd_t;
+	type var_lib_t;
+	type var_run_t;
+}
+allow user_dbusd_t var_lib_t:dir watch;
+allow user_t fwupd_cache_t:dir watch;
+allow user_t lib_t:dir watch;
+allow user_t system_conf_t:dir watch;
+allow user_t systemd_logind_var_run_t:dir watch;
+allow user_t var_run_t:dir watch;
