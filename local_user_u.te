@@ -399,12 +399,12 @@ allow user_t session_dbusd_tmp_t:sock_file write;
 ### use journalctl
 require {
 	class dir { add_name write };
-	class dir { watch write };
+	class file { create map open read unlink write };
 	type journalctl_t;
 	type user_home_dir_t;
 }
-allow journalctl_t user_home_dir_t:dir write;
-allow journalctl_t user_home_dir_t:dir add_name;
+allow journalctl_t user_home_dir_t:dir { add_name write };
+allow journalctl_t user_home_dir_t:file create;
 
 ### login
 require {
