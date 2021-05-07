@@ -7,3 +7,15 @@ require {
 	class dir watch;
 }
 allow NetworkManager_t NetworkManager_etc_t:dir watch;
+
+require {
+	type tmpfs_t;
+	type tmp_t;
+	type xdm_t;
+	class sock_file write;
+	class file { read write };
+}
+
+#============= xdm_t ==============
+allow xdm_t tmp_t:sock_file write;
+allow xdm_t tmpfs_t:file { read write };
