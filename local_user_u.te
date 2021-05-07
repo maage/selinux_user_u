@@ -383,3 +383,15 @@ allow user_t lib_t:dir watch;
 allow user_t system_conf_t:dir watch;
 allow user_t systemd_logind_var_run_t:dir watch;
 allow user_t var_run_t:dir watch;
+
+### What?
+require {
+	class file { create read };
+	class sock_file write;
+	type init_var_run_t;
+	type pulseaudio_var_lib_t;
+	type session_dbusd_tmp_t;
+}
+allow user_t init_var_run_t:file read;
+allow user_t pulseaudio_var_lib_t:file create;
+allow user_t session_dbusd_tmp_t:sock_file write;
