@@ -404,7 +404,7 @@ require {
 	type user_home_dir_t;
 }
 allow journalctl_t user_home_dir_t:dir { add_name write };
-allow journalctl_t user_home_dir_t:file create;
+allow journalctl_t user_home_dir_t:file { create open write };
 
 ### login
 require {
@@ -427,3 +427,10 @@ require {
 allow user_dbusd_t user_t:system status;
 allow user_t etc_t:service start;
 allow user_t usr_t:service start;
+
+### what?
+require {
+	type user_home_dir_t;
+	class file { create map open read unlink write };
+}
+allow user_t user_home_dir_t:file write;
