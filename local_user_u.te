@@ -403,3 +403,13 @@ require {
 	type user_home_dir_t;
 }
 allow journalctl_t user_home_dir_t:dir write;
+
+### login
+require {
+	class dir write;
+	class file { open write };
+	type init_var_run_t;
+	type pulseaudio_var_lib_t;
+}
+allow user_t init_var_run_t:file open;
+allow user_t pulseaudio_var_lib_t:file { open write };
