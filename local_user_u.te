@@ -370,6 +370,8 @@ require {
 	type fonts_t;
 	type fwupd_cache_t;
 	type lib_t;
+	type locale_t;
+	type root_t;
 	type system_conf_t;
 	type systemd_logind_var_run_t;
 	type user_dbusd_t;
@@ -380,6 +382,8 @@ allow user_dbusd_t var_lib_t:dir watch;
 allow user_t fonts_t:dir watch;
 allow user_t fwupd_cache_t:dir watch;
 allow user_t lib_t:dir watch;
+allow user_t locale_t:dir watch;
+allow user_t root_t:dir watch;
 allow user_t system_conf_t:dir watch;
 allow user_t systemd_logind_var_run_t:dir watch;
 allow user_t var_run_t:dir watch;
