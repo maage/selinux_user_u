@@ -415,3 +415,15 @@ require {
 }
 allow user_t init_var_run_t:file open;
 allow user_t pulseaudio_var_lib_t:file { open write };
+
+### start stuff
+require {
+	class service start;
+	class system status;
+	type etc_t;
+	type user_dbusd_t;
+	type usr_t;
+}
+allow user_dbusd_t user_t:system status;
+allow user_t etc_t:service start;
+allow user_t usr_t:service start;
