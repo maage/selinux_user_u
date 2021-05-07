@@ -439,4 +439,4 @@ require {
 	type user_home_dir_t;
 	class file { create map open read unlink write };
 }
-allow user_t user_home_dir_t:file { read write };
+allow user_t user_home_dir_t:file { open read write };
