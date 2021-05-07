@@ -8,6 +8,7 @@ require {
 }
 allow NetworkManager_t NetworkManager_etc_t:dir watch;
 
+# What?
 require {
 	type tmpfs_t;
 	type tmp_t;
@@ -15,7 +16,13 @@ require {
 	class sock_file write;
 	class file { read write };
 }
-
-#============= xdm_t ==============
 allow xdm_t tmp_t:sock_file write;
 allow xdm_t tmpfs_t:file { read write };
+
+### What?
+require {
+	type systemd_logind_t;
+	type pulseaudio_var_lib_t;
+	class file unlink;
+}
+allow systemd_logind_t pulseaudio_var_lib_t:file unlink;
