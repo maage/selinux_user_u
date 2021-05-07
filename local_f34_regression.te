@@ -14,10 +14,10 @@ require {
 	type tmp_t;
 	type xdm_t;
 	class sock_file write;
-	class file { read write };
+	class file { map read write };
 }
 allow xdm_t tmp_t:sock_file write;
-allow xdm_t tmpfs_t:file { read write };
+allow xdm_t tmpfs_t:file { map read write };
 
 ### What?
 require {
@@ -26,3 +26,11 @@ require {
 	class file unlink;
 }
 allow systemd_logind_t pulseaudio_var_lib_t:file unlink;
+
+### What?
+require {
+	class unix_stream_socket connectto;
+	type unconfined_service_t;
+	type xdm_t;
+}
+allow xdm_t unconfined_service_t:unix_stream_socket connectto;
