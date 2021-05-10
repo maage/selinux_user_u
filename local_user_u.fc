@@ -12,7 +12,7 @@
 /var/run/user/%{USERID}/bus(/.*)?				gen_context(system_u:object_r:system_dbusd_var_run_t,s0)
 /var/run/user/%{USERID}/gnupg					gen_context(system_u:object_r:gpg_secret_t,s0)
 /var/run/user/%{USERID}/gnupg/.*				gen_context(system_u:object_r:gpg_agent_tmp_t,s0)
-/var/run/user/%{USERID}/pipewire-.*				gen_context(system_u:object_r:pulseaudio_var_lib_t,s2)
+/var/run/user/%{USERID}/pipewire-.*				gen_context(system_u:object_r:pulseaudio_var_lib_t,s0)
 /var/run/user/%{USERID}/pulse(/.*)?				gen_context(system_u:object_r:pulseaudio_var_lib_t,s0)
 /var/run/user/%{USERID}/systemd(/.*)?				gen_context(system_u:object_r:systemd_logind_var_run_t,s0)
 /var/run/user/%{USERID}/systemd/generator(/.*)?			gen_context(system_u:object_r:systemd_unit_file_t,s0)
