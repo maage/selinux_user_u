@@ -367,6 +367,7 @@ allow login_userdomain self:cap_userns sys_ptrace;
 ### watch
 require {
 	class dir watch;
+	type bin_t;
 	type fonts_t;
 	type fwupd_cache_t;
 	type home_root_t;
@@ -380,6 +381,7 @@ require {
 	type var_run_t;
 }
 allow user_dbusd_t var_lib_t:dir watch;
+allow user_t bin_t:dir watch;
 allow user_t fonts_t:dir watch;
 allow user_t fwupd_cache_t:dir watch;
 allow user_t home_root_t:dir watch;
@@ -437,6 +439,6 @@ allow user_t usr_t:service start;
 ### what?
 require {
 	type user_home_dir_t;
-	class file { create map open read unlink write };
+	class file { create map open read rename unlink write };
 }
-allow user_t user_home_dir_t:file { open read write };
+allow user_t user_home_dir_t:file { open read rename write };
