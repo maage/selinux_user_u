@@ -1,12 +1,28 @@
 policy_module(local_f34_regression, 1.0.0)
 
-### watch
+### Allow: missing watches
 require {
 	type NetworkManager_etc_t;
 	type NetworkManager_t;
 	class dir watch;
 }
 allow NetworkManager_t NetworkManager_etc_t:dir watch;
+
+### Allow: during logout logind removes /run/user/<uid>/ files
+require {
+	class file unlink;
+	type pulseaudio_var_lib_t;
+	type systemd_logind_t;
+}
+allow systemd_logind_t pulseaudio_var_lib_t:file unlink;
+
+#### laptop_mode lock /run/lock/lmt-req.lock
+require {
+	type apmd_lock_t;
+	type unconfined_service_t;
+	type var_lock_t;
+}
+filetrans_pattern(unconfined_service_t, var_lock_t, apmd_lock_t, file, "lmt-req.lock")
 
 ### What?
 require {
@@ -21,24 +37,8 @@ allow xdm_t tmpfs_t:file { map read write };
 
 ### What?
 require {
-	type systemd_logind_t;
-	type pulseaudio_var_lib_t;
-	class file unlink;
-}
-allow systemd_logind_t pulseaudio_var_lib_t:file unlink;
-
-### What?
-require {
 	class unix_stream_socket connectto;
 	type unconfined_service_t;
 	type xdm_t;
 }
 allow xdm_t unconfined_service_t:unix_stream_socket connectto;
-
-#### laptop_mode lock /run/lock/lmt-req.lock
-require {
-	type apmd_lock_t;
-	type unconfined_service_t;
-	type var_lock_t;
-}
-filetrans_pattern(unconfined_service_t, var_lock_t, apmd_lock_t, file, "lmt-req.lock")
