@@ -34,3 +34,11 @@ require {
 	type xdm_t;
 }
 allow xdm_t unconfined_service_t:unix_stream_socket connectto;
+
+#### laptop_mode lock /run/lock/lmt-req.lock
+require {
+	type bin_t;
+	type var_lock_t;
+	type apmd_lock_t;
+}
+filetrans_pattern(bin_t, var_lock_t, apmd_lock_t, file, "lmt-req.lock")
