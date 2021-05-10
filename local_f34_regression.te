@@ -8,7 +8,7 @@ require {
 }
 allow NetworkManager_t NetworkManager_etc_t:dir watch;
 
-# What?
+### What?
 require {
 	type tmpfs_t;
 	type tmp_t;
