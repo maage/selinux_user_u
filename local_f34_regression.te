@@ -16,13 +16,21 @@ require {
 }
 allow systemd_logind_t pulseaudio_var_lib_t:file unlink;
 
-#### laptop_mode lock /run/lock/lmt-req.lock
+#### Fix: laptop_mode.service lock /run/lock/lmt-req.lock
 require {
 	type apmd_lock_t;
 	type unconfined_service_t;
 	type var_lock_t;
 }
 filetrans_pattern(unconfined_service_t, var_lock_t, apmd_lock_t, file, "lmt-req.lock")
+
+## Allow: iw to write the lock too
+require {
+	type ifconfig_t;
+	type apmd_lock_t;
+	class file write;
+}
+allow ifconfig_t apmd_lock_t:file write;
 
 ### What?
 require {
