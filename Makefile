@@ -1,8 +1,8 @@
 QUIET := n
 
 .PHONY: my-hop my-commit
-my-hop: | my-commit all
-my-hop:
+my-hop: | my-commit
+my-hop: all
 	sudo /usr/sbin/semodule -v -i *.pp
 
 my-commit:
