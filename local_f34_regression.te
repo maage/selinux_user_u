@@ -60,6 +60,6 @@ require {
 	type initctl_t;
 	type journalctl_t;
 }
-allow journalctl_t device_node:blk_file getattr;
+dontaudit journalctl_t device_node:blk_file getattr;
 allow journalctl_t device_node:chr_file getattr;
 allow journalctl_t initctl_t:fifo_file getattr;
