@@ -57,8 +57,9 @@ require {
 	class blk_file getattr;
 	class chr_file getattr;
 	class fifo_file getattr;
+	type initctl_t;
 	type journalctl_t;
 }
 allow journalctl_t device_node:blk_file getattr;
 allow journalctl_t device_node:chr_file getattr;
-allow journalctl_t device_node:fifo_file getattr;
+allow journalctl_t initctl_t:fifo_file getattr;
