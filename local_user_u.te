@@ -410,12 +410,11 @@ allow user_t session_dbusd_tmp_t:sock_file write;
 ### use journalctl
 require {
 	class dir { add_name write };
-	class file { create map open read unlink write };
 	type journalctl_t;
 	type user_home_dir_t;
 }
 allow journalctl_t user_home_dir_t:dir { add_name write };
-allow journalctl_t user_home_dir_t:file { create open write };
+filetrans_pattern(journalctl_t, user_home_dir_t, user_home_t, file)
 
 ### login
 require {
@@ -438,10 +437,3 @@ require {
 allow user_dbusd_t user_t:system status;
 allow user_t etc_t:service start;
 allow user_t usr_t:service start;
-
-### what?
-require {
-	type user_home_dir_t;
-	class file { create map open read rename unlink write };
-}
-allow user_t user_home_dir_t:file { open read rename write };
