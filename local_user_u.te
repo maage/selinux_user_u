@@ -411,7 +411,7 @@ allow user_t session_dbusd_tmp_t:sock_file write;
 ### Allow: use journalctl
 require {
 	class dir { add_name write };
-	class file { create open read rename setattr write };
+	class file { create open read rename setattr unlink write };
 	type journalctl_t;
 	type user_home_dir_t;
 	type user_home_t;
@@ -419,7 +419,7 @@ require {
 allow journalctl_t user_home_dir_t:dir { add_name write };
 # without this .lesshst etc has domain user_home_dir_t and that is just wrong
 filetrans_pattern(journalctl_t, user_home_dir_t, user_home_t, file)
-allow journalctl_t user_home_t:file { create open read rename setattr write };
+allow journalctl_t user_home_t:file { create open read rename setattr unlink write };
 
 
 ### login
@@ -445,15 +445,14 @@ allow user_t pulseaudio_var_lib_t:file { read unlink };
 
 ### start stuff
 require {
-	class service start;
+	class service { reload start status stop };
 	class system status;
 	type etc_t;
 	type user_dbusd_t;
 	type usr_t;
 }
 allow user_dbusd_t user_t:system status;
-allow user_t etc_t:service start;
-allow user_t usr_t:service start;
+allow user_t { etc_t usr_t }:service { reload start status stop };
 
 ### gpg?
 require {
