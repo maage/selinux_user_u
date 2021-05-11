@@ -51,15 +51,26 @@ require {
 }
 allow xdm_t unconfined_service_t:unix_stream_socket connectto;
 
-#### Allow: journalctl to probe devices
+#### Allow: journalctl to probe some
+require {
+	class lnk_file { getattr read };
+	type devlog_t;
+	type journalctl_t;
+}
+allow journalctl_t devlog_t:lnk_file { getattr read };
+
+#### Deny: journalctl to probe devices
 require {
 	attribute device_node;
 	class blk_file getattr;
 	class chr_file getattr;
 	class fifo_file getattr;
+	class file getattr;
 	type initctl_t;
 	type journalctl_t;
+	type proc_kcore_t;
 }
 dontaudit journalctl_t device_node:blk_file getattr;
-allow journalctl_t device_node:chr_file getattr;
-allow journalctl_t initctl_t:fifo_file getattr;
+dontaudit journalctl_t device_node:chr_file getattr;
+dontaudit journalctl_t initctl_t:fifo_file getattr;
+dontaudit journalctl_t proc_kcore_t:file getattr;
