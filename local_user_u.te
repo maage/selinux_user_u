@@ -62,6 +62,7 @@ require {
 	type systemd_logind_t;
 	type systemd_logind_var_run_t;
 	type systemd_unit_file_t;
+	type unconfined_service_t;
 	type xdm_t;
 }
 
@@ -104,7 +105,7 @@ manage_files_pattern(systemd_logind_t, systemd_unit_file_t, systemd_unit_file_t)
 manage_lnk_files_pattern(systemd_logind_t, systemd_unit_file_t, systemd_unit_file_t)
 
 # /run/systemd/user
-filetrans_pattern({ init_t systemd_logind_t }, init_var_run_t, systemd_unit_file_t, dir, "user")
+filetrans_pattern({ init_t systemd_logind_t unconfined_service_t }, init_var_run_t, systemd_unit_file_t, dir, "user")
 
 
 ### Allow some: ps: /proc/<pid>
