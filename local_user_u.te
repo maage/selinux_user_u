@@ -420,13 +420,24 @@ filetrans_pattern(journalctl_t, user_home_dir_t, user_home_t, file)
 
 ### login
 require {
-	class dir write;
 	class file { open write };
 	type init_var_run_t;
-	type pulseaudio_var_lib_t;
 }
 allow user_t init_var_run_t:file open;
+
+### login: create /run/user/<uid>/pipewire*
+require {
+	class file { open write };
+	type pulseaudio_var_lib_t;
+}
 allow user_t pulseaudio_var_lib_t:file { open write };
+
+#### logout: remove /run/user/<uid>/pipewire*
+require {
+	class file { read unlink };
+	type pulseaudio_var_lib_t;
+}
+allow user_t pulseaudio_var_lib_t:file { read unlink };
 
 ### start stuff
 require {
@@ -439,3 +450,10 @@ require {
 allow user_dbusd_t user_t:system status;
 allow user_t etc_t:service start;
 allow user_t usr_t:service start;
+
+### gpg?
+require {
+	class process signull;
+	type gpg_agent_t;
+}
+allow user_t gpg_agent_t:process signull;
