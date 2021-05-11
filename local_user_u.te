@@ -411,7 +411,7 @@ allow user_t session_dbusd_tmp_t:sock_file write;
 ### Allow: use journalctl
 require {
 	class dir { add_name write };
-	class file { create open read write };
+	class file { create open read rename setattr write };
 	type journalctl_t;
 	type user_home_dir_t;
 	type user_home_t;
@@ -419,7 +419,8 @@ require {
 allow journalctl_t user_home_dir_t:dir { add_name write };
 # without this .lesshst etc has domain user_home_dir_t and that is just wrong
 filetrans_pattern(journalctl_t, user_home_dir_t, user_home_t, file)
-allow journalctl_t user_home_t:file { create open read write };
+allow journalctl_t user_home_t:file { create open read rename setattr write };
+
 
 ### login
 require {
