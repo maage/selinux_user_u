@@ -407,13 +407,15 @@ allow user_t init_var_run_t:file read;
 allow user_t pulseaudio_var_lib_t:file create;
 allow user_t session_dbusd_tmp_t:sock_file write;
 
-### use journalctl
+### Allow: use journalctl
 require {
 	class dir { add_name write };
 	type journalctl_t;
 	type user_home_dir_t;
+	type user_home_t;
 }
 allow journalctl_t user_home_dir_t:dir { add_name write };
+# without this .lesshst etc has domain user_home_dir_t and that is just wrong
 filetrans_pattern(journalctl_t, user_home_dir_t, user_home_t, file)
 
 ### login
