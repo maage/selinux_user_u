@@ -62,7 +62,7 @@ require {
 	type systemd_logind_t;
 	type systemd_logind_var_run_t;
 	type systemd_unit_file_t;
-	type unconfined_service_t;
+	type unconfined_service_t; # /usr/libexec/uresourced
 	type xdm_t;
 }
 
