@@ -429,10 +429,10 @@ allow user_t init_var_run_t:file open;
 
 ### login: create /run/user/<uid>/pipewire*
 require {
-	class file { lock open write };
+	class file { getattr lock open write };
 	type pulseaudio_var_lib_t;
 }
-allow user_t pulseaudio_var_lib_t:file { lock open write };
+allow user_t pulseaudio_var_lib_t:file { getattr lock open write };
 
 #### logout: remove /run/user/<uid>/pipewire*
 require {
