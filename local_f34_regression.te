@@ -57,4 +57,4 @@ require {
 	class chr_file getattr;
 	type journalctl_t;
 }
-allow journalctl_t device_node::chr_file getattr;
+allow journalctl_t device_node:chr_file getattr;
