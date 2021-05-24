@@ -2,8 +2,9 @@ policy_module(local_firefox, 1.0.0)
 
 require {
 	type mozilla_exec_t;
-	type textrel_shlib_t;
 	type mozilla_plugin_exec_t;
+	type mozilla_t;
+	type textrel_shlib_t;
 }
 
 require {
