@@ -5,3 +5,13 @@ require {
 	type textrel_shlib_t;
 	type mozilla_plugin_exec_t;
 }
+
+require {
+        role staff_r;
+        role user_r;
+        type staff_t;
+        type user_t;
+}
+
+mozilla_role(staff_r, staff_t)
+mozilla_role(user_r, user_t)
