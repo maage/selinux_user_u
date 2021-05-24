@@ -6,4 +6,5 @@
 (/usr)?/lib(64)?/firefox/plugin-container				--	gen_context(system_u:object_r:mozilla_plugin_exec_t,s0) 
 (/usr)?/lib(64)?/firefox/plugins/libractrl\.so				--	gen_context(system_u:object_r:textrel_shlib_t,s0) 
 (/usr)?/lib(64)?/[^/]*firefox[^/]*/run-mozilla\.sh			--	gen_context(system_u:object_r:mozilla_exec_t,s0)
+/usr/lib/firefox/run-mozilla\.sh					--	gen_context(system_u:object_r:mozilla_exec_t,s0)
 (/usr)?/lib(64)?/[^/]*firefox[^/]*/mozilla-.*				--	gen_context(system_u:object_r:mozilla_exec_t,s0) 
