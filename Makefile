@@ -9,8 +9,6 @@ all: my-commit
 my-commit:
 	./commit.sh
 
-SEMODULE := $(SBINDIR)/semodule -v
-
 include /usr/share/selinux/devel/Makefile
 
 SEMODULE := $(SBINDIR)/semodule -v
