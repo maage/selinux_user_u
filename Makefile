@@ -2,7 +2,7 @@ QUIET := n
 
 .PHONY: my-hop my-commit
 my-hop: all
-	sudo $(MAKE) load
+	sudo $(MAKE) my-load
 
 all: my-commit
 
@@ -11,8 +11,9 @@ my-commit:
 
 include /usr/share/selinux/devel/Makefile
 
-tmp/loaded: $(all_packages)
+my-load: tmp/my-loaded
+tmp/my-loaded: $(all_packages)
 	@$(EINFO) "Loading $(NAME) modules: $(basename $(notdir $?))"
 	$(verbose) $(SEMODULE) -v $(foreach mod,$?,-i $(mod))
 	@mkdir -p tmp
-	@touch tmp/loaded
+	@touch tmp/my-loaded
