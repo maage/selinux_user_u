@@ -76,3 +76,21 @@ dontaudit journalctl_t device_node:blk_file getattr;
 dontaudit journalctl_t device_node:chr_file getattr;
 dontaudit journalctl_t initctl_t:fifo_file getattr;
 dontaudit journalctl_t proc_kcore_t:file getattr;
+
+require {
+	type user_tmp_t;
+	type fapolicyd_t;
+	class file { watch_mount watch_with_perm };
+}
+
+#============= fapolicyd_t ==============
+# audit(1622112295.772:1760):
+#  scontext="system_u:system_r:fapolicyd_t:s0" tcontext="unconfined_u:object_r:user_tmp_t:s0"
+#  class="file" perms="{ watch_mount watch_with_perm }"
+#  comm="fapolicyd" exe="" path=""
+#  message="type=AVC msg=audit(1622112295.772:1760): avc:  denied  { watch_mount
+#   watch_with_perm } for  pid=20253 comm="fapolicyd"
+#   path="/var/lib/mock/fedora-34-x86_64-bootstrap/root/proc/filesystems"
+#   dev="tmpfs" ino=825 scontext=system_u:system_r:fapolicyd_t:s0
+#   tcontext=unconfined_u:object_r:user_tmp_t:s0 tclass=file permissive=0"
+allow fapolicyd_t user_tmp_t:file { watch_mount watch_with_perm };
