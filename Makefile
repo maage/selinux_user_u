@@ -12,3 +12,5 @@ my-commit:
 SEMODULE := $(SBINDIR)/semodule -v
 
 include /usr/share/selinux/devel/Makefile
+
+SEMODULE := $(SBINDIR)/semodule -v
