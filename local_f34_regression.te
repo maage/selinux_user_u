@@ -94,3 +94,22 @@ require {
 #   dev="tmpfs" ino=825 scontext=system_u:system_r:fapolicyd_t:s0
 #   tcontext=unconfined_u:object_r:user_tmp_t:s0 tclass=file permissive=0"
 allow fapolicyd_t user_tmp_t:file { watch_mount watch_with_perm };
+
+require {
+	type fapolicyd_t;
+	type user_home_t;
+	class dir { watch_mount watch_with_perm };
+}
+
+#============= fapolicyd_t ==============
+# audit(1622113139.201:1901):
+#  scontext="system_u:system_r:fapolicyd_t:s0" tcontext="unconfined_u:object_r:user_home_t:s0"
+#  class="dir" perms="{ watch_mount watch_with_perm }"
+#  comm="fapolicyd" exe="" path=""
+#  message="type=AVC msg=audit(1622113139.201:1901): avc:  denied  { watch_mount
+#   watch_with_perm } for  pid=20253 comm="fapolicyd" path="/var/lib/mock/fedora-
+#   34-x86_64-bootstrap/root/home/admin/git/rpm/laptop-mode-
+#   tools/results/default" dev="dm-2" ino=1311375
+#   scontext=system_u:system_r:fapolicyd_t:s0
+#   tcontext=unconfined_u:object_r:user_home_t:s0 tclass=dir permissive=0"
+allow fapolicyd_t user_home_t:dir { watch_mount watch_with_perm };
