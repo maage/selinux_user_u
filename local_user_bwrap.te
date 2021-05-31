@@ -34,6 +34,7 @@ require {
 }
 
 allow user_t config_home_t:dir mounton;
+allow user_t data_home_t:dir mounton;
 allow user_t pulseaudio_var_lib_t:dir mounton;
 allow user_t root_t:dir mounton;
 allow user_t tmp_t:dir mounton;
