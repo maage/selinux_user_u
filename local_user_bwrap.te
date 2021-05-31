@@ -22,6 +22,7 @@ require {
 	type fusefs_t;
 	type proc_t;
 	type pstore_t;
+	type pulseaudio_var_lib_t;
 	type root_t;
 	type security_t;
 	type sysfs_t;
@@ -29,15 +30,19 @@ require {
 	type tmpfs_t;
 	type tracefs_t;
 	type user_tmp_t;
+	type usr_t;
 }
 
 allow user_t config_home_t:dir mounton;
+allow user_t pulseaudio_var_lib_t:dir mounton;
 allow user_t root_t:dir mounton;
 allow user_t tmp_t:dir mounton;
+allow user_t usr_t:dir mounton;
 
 allow user_t config_home_t:file mounton;
 allow user_t data_home_t:file mounton;
 allow user_t etc_t:file mounton;
+allow user_t pulseaudio_var_lib_t:file mounton;
 allow user_t user_tmp_t:file mounton;
 
 allow user_t bpf_t:filesystem remount;
@@ -54,7 +59,6 @@ allow user_t security_t:filesystem remount;
 allow user_t sysfs_t:filesystem remount;
 allow user_t tmpfs_t:filesystem mount_fs_perms;
 allow user_t tracefs_t:filesystem remount;
-
 
 #### because: --unshare-user-try
 require {
