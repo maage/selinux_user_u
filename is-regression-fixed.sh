@@ -117,17 +117,17 @@ if (( ${#perms[@]} )); then
 	rx+="[(]("
 	while read -r permutation; do
 		IFS=, read -r -a idx_arr <<< "$permutation"
-		rx+="[^()]* )?"
+		rx+="([^()]* )?"
 		flag=0
 		for idx in "${idx_arr[@]}"; do
 			if (( flag )); then
-				rx+="[^()]* "
+				rx+="( [^()]*)? "
 			else
 				flag=1
 			fi
 			rx+="$(rx_escape "${perms[$idx]}")"
 		done
-		rx+="[^()]* )?"
+		rx+="( [^()]*)?"
 		rx+="|"
 	done < <(
 		for a in "${ax[@]}"; do 
@@ -139,7 +139,6 @@ if (( ${#perms[@]} )); then
 else
 	rx+="[(][^)]*[)]"
 fi
-rx+="[)]"
 
 set -x
 grep -Er "$rx" export
