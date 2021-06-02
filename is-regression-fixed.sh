@@ -87,7 +87,7 @@ if (( ${#perms[@]} )); then
 	frx="$rx[(]"
 	rx=""
 	for a in "${perms[@]}"; do
-		rx+="$frx([^()]* )?$(rx_escape "${perms[$idx]}")[ )]/!d;"
+		rx+="$frx([^()]* )?$(rx_escape "$a")[ )]/!d;"
 	done
 else
 	rx+="[(][^)]*[)]/!d;"
