@@ -27,6 +27,8 @@ while (( $# )); do
 		-t|--not[-_]target) (( $# >= 2 )) || exit 1; not_tgt="$2"; shift 2 ;;
 		-c|--class) (( $# >= 2 )) || exit 1; cls="$2"; shift 2 ;;
 		-p|--perm) (( $# >= 2 )) || exit 1; perm="$2"; shift 2 ;;
+		--) shift; break ;;
+		*) echo "ERROR: param $*"; exit 2 ;;
 	esac
 done
 
@@ -107,7 +109,7 @@ if [ "$typ" = "typeattributeset" ]; then
 
 	grep -r ^ export | sed -r "$rx" | \
 	if (( OPT_resolveattr )); then
-		sed -r 's/.*[(]typeattributeset [^ ]+ //;s/[() ]/\n/g' | sed '/./!d' | sort -u
+		sed -r 's/.*[(]typeattributeset //;s/[() ]/\n/g' | sed '/./!d' | sort -u
 	else
 		cat
 	fi
