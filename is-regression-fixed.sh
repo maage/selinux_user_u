@@ -83,54 +83,12 @@ else
 	rx+="[^ ]* "
 fi
 
-perm_helper() {
-	sed -r '
-# /(.).*\1/d;
-s/A/0,/;
-s/B/1,/;
-s/C/2,/;
-s/D/3,/;
-s/E/4,/;
-s/F/5,/;
-s/,$//;
-'
-}
-
-permutation_generator() {
-	if [ "$1" ]; then
-		local -i i
-		for (( i=0; i<${#1}; i++ )) ; do
-			permutation_generator "${1:0:i}${1:i+1}" "${2:-}${1:i:1}"
-		done
-	else
-		printf "%s\n" "$2"
-	fi
-}
-
 if (( ${#perms[@]} )); then
-	ax="ABCDEF"
-	if (( ${#perms[@]} > ${#ax} )); then
-		echo "ERROR: too many to permute, implement it"
-		exit 1
-	fi
-	rx+="[(]("
-	while read -r permutation; do
-		IFS=, read -r -a idx_arr <<< "$permutation"
-		rx+="([^()]* )?"
-		flag=0
-		for idx in "${idx_arr[@]}"; do
-			if (( flag )); then
-				rx+="( [^()]*)? "
-			else
-				flag=1
-			fi
-			rx+="$(rx_escape "${perms[$idx]}")"
-		done
-		rx+="( [^()]*)?"
-		rx+="|"
-	done < <(permutation_generator "${ax:0:${#perms[@]}}" | perm_helper)
-
-	rx="${rx%|})[)]/!d;"
+	frx="$rx[(]"
+	rx=""
+	for a in "${perms[@]}"; do
+		rx+="$frx([^()]* )?$(rx_escape "${perms[$idx]}")[ )]/!d;"
+	done
 else
 	rx+="[(][^)]*[)]/!d;"
 fi
