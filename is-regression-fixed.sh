@@ -3,18 +3,24 @@
 set -epu -o pipefail
 
 src=
+not_src=
 tgt=
+not_tgt=
 cls=
 perm=
 perms=()
 typ="allow"
+declare -i OPT_resolveattr=0
 
 while (( $# )); do
 	case "$1" in
 		--allow|--auditallow|--dontaudit|--neverallow|--allowxperm|--auditallowxperm|--dontauditxperm|--neverallowxperm) typ="${1#--}"; shift ;;
 		--attr) typ="typeattributeset"; shift ;;
+		--resolveattr) typ="typeattributeset"; OPT_resolveattr=1; shift ;;
 		-s|--source) (( $# >= 2 )) || exit 1; src="$2"; shift 2 ;;
+		-s|--not[-_]source) (( $# >= 2 )) || exit 1; not_src="$2"; shift 2 ;;
 		-t|--target) (( $# >= 2 )) || exit 1; tgt="$2"; shift 2 ;;
+		-t|--not[-_]target) (( $# >= 2 )) || exit 1; not_tgt="$2"; shift 2 ;;
 		-c|--class) (( $# >= 2 )) || exit 1; cls="$2"; shift 2 ;;
 		-p|--perm) (( $# >= 2 )) || exit 1; perm="$2"; shift 2 ;;
 	esac
@@ -35,12 +41,35 @@ rx_escape() {
 get_typeattributeset() {
 	declare -n attrs="$1"; shift
 	local rx="$1"; shift
+	local -i reverse="${1:-0}"
+	local -A aah=()
+	attrs+=("$rx")
+	aah["$rx"]=1
+	if (( reverse )); then
+
+		while read -r attr; do
+			aa="$(rx_escape "$attr")"
+			 [ ! "${aah[$aa]:-}" ] || continue
+			aah["$aa"]=1
+			attrs+=("$aa")
+		done < <(
+			grep -Erh '[(]typeattributeset ' export | \
+			sed -nr '/ cil_gen_require /d;/[(]typeattributeset '"$rx"' /!d;s/[(]typeattributeset '"$rx"' //;s/[() ]/\n/g;p' | \
+			sed '/./!d'
+		)
+		return
+
+	fi
+
 	while read -r tas attr rest; do
 		if [ "$tas" != "(typeattributeset" ]; then
 			echo "ERROR: Parse error: $tas $attr $rest"
 			exit 1
 		fi
-		attrs+=("$attr")
+		aa="$(rx_escape "$attr")"
+		 [ ! "${aah[$aa]:-}" ] || continue
+		aah["$aa"]=1
+		attrs+=("$aa")
 	done < <(grep -Erh '[(]typeattributeset ' export | sed '/ cil_gen_require /d;/[( ]'"$rx"'[) ]/!d;s/^[[:space:]]*//')
 }
 
@@ -58,8 +87,6 @@ if [ ! -d export ]; then
 	# chown -R "$SUDO_USER": export
 fi
 
-src_attrs=()
-tgt_attrs=()
 if [ "$typ" = "typeattributeset" ]; then
 
 	rx="/[(]$(rx_escape "$typ") /!d;"
@@ -73,24 +100,21 @@ if [ "$typ" = "typeattributeset" ]; then
 		rx+="/[( ]$(rx_escape "$tgt")[) ]/!d;"
 	fi
 
-	grep -r ^ export | sed -r "$rx"
+	grep -r ^ export | sed -r "$rx" | \
+	if (( OPT_resolveattr )); then
+		sed -r 's/.*[(]typeattributeset [^ ]+ //;s/[() ]/\n/g' | sed '/./!d' | sort -u
+	else
+		cat
+	fi
 	exit 0
-fi
-
-if [ "$src" ]; then
-	src_rx="$(rx_escape "$src")"
-	get_typeattributeset src_attrs "$src_rx"
-fi
-
-if [ "$tgt" ]; then
-	tgt_rx="$(rx_escape "$tgt")"
-	get_typeattributeset tgt_attrs "$tgt_rx"
 fi
 
 rx="/[(]$(rx_escape "$typ") ("
 
 if [ "$src" ]; then
-	for a in "$src" "${src_attrs[@]}"; do
+	src_attrs=()
+	get_typeattributeset src_attrs "$(rx_escape "$src")"
+	for a in "${src_attrs[@]}"; do
 		rx+="${a}|"
 	done
 else
@@ -100,7 +124,9 @@ fi
 rx="${rx%|}) ("
 
 if [ "$tgt" ]; then
-	for a in "$tgt" "${tgt_attrs[@]}"; do
+	tgt_attrs=()
+	get_typeattributeset tgt_attrs "$(rx_escape "$tgt")"
+	for a in "${tgt_attrs[@]}"; do
 		rx+="${a}|"
 	done
 else
@@ -126,5 +152,37 @@ else
 	rx+="[(][^)]*[)]/!d;"
 fi
 
+not_rx="/[(]$(rx_escape "$typ") ("
+has_not=0
+
+if [ "$not_src" ]; then
+	has_not=1
+	not_src_attrs=()
+	get_typeattributeset not_src_attrs "$(rx_escape "$not_src")" 1
+	for a in "${not_src_attrs[@]}"; do
+		not_rx+="${a}|"
+	done
+else
+	not_rx+="[^ ]*|"
+fi
+
+not_rx="${not_rx%|}) ("
+
+if [ "$not_tgt" ]; then
+	has_not=1
+	not_tgt_attrs=()
+	get_typeattributeset not_tgt_attrs "$(rx_escape "$not_tgt")" 1
+	for a in "${not_tgt_attrs[@]}"; do
+		not_rx+="${a}|"
+	done
+else
+	not_rx+="[^ ]*|"
+fi
+
+not_rx="${not_rx%|}) [(]/d;"
+if (( has_not )); then
+	rx+="$not_rx"
+fi
+
 set -x
-exec grep -r ^ export | sed -r "$rx"
+exec grep -r ^ export | sed -r "$rx" | awk '!seen[$0]++'
