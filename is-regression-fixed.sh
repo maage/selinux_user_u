@@ -55,7 +55,7 @@ if [ "$tgt" ]; then
 	get_typeattributeset tgt_attrs "$tgt_rx"
 fi
 
-rx="[(]$(rx_escape "$typ") ("
+rx="/[(]$(rx_escape "$typ") ("
 
 if [ "$src" ]; then
 	for a in "$src" "${src_attrs[@]}"; do
@@ -130,10 +130,10 @@ if (( ${#perms[@]} )); then
 		rx+="|"
 	done < <(permutation_generator "${ax:0:${#perms[@]}}" | perm_helper)
 
-	rx="${rx%|})[)]"
+	rx="${rx%|})[)]/!d;"
 else
-	rx+="[(][^)]*[)]"
+	rx+="[(][^)]*[)]/!d;"
 fi
 
 set -x
-grep -Er "$rx" export
+grep -r ^ export | sed -r "$rx"
