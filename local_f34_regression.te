@@ -113,3 +113,28 @@ require {
 #   scontext=system_u:system_r:fapolicyd_t:s0
 #   tcontext=unconfined_u:object_r:user_home_t:s0 tclass=dir permissive=0"
 allow fapolicyd_t user_home_t:dir { watch_mount watch_with_perm };
+
+require {
+	type init_t;
+	type dma_device_t;
+	type udev_t;
+}
+
+#============= init_t ==============
+# 
+#  scontext="system_u:system_r:init_t:s0" tcontext="system_u:object_r:dma_device_t:s0"
+#  class="dir" perms="read"
+#  comm="systemd" exe="" path=""
+#  message="Jun 02 10:13:34 user-hp-eb-lan audit[1]: AVC avc:  denied  { read }
+#   for  pid=1 comm="systemd" path="/dev/dma_heap" dev="devtmpfs" ino=137
+#   scontext=system_u:system_r:init_t:s0
+#   tcontext=system_u:object_r:dma_device_t:s0 tclass=dir permissive=0 "
+#  scontext="system_u:system_r:udev_t:s0-s0:c0.c1023" tcontext="system_u:object_r:dma_device_t:s0"
+#  class="dir" perms="search"
+#  comm="systemd-udevd" exe="" path=""
+#  message="Jun 02 10:13:36 user-hp-eb-lan audit[956]: AVC avc:  denied  {
+#   search } for  pid=956 comm="systemd-udevd" name="dma_heap" dev="devtmpfs"
+#   ino=137 scontext=system_u:system_r:udev_t:s0-s0:c0.c1023
+#   tcontext=system_u:object_r:dma_device_t:s0 tclass=dir permissive=0 "
+allow udev_t dma_device_t:dir list_dir_perms;
+allow init_t dma_device_t:dir list_dir_perms;
