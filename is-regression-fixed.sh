@@ -22,7 +22,7 @@ get_typeattributeset() {
 			exit 1
 		fi
 		attrs+=("$attr")
-	done < <(grep -Erh '[(]typeattributeset '|sed '/ cil_gen_require /d;/[( ]'"$rx"'[) ]/!d;s/^[[:space:]]*//')
+	done < <(grep -Erh '[(]typeattributeset ' export | sed '/ cil_gen_require /d;/[( ]'"$rx"'[) ]/!d;s/^[[:space:]]*//')
 }
 
 src_attrs=()
@@ -43,4 +43,4 @@ for a in "$@"; do
 	rx+="$(rx_escape "$a")|"
 done
 rx="${rx%|})[( ]"
-grep -Er "$rx"
+grep -Er "$rx" export
