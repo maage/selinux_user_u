@@ -1,3 +1,4 @@
 *.pp
 tmp/
 .*.swp
+export/
