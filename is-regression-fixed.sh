@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -epu -o pipefail
+set -epux -o pipefail
 
 src=
 not_src=
@@ -11,12 +11,16 @@ perm=
 perms=()
 typ="allow"
 declare -i OPT_resolveattr=0
+declare -i OPT_reverse_source=0
+declare -i OPT_reverse_target=0
 
 while (( $# )); do
 	case "$1" in
 		--allow|--auditallow|--dontaudit|--neverallow|--allowxperm|--auditallowxperm|--dontauditxperm|--neverallowxperm) typ="${1#--}"; shift ;;
 		--attr) typ="typeattributeset"; shift ;;
 		--resolveattr) typ="typeattributeset"; OPT_resolveattr=1; shift ;;
+		--reverse[-_]source) OPT_reverse_source=1; shift ;;
+		--reverse[-_]target) OPT_reverse_target=1; shift ;;
 		-s|--source) (( $# >= 2 )) || exit 1; src="$2"; shift 2 ;;
 		-s|--not[-_]source) (( $# >= 2 )) || exit 1; not_src="$2"; shift 2 ;;
 		-t|--target) (( $# >= 2 )) || exit 1; tgt="$2"; shift 2 ;;
@@ -45,6 +49,7 @@ get_typeattributeset() {
 	local -A aah=()
 	attrs+=("$rx")
 	aah["$rx"]=1
+
 	if (( reverse )); then
 
 		while read -r attr; do
@@ -113,7 +118,7 @@ rx="/[(]$(rx_escape "$typ") ("
 
 if [ "$src" ]; then
 	src_attrs=()
-	get_typeattributeset src_attrs "$(rx_escape "$src")"
+	get_typeattributeset src_attrs "$(rx_escape "$src")" $OPT_reverse_source
 	for a in "${src_attrs[@]}"; do
 		rx+="${a}|"
 	done
@@ -125,7 +130,7 @@ rx="${rx%|}) ("
 
 if [ "$tgt" ]; then
 	tgt_attrs=()
-	get_typeattributeset tgt_attrs "$(rx_escape "$tgt")"
+	get_typeattributeset tgt_attrs "$(rx_escape "$tgt")" $OPT_reverse_target
 	for a in "${tgt_attrs[@]}"; do
 		rx+="${a}|"
 	done
@@ -158,7 +163,7 @@ has_not=0
 if [ "$not_src" ]; then
 	has_not=1
 	not_src_attrs=()
-	get_typeattributeset not_src_attrs "$(rx_escape "$not_src")" 1
+	get_typeattributeset not_src_attrs "$(rx_escape "$not_src")" $OPT_reverse_source
 	for a in "${not_src_attrs[@]}"; do
 		not_rx+="${a}|"
 	done
@@ -171,7 +176,7 @@ not_rx="${not_rx%|}) ("
 if [ "$not_tgt" ]; then
 	has_not=1
 	not_tgt_attrs=()
-	get_typeattributeset not_tgt_attrs "$(rx_escape "$not_tgt")" 1
+	get_typeattributeset not_tgt_attrs "$(rx_escape "$not_tgt")" $OPT_reverse_target
 	for a in "${not_tgt_attrs[@]}"; do
 		not_rx+="${a}|"
 	done
