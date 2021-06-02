@@ -84,8 +84,9 @@ else
 fi
 
 if (( ${#perms[@]} )); then
+	# This makes multiple prefix matches, much simpler than permutations
 	frx="$rx[(]"
-	rx=""
+	rx+="/!d;"
 	for a in "${perms[@]}"; do
 		rx+="$frx([^()]* )?$(rx_escape "$a")[ )]/!d;"
 	done
