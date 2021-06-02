@@ -85,7 +85,7 @@ fi
 
 perm_helper() {
 	sed -r '
-/(.).*\1/d;
+# /(.).*\1/d;
 s/A/0,/;
 s/B/1,/;
 s/C/2,/;
@@ -96,24 +96,23 @@ s/,$//;
 '
 }
 
-if (( ${#perms[@]} )); then
-	if (( ${#perms[@]} == 1 )); then
-		ax=(A)
-	elif (( ${#perms[@]} == 2 )); then
-		ax=({A,B}{A,B})
-	elif (( ${#perms[@]} == 3 )); then
-		ax=({A,B,C}{A,B,C}{A,B,C})
-	elif (( ${#perms[@]} == 4 )); then
-		ax=({A,B,C,D}{A,B,C,D}{A,B,C,D}{A,B,C,D})
-	elif (( ${#perms[@]} == 5 )); then
-		ax=({A,B,C,D,E}{A,B,C,D,E}{A,B,C,D,E}{A,B,C,D,E}{A,B,C,D,E})
-	elif (( ${#perms[@]} == 6 )); then
-		ax=({A,B,C,D,E,F}{A,B,C,D,E,F}{A,B,C,D,E,F}{A,B,C,D,E,F}{A,B,C,D,E,F}{A,B,C,D,E,F})
+permutation_generator() {
+	if [ "$1" ]; then
+		local -i i
+		for (( i=0; i<${#1}; i++ )) ; do
+			permutation_generator "${1:0:i}${1:i+1}" "${2:-}${1:i:1}"
+		done
 	else
+		printf "%s\n" "$2"
+	fi
+}
+
+if (( ${#perms[@]} )); then
+	ax="ABCDEF"
+	if (( ${#perms[@]} > ${#ax} )); then
 		echo "ERROR: too many to permute, implement it"
 		exit 1
 	fi
-
 	rx+="[(]("
 	while read -r permutation; do
 		IFS=, read -r -a idx_arr <<< "$permutation"
@@ -129,11 +128,7 @@ if (( ${#perms[@]} )); then
 		done
 		rx+="( [^()]*)?"
 		rx+="|"
-	done < <(
-		for a in "${ax[@]}"; do 
-			printf "%s\n" "$a"
-		done | perm_helper
-	)
+	done < <(permutation_generator "${ax:0:${#perms[@]}}" | perm_helper)
 
 	rx="${rx%|})[)]"
 else
