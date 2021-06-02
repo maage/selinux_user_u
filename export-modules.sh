@@ -3,7 +3,7 @@
 rm -rf export
 mkdir -p export
 pushd export
-args=(--verbose)
+args=() # --verbose)
 for a in $(sudo semodule -l); do
 	args+=(--cil --extract="$a")
 done

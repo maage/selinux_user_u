@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -epux -o pipefail
+set -epu -o pipefail
 
 src="$1"
 tgt="$2"
