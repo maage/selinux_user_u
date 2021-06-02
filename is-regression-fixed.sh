@@ -12,6 +12,7 @@ typ="allow"
 while (( $# )); do
 	case "$1" in
 		--allow|--auditallow|--dontaudit|--neverallow|--allowxperm|--auditallowxperm|--dontauditxperm|--neverallowxperm) typ="${1#--}"; shift ;;
+		--attr) typ="typeattributeset"; shift ;;
 		-s|--source) (( $# >= 2 )) || exit 1; src="$2"; shift 2 ;;
 		-t|--target) (( $# >= 2 )) || exit 1; tgt="$2"; shift 2 ;;
 		-c|--class) (( $# >= 2 )) || exit 1; cls="$2"; shift 2 ;;
@@ -44,12 +45,29 @@ get_typeattributeset() {
 }
 
 src_attrs=()
+tgt_attrs=()
+if [ "$typ" = "typeattributeset" ]; then
+
+	rx="/[(]$(rx_escape "$typ") /!d;"
+	rx+="/[(]$(rx_escape "$typ") cil_gen_require /d;"
+
+	if [ "$src" ]; then
+		rx+="/[(]$(rx_escape "$typ") $(rx_escape "$src") /!d;"
+	fi
+
+	if [ "$tgt" ]; then
+		rx+="/[( ]$(rx_escape "$tgt")[) ]/!d;"
+	fi
+
+	grep -r ^ export | sed -r "$rx"
+	exit 0
+fi
+
 if [ "$src" ]; then
 	src_rx="$(rx_escape "$src")"
 	get_typeattributeset src_attrs "$src_rx"
 fi
 
-tgt_attrs=()
 if [ "$tgt" ]; then
 	tgt_rx="$(rx_escape "$tgt")"
 	get_typeattributeset tgt_attrs "$tgt_rx"
@@ -95,4 +113,4 @@ else
 fi
 
 set -x
-grep -r ^ export | sed -r "$rx"
+exec grep -r ^ export | sed -r "$rx"
