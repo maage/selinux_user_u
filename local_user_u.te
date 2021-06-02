@@ -16,6 +16,7 @@ gen_tunable(local_user_u_journalctl, true)
 
 # TODO: optional_policy stuff missing?
 require {
+	# Should always use login_userdomain for all stuff allowed to all
 	attribute login_userdomain;
 	# type sysadm_t;
 	# type staff_t;
