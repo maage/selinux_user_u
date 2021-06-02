@@ -1,13 +1,5 @@
 policy_module(local_f34_regression, 1.0.0)
 
-### Allow: missing watches
-require {
-	type NetworkManager_etc_t;
-	type NetworkManager_t;
-	class dir watch;
-}
-allow NetworkManager_t NetworkManager_etc_t:dir watch;
-
 ### Allow: during logout logind removes /run/user/<uid>/ files
 require {
 	class file unlink;
@@ -74,16 +66,19 @@ require {
 }
 dontaudit journalctl_t device_node:blk_file getattr;
 dontaudit journalctl_t device_node:chr_file getattr;
+dontaudit journalctl_t dma_device_t:dir list_dir_perms;
 dontaudit journalctl_t initctl_t:fifo_file getattr;
 dontaudit journalctl_t proc_kcore_t:file getattr;
 
+#### allow: faplolicyd to watch
+# mostly mock files
 require {
-	type user_tmp_t;
-	type fapolicyd_t;
+	class dir { watch_mount watch_with_perm };
 	class file { watch_mount watch_with_perm };
+	type fapolicyd_t;
+	type user_home_t;
+	type user_tmp_t;
 }
-
-#============= fapolicyd_t ==============
 # audit(1622112295.772:1760):
 #  scontext="system_u:system_r:fapolicyd_t:s0" tcontext="unconfined_u:object_r:user_tmp_t:s0"
 #  class="file" perms="{ watch_mount watch_with_perm }"
@@ -95,13 +90,6 @@ require {
 #   tcontext=unconfined_u:object_r:user_tmp_t:s0 tclass=file permissive=0"
 allow fapolicyd_t user_tmp_t:file { watch_mount watch_with_perm };
 
-require {
-	type fapolicyd_t;
-	type user_home_t;
-	class dir { watch_mount watch_with_perm };
-}
-
-#============= fapolicyd_t ==============
 # audit(1622113139.201:1901):
 #  scontext="system_u:system_r:fapolicyd_t:s0" tcontext="unconfined_u:object_r:user_home_t:s0"
 #  class="dir" perms="{ watch_mount watch_with_perm }"
@@ -122,5 +110,4 @@ require {
 	type udev_t;
 }
 allow init_t dma_device_t:dir list_dir_perms;
-allow journalctl_t dma_device_t:dir list_dir_perms;
 allow udev_t dma_device_t:dir list_dir_perms;
