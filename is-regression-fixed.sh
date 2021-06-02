@@ -44,6 +44,20 @@ get_typeattributeset() {
 	done < <(grep -Erh '[(]typeattributeset ' export | sed '/ cil_gen_require /d;/[( ]'"$rx"'[) ]/!d;s/^[[:space:]]*//')
 }
 
+if [ ! -d export ]; then
+	mkdir -p export
+	pushd export
+	args=() # --verbose)
+	for a in $(sudo semodule -l); do
+		args+=(--cil --extract="$a")
+	done
+
+	sudo semodule "${args[@]}"
+
+	popd
+	# chown -R "$SUDO_USER": export
+fi
+
 src_attrs=()
 tgt_attrs=()
 if [ "$typ" = "typeattributeset" ]; then

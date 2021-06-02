@@ -17,10 +17,10 @@ gen_tunable(local_user_u_journalctl, true)
 # TODO: optional_policy stuff missing?
 require {
 	attribute login_userdomain;
-	type sysadm_t;
-	type staff_t;
-	type user_t;
-	role user_r;
+	# type sysadm_t;
+	# type staff_t;
+	# type user_t;
+	# role user_r;
 	role system_r;
 }
 
@@ -385,16 +385,16 @@ require {
 	type var_run_t;
 }
 allow user_dbusd_t var_lib_t:dir watch;
-allow user_t bin_t:dir watch;
-allow user_t fonts_t:dir watch;
-allow user_t fwupd_cache_t:dir watch;
-allow user_t home_root_t:dir watch;
-allow user_t lib_t:dir watch;
-allow user_t locale_t:dir watch;
-allow user_t root_t:dir watch;
-allow user_t system_conf_t:dir watch;
-allow user_t systemd_logind_var_run_t:dir watch;
-allow user_t var_run_t:dir watch;
+allow login_userdomain bin_t:dir watch;
+allow login_userdomain fonts_t:dir watch;
+allow login_userdomain fwupd_cache_t:dir watch;
+allow login_userdomain home_root_t:dir watch;
+allow login_userdomain lib_t:dir watch;
+allow login_userdomain locale_t:dir watch;
+allow login_userdomain root_t:dir watch;
+allow login_userdomain system_conf_t:dir watch;
+allow login_userdomain systemd_logind_var_run_t:dir watch;
+allow login_userdomain var_run_t:dir watch;
 
 ### What?
 require {
@@ -404,9 +404,9 @@ require {
 	type pulseaudio_var_lib_t;
 	type session_dbusd_tmp_t;
 }
-allow user_t init_var_run_t:file read;
-allow user_t pulseaudio_var_lib_t:file create;
-allow user_t session_dbusd_tmp_t:sock_file write;
+allow login_userdomain init_var_run_t:file read;
+allow login_userdomain pulseaudio_var_lib_t:file create;
+allow login_userdomain session_dbusd_tmp_t:sock_file write;
 
 ### Allow: use journalctl
 require {
@@ -427,21 +427,21 @@ require {
 	class file { open write };
 	type init_var_run_t;
 }
-allow user_t init_var_run_t:file open;
+allow login_userdomain init_var_run_t:file open;
 
 ### login: create /run/user/<uid>/pipewire*
 require {
 	class file { getattr lock open write };
 	type pulseaudio_var_lib_t;
 }
-allow user_t pulseaudio_var_lib_t:file { getattr lock open write };
+allow login_userdomain pulseaudio_var_lib_t:file { getattr lock open write };
 
 #### logout: remove /run/user/<uid>/pipewire*
 require {
 	class file { read unlink };
 	type pulseaudio_var_lib_t;
 }
-allow user_t pulseaudio_var_lib_t:file { read unlink };
+allow login_userdomain pulseaudio_var_lib_t:file { read unlink };
 
 ### start stuff
 require {
@@ -451,15 +451,15 @@ require {
 	type user_dbusd_t;
 	type usr_t;
 }
-allow user_dbusd_t user_t:system status;
-allow user_t { etc_t usr_t }:service { reload start status stop };
+allow user_dbusd_t login_userdomain:system status;
+allow login_userdomain { etc_t usr_t }:service { reload start status stop };
 
 ### gpg?
 require {
 	class process signull;
 	type gpg_agent_t;
 }
-allow user_t gpg_agent_t:process signull;
+allow login_userdomain gpg_agent_t:process signull;
 
 require {
 	type user_dbusd_t;
