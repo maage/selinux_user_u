@@ -1,23 +1,5 @@
 policy_module(local_f33_regression, 1.0.0)
 
-#### /run/user/<uid>/pulse/native
-require {
-	type xdm_t;
-	type pulseaudio_var_lib_t;
-	class sock_file write;
-}
-# audit(1618397152.013:540):
-#  scontext="system_u:system_r:xdm_t:s0-s0:c0.c1023" tcontext="unconfined_u:object_r:pulseaudio_var_lib_t:s0"
-#  class="sock_file" perms="write"
-#  comm="gnome-shell" exe="" path=""
-#  message="type=AVC msg=audit(1618397152.013:540): avc:  denied  { write } for
-#   pid=5179 comm="gnome-shell" name="native" dev="tmpfs" ino=48
-#   scontext=system_u:system_r:xdm_t:s0-s0:c0.c1023
-#   tcontext=unconfined_u:object_r:pulseaudio_var_lib_t:s0 tclass=sock_file
-#   permissive=0"
-## maybe not need actual manage, but it is pointless
-manage_sock_files_pattern(xdm_t, pulseaudio_var_lib_t, pulseaudio_var_lib_t)
-
 #### flatpak files under: /var/lib/flatpak/
 require {
 	type var_lib_t;

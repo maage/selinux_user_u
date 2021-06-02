@@ -1,13 +1,5 @@
 policy_module(local_f34_regression, 1.0.0)
 
-### Allow: during logout logind removes /run/user/<uid>/ files
-require {
-	class file unlink;
-	type pulseaudio_var_lib_t;
-	type systemd_logind_t;
-}
-allow systemd_logind_t pulseaudio_var_lib_t:file unlink;
-
 #### Fix: laptop_mode.service lock /run/lock/lmt-req.lock
 require {
 	type apmd_lock_t;
