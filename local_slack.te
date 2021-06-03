@@ -1,0 +1,20 @@
+policy_module(local_slack, 1.0.0)
+
+require {
+	type mozilla_exec_t;
+	type mozilla_plugin_exec_t;
+	type mozilla_t;
+	type textrel_shlib_t;
+}
+
+require {
+        role staff_r;
+        role user_r;
+	attribute login_userdomain;
+        type staff_t;
+        type user_t;
+}
+
+# This gives:
+# audit: SELINUX_ERR op=security_compute_sid invalid_context="user_u:user_r:mozilla_t:s0-s0:c0.c255" scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=system_u:object_r:mozilla_exec_t:s0 tclass=process
+#err# domain_auto_trans(user_t, mozilla_exec_t, mozilla_t)
