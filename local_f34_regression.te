@@ -62,7 +62,7 @@ dontaudit journalctl_t dma_device_t:dir list_dir_perms;
 dontaudit journalctl_t initctl_t:fifo_file getattr;
 dontaudit journalctl_t proc_kcore_t:file getattr;
 
-optional_policy('
+optional_policy(`
 #### allow: faplolicyd to watch
 # mostly mock files
 require {
@@ -94,7 +94,7 @@ allow fapolicyd_t user_tmp_t:file { watch_mount watch_with_perm };
 #   scontext=system_u:system_r:fapolicyd_t:s0
 #   tcontext=unconfined_u:object_r:user_home_t:s0 tclass=dir permissive=0"
 allow fapolicyd_t user_home_t:dir { watch_mount watch_with_perm };
-`)
+')
 
 #### Allow to access: /dev/dma_heap
 require {
