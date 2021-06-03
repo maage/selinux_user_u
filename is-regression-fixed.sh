@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -epux -o pipefail
+set -epu -o pipefail
 
 src=
 not_src=
@@ -191,5 +191,4 @@ if (( has_not )); then
 	rx+="$not_rx"
 fi
 
-set -x
 exec grep -r ^ export | sed -r "$rx" | awk '!seen[$0]++'

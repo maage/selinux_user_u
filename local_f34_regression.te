@@ -130,3 +130,37 @@ require {
 #   scontext=system_u:system_r:mdadm_t:s0
 #   tcontext=system_u:object_r:dma_device_t:s0 tclass=dir permissive=0"
 allow mdadm_t dma_device_t:dir { read search };
+
+require {
+	type dma_device_t;
+	type mdadm_t;
+	class dir open;
+}
+
+#============= mdadm_t ==============
+# audit(1622726629.867:158):
+#  scontext="system_u:system_r:mdadm_t:s0" tcontext="system_u:object_r:dma_device_t:s0"
+#  class="dir" perms="open"
+#  comm="mdadm" exe="" path=""
+#  message="type=AVC msg=audit(1622726629.867:158): avc:  denied  { open } for
+#   pid=987 comm="mdadm" path="/dev/dma_heap" dev="devtmpfs" ino=132
+#   scontext=system_u:system_r:mdadm_t:s0
+#   tcontext=system_u:object_r:dma_device_t:s0 tclass=dir permissive=0"
+allow mdadm_t dma_device_t:dir open;
+
+require {
+	type setroubleshootd_t;
+	type dma_device_t;
+	class dir getattr;
+}
+
+#============= setroubleshootd_t ==============
+# audit(1622726632.928:739):
+#  scontext="system_u:system_r:setroubleshootd_t:s0" tcontext="system_u:object_r:dma_device_t:s0"
+#  class="dir" perms="getattr"
+#  comm="setroubleshootd" exe="" path=""
+#  message="type=AVC msg=audit(1622726632.928:739): avc:  denied  { getattr } for
+#   pid=1083 comm="setroubleshootd" path="/dev/dma_heap" dev="devtmpfs" ino=132
+#   scontext=system_u:system_r:setroubleshootd_t:s0
+#   tcontext=system_u:object_r:dma_device_t:s0 tclass=dir permissive=0"
+allow setroubleshootd_t dma_device_t:dir getattr;
