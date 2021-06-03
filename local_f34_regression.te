@@ -105,3 +105,28 @@ require {
 }
 allow init_t dma_device_t:dir list_dir_perms;
 allow udev_t dma_device_t:dir list_dir_perms;
+
+require {
+	type mdadm_t;
+	type dma_device_t;
+	class dir { read search };
+}
+
+#============= mdadm_t ==============
+# audit(1622722822.397:176):
+#  scontext="system_u:system_r:mdadm_t:s0" tcontext="system_u:object_r:dma_device_t:s0"
+#  class="dir" perms="search"
+#  comm="mdadm" exe="" path=""
+#  message="type=AVC msg=audit(1622722822.397:176): avc:  denied  { search } for
+#   pid=1018 comm="mdadm" name="dma_heap" dev="devtmpfs" ino=132
+#   scontext=system_u:system_r:mdadm_t:s0
+#   tcontext=system_u:object_r:dma_device_t:s0 tclass=dir permissive=0"
+# audit(1622722822.399:177):
+#  scontext="system_u:system_r:mdadm_t:s0" tcontext="system_u:object_r:dma_device_t:s0"
+#  class="dir" perms="read"
+#  comm="mdadm" exe="" path=""
+#  message="type=AVC msg=audit(1622722822.399:177): avc:  denied  { read } for
+#   pid=1018 comm="mdadm" name="dma_heap" dev="devtmpfs" ino=132
+#   scontext=system_u:system_r:mdadm_t:s0
+#   tcontext=system_u:object_r:dma_device_t:s0 tclass=dir permissive=0"
+allow mdadm_t dma_device_t:dir { read search };
