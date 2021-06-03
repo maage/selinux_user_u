@@ -1,5 +1,7 @@
 policy_module(local_pangp_regression, 1.0.0)
 
+optional_policy(`
+
 require {
         class file { getattr map open };
         type pangp_server_t;
@@ -24,3 +26,4 @@ allow pangp_user_ui_t self:netlink_kobject_uevent_socket { bind create getattr s
 allow pangp_user_ui_t sysfs_t:dir read;
 allow pangp_user_ui_t udev_var_run_t:file { getattr open read };
 allow pangp_user_ui_t var_lib_t:file { getattr map open read };
+')
