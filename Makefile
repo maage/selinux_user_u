@@ -7,7 +7,6 @@ my-hop: all
 all: my-commit
 
 my-commit:
-	rpm -q --quiet gawk || sudo dnf install gawk
 	./commit.sh
 
 include /usr/share/selinux/devel/Makefile
