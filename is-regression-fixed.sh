@@ -33,7 +33,7 @@ while (( $# )); do
 done
 
 if [ "$perm" ]; then
-	IFS=, read -r -a perms <<< "$perm"
+	IFS=', ' read -r -a perms <<< "$perm"
 fi
 
 #
