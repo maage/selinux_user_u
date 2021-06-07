@@ -1,6 +1,9 @@
 policy_module(local_f34_regression, 1.0.0)
 
 #### Fix: laptop_mode.service lock /run/lock/lmt-req.lock
+# contexts used to create the file
+# udev_t: boot
+# unconfined_service_t: sudo udevadm trigger
 require {
 	type apmd_lock_t;
 	type udev_t;
