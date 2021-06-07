@@ -3,10 +3,10 @@ policy_module(local_f34_regression, 1.0.0)
 #### Fix: laptop_mode.service lock /run/lock/lmt-req.lock
 require {
 	type apmd_lock_t;
-	type unconfined_service_t;
+	type udev_t;
 	type var_lock_t;
 }
-filetrans_pattern(unconfined_service_t, var_lock_t, apmd_lock_t, file, "lmt-req.lock")
+filetrans_pattern(udev_t, var_lock_t, apmd_lock_t, file, "lmt-req.lock")
 
 ## Allow: iw to write the lock too
 require {
