@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -epux -o pipefail
+set -epu -o pipefail
 
 rm -rf module_lines
 mkdir -p module_lines
