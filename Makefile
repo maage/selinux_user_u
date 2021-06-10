@@ -13,5 +13,11 @@ include /usr/share/selinux/devel/Makefile
 
 SEMODULE := $(SBINDIR)/semodule -v
 
-module_lines: $(3rd_party_mods)
+te_lines: local_lines
+	if [ -d ../cil-parser ]; then \
+		rm -rf ../cil-parser/local_lines; \
+		mv local_lines ../cil-parser/local_lines; \
+	fi
+
+local_lines:
 	./te_lines.sh
