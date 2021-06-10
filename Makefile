@@ -20,4 +20,4 @@ lines: local_lines
 	fi
 
 local_lines:
-	./te_lines.sh
+	./local_lines.sh
