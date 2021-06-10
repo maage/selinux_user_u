@@ -2,4 +2,4 @@
 tmp/
 .*.swp
 export/
-module_lines/
+local_lines/
