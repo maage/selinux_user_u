@@ -1,6 +1,6 @@
 QUIET := n
 
-.PHONY: my-hop my-commit
+.PHONY: my-hop my-commit lines local_lines
 my-hop: all
 	sudo $(MAKE) load
 
@@ -13,7 +13,7 @@ include /usr/share/selinux/devel/Makefile
 
 SEMODULE := $(SBINDIR)/semodule -v
 
-te_lines: local_lines
+lines: local_lines
 	if [ -d ../cil-parser ]; then \
 		rm -rf ../cil-parser/local_lines; \
 		mv local_lines ../cil-parser/local_lines; \
