@@ -151,15 +151,6 @@ allow login_userdomain self:netlink_generic_socket create;
 # why not? missing in roles/unprivuser.te
 systemd_hwdb_mmap_config(login_userdomain)
 
-### login via gnome
-# gnome-keyring-d
-# bug in gnome_role_template
-require {
-	class process setsched;
-	type user_gkeyringd_t;
-}
-allow user_gkeyringd_t self:process setsched;
-
 ### Allow gvfsd-fuse /home/user/.cache/gvfs
 require {
 	type cache_home_t;
@@ -218,7 +209,6 @@ allow user_dbusd_t var_lib_t:lnk_file read;
 ### journalctl needs to access: /var/lib/systemd/catalog/database
 tunable_policy(`local_user_u_journalctl',`
 	init_read_var_lib_files(login_userdomain)
-	init_search_var_lib_dirs(login_userdomain)
 	init_read_var_lib_files(journalctl_t)
 	init_search_var_lib_dirs(journalctl_t)
 	require {
