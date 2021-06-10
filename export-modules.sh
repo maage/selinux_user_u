@@ -11,4 +11,4 @@ done
 sudo semodule "${args[@]}"
 
 popd
-chown -R "$SUDO_USER": export
+sudo chown -R "$USER": export
