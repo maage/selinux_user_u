@@ -147,10 +147,6 @@ allow login_userdomain self:netlink_generic_socket create;
 # maybe not allow
 #allow login_userdomain security_t:security read_policy;
 
-### login via gnome
-# fixed in: selinux-policy 4c86f565d0fc14850250fd182aafbda0c69c48a1
-kerberos_read_keytab(ssh_t)
-
 ### gnome-shell gsd-color
 # why not? missing in roles/unprivuser.te
 systemd_hwdb_mmap_config(login_userdomain)
