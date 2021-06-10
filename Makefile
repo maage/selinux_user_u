@@ -12,12 +12,3 @@ my-commit:
 include /usr/share/selinux/devel/Makefile
 
 SEMODULE := $(SBINDIR)/semodule -v
-
-lines: local_lines
-	if [ -d ../cil-parser ]; then \
-		rm -rf ../cil-parser/local_lines; \
-		mv local_lines ../cil-parser/local_lines; \
-	fi
-
-local_lines:
-	./local_lines.sh
