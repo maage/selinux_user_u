@@ -12,3 +12,6 @@ my-commit:
 include /usr/share/selinux/devel/Makefile
 
 SEMODULE := $(SBINDIR)/semodule -v
+
+module_lines: $(3rd_party_mods)
+	./te_lines.sh

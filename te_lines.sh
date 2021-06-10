@@ -2,6 +2,7 @@
 
 set -epux -o pipefail
 
+rm -rf module_lines
 mkdir -p module_lines
 
 for a in *.te;do
