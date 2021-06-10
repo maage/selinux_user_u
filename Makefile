@@ -1,7 +1,7 @@
 QUIET := n
 
 .PHONY: my-hop my-commit
-my-hop: all
+my-hop: module_lines all
 	sudo $(MAKE) load
 
 all: my-commit
