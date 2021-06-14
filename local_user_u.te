@@ -541,33 +541,6 @@ require {
 	type systemd_logind_var_run_t;
 	type user_t;
 	class dir create;
-}
-
-#============= user_t ==============
-# audit(1623656228.130:376):
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
-#  class="dir" perms="create"
-#  comm="systemd" exe="" path=""
-#  message="type=AVC msg=audit(1623656228.130:376): avc:  denied  { create } for
-#   pid=7686 comm="systemd" name="systemd"
-#   scontext=user_u:user_r:user_t:s0-s0:c0.c255
-#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=dir
-#   permissive=0"
-# audit(1623656228.137:379):
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
-#  class="dir" perms="create"
-#  comm="systemd" exe="" path=""
-#  message="type=AVC msg=audit(1623656228.137:379): avc:  denied  { create } for
-#   pid=7686 comm="systemd" name="systemd"
-#   scontext=user_u:user_r:user_t:s0-s0:c0.c255
-#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=dir
-#   permissive=0"
-allow user_t systemd_logind_var_run_t:dir create;
-
-require {
-	type systemd_logind_var_run_t;
-	type user_t;
-	class dir create;
 	class file create;
 	class fifo_file create;
 }
@@ -591,7 +564,6 @@ require {
 #   scontext=user_u:user_r:user_t:s0-s0:c0.c255
 #   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=dir
 #   permissive=0"
-#!!!! This avc is allowed in the current policy
 allow user_t systemd_logind_var_run_t:dir create;
 # audit(1623656530.996:610):
 #  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
