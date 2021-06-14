@@ -219,3 +219,46 @@ require {
 #   scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023
 #   tcontext=system_u:object_r:xdm_var_lib_t:s0 tclass=file permissive=0"
 allow abrt_t xdm_var_lib_t:file read;
+
+require {
+	type abrt_t;
+	type xdm_var_lib_t;
+	class file { open read };
+}
+
+#============= abrt_t ==============
+# audit(1623656221.222:356):
+#  scontext="system_u:system_r:abrt_t:s0-s0:c0.c1023" tcontext="system_u:object_r:xdm_var_lib_t:s0"
+#  class="file" perms="read"
+#  comm="gdb" exe="" path=""
+#  message="type=AVC msg=audit(1623656221.222:356): avc:  denied  { read } for
+#   pid=7366 comm="gdb" name="index" dev="dm-1" ino=14580458
+#   scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023
+#   tcontext=system_u:object_r:xdm_var_lib_t:s0 tclass=file permissive=0"
+# audit(1623656221.241:357):
+#  scontext="system_u:system_r:abrt_t:s0-s0:c0.c1023" tcontext="system_u:object_r:xdm_var_lib_t:s0"
+#  class="file" perms="read"
+#  comm="gdb" exe="" path=""
+#  message="type=AVC msg=audit(1623656221.241:357): avc:  denied  { read } for
+#   pid=7366 comm="gdb" name="user" dev="dm-1" ino=17040737
+#   scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023
+#   tcontext=system_u:object_r:xdm_var_lib_t:s0 tclass=file permissive=0"
+#!!!! This avc is allowed in the current policy
+allow abrt_t xdm_var_lib_t:file read;
+# audit(1623656510.130:593):
+#  scontext="system_u:system_r:abrt_t:s0-s0:c0.c1023" tcontext="system_u:object_r:xdm_var_lib_t:s0"
+#  class="file" perms="open"
+#  comm="gdb" exe="" path=""
+#  message="type=AVC msg=audit(1623656510.130:593): avc:  denied  { open } for
+#   pid=9437 comm="gdb" path="/var/lib/gdm/.cache/mesa_shader_cache/index"
+#   dev="dm-1" ino=14580458 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023
+#   tcontext=system_u:object_r:xdm_var_lib_t:s0 tclass=file permissive=0"
+# audit(1623656510.139:594):
+#  scontext="system_u:system_r:abrt_t:s0-s0:c0.c1023" tcontext="system_u:object_r:xdm_var_lib_t:s0"
+#  class="file" perms="open"
+#  comm="gdb" exe="" path=""
+#  message="type=AVC msg=audit(1623656510.139:594): avc:  denied  { open } for
+#   pid=9437 comm="gdb" path="/var/lib/gdm/.config/dconf/user" dev="dm-1"
+#   ino=17040737 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023
+#   tcontext=system_u:object_r:xdm_var_lib_t:s0 tclass=file permissive=0"
+allow abrt_t xdm_var_lib_t:file open;
