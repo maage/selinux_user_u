@@ -210,9 +210,7 @@ tunable_policy(`local_user_u_journalctl',`
 	init_read_var_lib_files(journalctl_t)
 	require {
 		class dir { read search };
-		class file map;
 		type init_var_lib_t;
-		type journalctl_t;
 	}
 	allow login_userdomain init_var_lib_t:dir { read search };
 ')
