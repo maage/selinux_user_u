@@ -154,7 +154,7 @@ require {
 allow mdadm_t dma_device_t:dir open;
 
 require {
-	class dir { getattr search };
+	class dir { getattr open read search };
 	type dma_device_dir_t;
 	type mdadm_t;
 }
@@ -176,7 +176,7 @@ require {
 #   pid=990 comm="mdadm" path="/dev/dma_heap" dev="devtmpfs" ino=132
 #   scontext=system_u:system_r:mdadm_t:s0
 #   tcontext=system_u:object_r:dma_device_dir_t:s0 tclass=dir permissive=0"
-allow mdadm_t dma_device_dir_t:dir { getattr search };
+allow mdadm_t dma_device_dir_t:dir { getattr open read search };
 
 require {
 	type setroubleshootd_t;
