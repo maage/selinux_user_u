@@ -91,12 +91,12 @@ userdom_user_tmp_filetrans({ login_userdomain systemd_logind_t }, systemd_logind
 ## /run/user/<uid>/systemd/inaccessible: both of these can create/remove these files
 # /run/user/<uid>/systemd/inaccessible/chr
 manage_chr_files_pattern({ login_userdomain systemd_logind_t }, systemd_logind_var_run_t, systemd_logind_var_run_t)
-# /run/user/<uid>/systemd/inaccessible/dir already
-# manage_dirs_pattern({ login_userdomain systemd_logind_t }, systemd_logind_var_run_t, systemd_logind_var_run_t)
-# /run/user/<uid>/systemd/inaccessible/fifo already
-# manage_fifo_files_pattern({ login_userdomain systemd_logind_t }, systemd_logind_var_run_t, systemd_logind_var_run_t)
-# /run/user/<uid>/systemd/inaccessible/reg already
-# manage_files_pattern({ login_userdomain systemd_logind_t }, systemd_logind_var_run_t, systemd_logind_var_run_t)
+# /run/user/<uid>/systemd/inaccessible/dir
+manage_dirs_pattern({ login_userdomain systemd_logind_t }, systemd_logind_var_run_t, systemd_logind_var_run_t)
+# /run/user/<uid>/systemd/inaccessible/fifo
+manage_fifo_files_pattern({ login_userdomain systemd_logind_t }, systemd_logind_var_run_t, systemd_logind_var_run_t)
+# /run/user/<uid>/systemd/inaccessible/reg
+manage_files_pattern({ login_userdomain systemd_logind_t }, systemd_logind_var_run_t, systemd_logind_var_run_t)
 # /run/user/<uid>/systemd/inaccessible/sock
 manage_sock_files_pattern({ login_userdomain systemd_logind_t }, systemd_logind_var_run_t, systemd_logind_var_run_t)
 
