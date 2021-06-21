@@ -467,4 +467,4 @@ require {
 	type systemd_machined_var_run_t;
 }
 read_files_pattern(login_userdomain, alsa_var_lib_t, alsa_var_lib_t)
-watch_files_pattern(login_userdomain, systemd_machined_var_run_t, systemd_machined_var_run_t)
+watch_dirs_pattern(login_userdomain, init_var_run_t, systemd_machined_var_run_t)
