@@ -36,11 +36,9 @@ require {
 	class service start;
 	class system reload;
 	type user_dbusd_t;
-	type user_tmp_t;
 }
 allow user_dbusd_t login_userdomain:system reload;
 allow user_dbusd_t systemd_unit_file_type:service start;
-allow user_dbusd_t user_tmp_t:service start;
 
 ### Allow: loginctl session-status <id>
 require {
