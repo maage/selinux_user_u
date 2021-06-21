@@ -464,7 +464,9 @@ allow systemd_logind_t pulseaudio_var_lib_t:file unlink;
 
 require {
 	type alsa_var_lib_t;
+	type init_var_run_t;
 	type systemd_machined_var_run_t;
 }
 read_files_pattern(login_userdomain, alsa_var_lib_t, alsa_var_lib_t)
+read_dirs_pattern(login_userdomain, init_var_run_t, systemd_machined_var_run_t)
 watch_dirs_pattern(login_userdomain, init_var_run_t, systemd_machined_var_run_t)
