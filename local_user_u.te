@@ -20,7 +20,7 @@ require {
 	attribute login_userdomain;
 	# type sysadm_t;
 	# type staff_t;
-	# type user_t;
+	type user_t;
 	# role user_r;
 	role system_r;
 }
@@ -461,3 +461,8 @@ require {
 	type systemd_logind_t;
 }
 allow systemd_logind_t pulseaudio_var_lib_t:file unlink;
+
+require {
+	type alsa_var_lib_t;
+}
+read_files_pattern(login_userdomain, alsa_var_lib_t, alsa_var_lib_t)
