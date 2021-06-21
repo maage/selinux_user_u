@@ -1,36 +1,5 @@
 policy_module(local_f33_regression, 1.0.0)
 
-#### flatpak files under: /var/lib/flatpak/
-# OK: 2021-06-02
-require {
-	type var_lib_t;
-	type xdm_t;
-	class lnk_file read;
-	class file map;
-}
-## /var/lib/flatpak/exports/share/icons/hicolor/icon-theme.cache
-# audit(1618397152.666:565):
-#  scontext="system_u:system_r:xdm_t:s0-s0:c0.c1023" tcontext="system_u:object_r:var_lib_t:s0"
-#  class="file" perms="map"
-#  comm="gnome-shell" exe="" path=""
-#  message="type=AVC msg=audit(1618397152.666:565): avc:  denied  { map } for
-#   pid=5179 comm="gnome-shell"
-#   path="/var/lib/flatpak/exports/share/icons/hicolor/icon-theme.cache"
-#   dev="dm-0" ino=21033510 scontext=system_u:system_r:xdm_t:s0-s0:c0.c1023
-#   tcontext=system_u:object_r:var_lib_t:s0 tclass=file permissive=0"
-mmap_read_files_pattern(xdm_t, var_lib_t, var_lib_t)
-## /var/lib/flatpak/app/ca.desrt.dconf-editor/x86_64/stable/214a98164a3f0935e889c8840cb794bcdc97a64fb33bce2b3181885413991066/export/share/dbus-1/services/ca.desrt.dconf-editor.service
-# audit(1618397148.853:492):
-#  scontext="system_u:system_r:xdm_t:s0-s0:c0.c1023" tcontext="system_u:object_r:var_lib_t:s0"
-#  class="lnk_file" perms="read"
-#  comm="dbus-daemon" exe="" path=""
-#  message="type=AVC msg=audit(1618397148.853:492): avc:  denied  { read } for
-#   pid=5155 comm="dbus-daemon" name="ca.desrt.dconf-editor.service" dev="dm-0"
-#   ino=21033507 scontext=system_u:system_r:xdm_t:s0-s0:c0.c1023
-#   tcontext=system_u:object_r:var_lib_t:s0 tclass=lnk_file permissive=0"
-read_lnk_files_pattern(xdm_t, var_lib_t, var_lib_t)
-
-
 ### regression
 require {
         class process setsched;

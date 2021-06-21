@@ -210,23 +210,13 @@ allow user_dbusd_t var_lib_t:lnk_file read;
 tunable_policy(`local_user_u_journalctl',`
 	init_read_var_lib_files(login_userdomain)
 	init_read_var_lib_files(journalctl_t)
-	init_search_var_lib_dirs(journalctl_t)
 	require {
 		class dir { read search };
 		class file map;
 		type init_var_lib_t;
 		type journalctl_t;
 	}
-	allow journalctl_t init_var_lib_t:file map;
 	allow login_userdomain init_var_lib_t:dir { read search };
-
-	### Use journalctl
-	require {
-		type tmp_t;
-		type journalctl_t;
-		class dir write;
-	}
-	allow journalctl_t tmp_t:dir write;
 ')
 
 ### chrome uses this
@@ -380,7 +370,6 @@ allow login_userdomain lib_t:dir watch;
 allow login_userdomain locale_t:dir watch;
 allow login_userdomain root_t:dir watch;
 allow login_userdomain system_conf_t:dir watch;
-allow login_userdomain systemd_logind_var_run_t:dir watch;
 allow login_userdomain var_run_t:dir watch;
 
 ### What?
@@ -403,7 +392,6 @@ require {
 	type user_home_dir_t;
 	type user_home_t;
 }
-allow journalctl_t user_home_dir_t:dir { add_name write };
 # without this .lesshst etc has domain user_home_dir_t and that is just wrong
 filetrans_pattern(journalctl_t, user_home_dir_t, user_home_t, file)
 allow journalctl_t user_home_t:file { create open read rename setattr unlink write };
@@ -448,69 +436,6 @@ require {
 }
 allow login_userdomain gpg_agent_t:process signull;
 
-require {
-	type user_dbusd_t;
-	type systemd_logind_var_run_t;
-	class sock_file write;
-}
-
-#============= user_dbusd_t ==============
-# audit(1622617702.866:37726):
-#  scontext="user_u:user_r:user_dbusd_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
-#  class="sock_file" perms="write"
-#  comm="dbus-broker-lau" exe="" path=""
-#  message="type=AVC msg=audit(1622617702.866:37726): avc:  denied  { write } for
-#   pid=5826 comm="dbus-broker-lau" name="notify" dev="tmpfs" ino=37
-#   scontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c255
-#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file
-#   permissive=0"
-# audit(1622618056.369:322):
-#  scontext="user_u:user_r:user_dbusd_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
-#  class="sock_file" perms="write"
-#  comm="dbus-broker-lau" exe="" path=""
-#  message="type=AVC msg=audit(1622618056.369:322): avc:  denied  { write } for
-#   pid=7316 comm="dbus-broker-lau" name="notify" dev="tmpfs" ino=37
-#   scontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c255
-#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file
-#   permissive=0"
-# audit(1622618056.389:323):
-#  scontext="user_u:user_r:user_dbusd_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
-#  class="sock_file" perms="write"
-#  comm="dbus-broker-lau" exe="" path=""
-#  message="type=AVC msg=audit(1622618056.389:323): avc:  denied  { write } for
-#   pid=7318 comm="dbus-broker-lau" name="notify" dev="tmpfs" ino=37
-#   scontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c255
-#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file
-#   permissive=0"
-# audit(1622618056.402:324):
-#  scontext="user_u:user_r:user_dbusd_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
-#  class="sock_file" perms="write"
-#  comm="dbus-broker-lau" exe="" path=""
-#  message="type=AVC msg=audit(1622618056.402:324): avc:  denied  { write } for
-#   pid=7319 comm="dbus-broker-lau" name="notify" dev="tmpfs" ino=37
-#   scontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c255
-#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file
-#   permissive=0"
-# audit(1622618056.415:325):
-#  scontext="user_u:user_r:user_dbusd_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
-#  class="sock_file" perms="write"
-#  comm="dbus-broker-lau" exe="" path=""
-#  message="type=AVC msg=audit(1622618056.415:325): avc:  denied  { write } for
-#   pid=7320 comm="dbus-broker-lau" name="notify" dev="tmpfs" ino=37
-#   scontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c255
-#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file
-#   permissive=0"
-# audit(1622618056.425:326):
-#  scontext="user_u:user_r:user_dbusd_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
-#  class="sock_file" perms="write"
-#  comm="dbus-broker-lau" exe="" path=""
-#  message="type=AVC msg=audit(1622618056.425:326): avc:  denied  { write } for
-#   pid=7321 comm="dbus-broker-lau" name="notify" dev="tmpfs" ino=37
-#   scontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c255
-#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file
-#   permissive=0"
-allow user_dbusd_t systemd_logind_var_run_t:sock_file write;
-
 #### /run/user/<uid>/pulse/native
 require {
 	type xdm_t;
@@ -536,52 +461,3 @@ require {
 	type systemd_logind_t;
 }
 allow systemd_logind_t pulseaudio_var_lib_t:file unlink;
-
-require {
-	type systemd_logind_var_run_t;
-	type user_t;
-	class dir create;
-	class file create;
-	class fifo_file create;
-}
-
-#============= user_t ==============
-# audit(1623656228.130:376):
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
-#  class="dir" perms="create"
-#  comm="systemd" exe="" path=""
-#  message="type=AVC msg=audit(1623656228.130:376): avc:  denied  { create } for
-#   pid=7686 comm="systemd" name="systemd"
-#   scontext=user_u:user_r:user_t:s0-s0:c0.c255
-#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=dir
-#   permissive=0"
-# audit(1623656228.137:379):
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
-#  class="dir" perms="create"
-#  comm="systemd" exe="" path=""
-#  message="type=AVC msg=audit(1623656228.137:379): avc:  denied  { create } for
-#   pid=7686 comm="systemd" name="systemd"
-#   scontext=user_u:user_r:user_t:s0-s0:c0.c255
-#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=dir
-#   permissive=0"
-allow user_t systemd_logind_var_run_t:dir create;
-# audit(1623656530.996:610):
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
-#  class="fifo_file" perms="create"
-#  comm="systemd" exe="" path=""
-#  message="type=AVC msg=audit(1623656530.996:610): avc:  denied  { create } for
-#   pid=9466 comm="systemd" name="fifo"
-#   scontext=user_u:user_r:user_t:s0-s0:c0.c255
-#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=fifo_file
-#   permissive=0"
-allow user_t systemd_logind_var_run_t:fifo_file create;
-# audit(1623656530.996:609):
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
-#  class="file" perms="create"
-#  comm="systemd" exe="" path=""
-#  message="type=AVC msg=audit(1623656530.996:609): avc:  denied  { create } for
-#   pid=9466 comm="systemd" name="reg"
-#   scontext=user_u:user_r:user_t:s0-s0:c0.c255
-#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=file
-#   permissive=0"
-allow user_t systemd_logind_var_run_t:file create;
