@@ -467,3 +467,59 @@ read_files_pattern(login_userdomain, alsa_var_lib_t, alsa_var_lib_t)
 list_dirs_pattern(login_userdomain, init_var_run_t, systemd_machined_var_run_t)
 watch_dirs_pattern(login_userdomain, init_var_run_t, systemd_machined_var_run_t)
 watch_reads_dirs_pattern(login_userdomain, init_var_run_t, systemd_machined_var_run_t)
+
+### Allow: /run/user/<uid>/systemd/notify
+# /usr/bin/dbus-broker-launch
+require {
+	type user_dbusd_t;
+	type systemd_logind_var_run_t;
+	class sock_file write;
+}
+
+#============= user_dbusd_t ==============
+# audit(1624357105.414:407):
+#  scontext="user_u:user_r:user_dbusd_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
+#  class="sock_file" perms="write"
+#  comm="dbus-broker-lau" exe="" path=""
+#  message="type=AVC msg=audit(1624357105.414:407): avc:  denied  { write } for
+#   pid=11373 comm="dbus-broker-lau" name="notify" dev="tmpfs" ino=37
+#   scontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c255
+#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file
+#   permissive=0"
+# audit(1624357105.426:408):
+#  scontext="user_u:user_r:user_dbusd_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
+#  class="sock_file" perms="write"
+#  comm="dbus-broker-lau" exe="" path=""
+#  message="type=AVC msg=audit(1624357105.426:408): avc:  denied  { write } for
+#   pid=11374 comm="dbus-broker-lau" name="notify" dev="tmpfs" ino=37
+#   scontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c255
+#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file
+#   permissive=0"
+# audit(1624357105.437:409):
+#  scontext="user_u:user_r:user_dbusd_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
+#  class="sock_file" perms="write"
+#  comm="dbus-broker-lau" exe="" path=""
+#  message="type=AVC msg=audit(1624357105.437:409): avc:  denied  { write } for
+#   pid=11375 comm="dbus-broker-lau" name="notify" dev="tmpfs" ino=37
+#   scontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c255
+#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file
+#   permissive=0"
+# audit(1624357105.448:410):
+#  scontext="user_u:user_r:user_dbusd_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
+#  class="sock_file" perms="write"
+#  comm="dbus-broker-lau" exe="" path=""
+#  message="type=AVC msg=audit(1624357105.448:410): avc:  denied  { write } for
+#   pid=11376 comm="dbus-broker-lau" name="notify" dev="tmpfs" ino=37
+#   scontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c255
+#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file
+#   permissive=0"
+# audit(1624357105.465:411):
+#  scontext="user_u:user_r:user_dbusd_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
+#  class="sock_file" perms="write"
+#  comm="dbus-broker-lau" exe="" path=""
+#  message="type=AVC msg=audit(1624357105.465:411): avc:  denied  { write } for
+#   pid=11377 comm="dbus-broker-lau" name="notify" dev="tmpfs" ino=37
+#   scontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c255
+#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file
+#   permissive=0"
+allow user_dbusd_t systemd_logind_var_run_t:sock_file write;
