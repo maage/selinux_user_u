@@ -523,3 +523,44 @@ require {
 #   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file
 #   permissive=0"
 allow user_dbusd_t systemd_logind_var_run_t:sock_file write;
+
+### google chrome
+require {
+	class sock_file read;
+	type session_dbusd_tmp_t;
+}
+#============= user_t ==============
+# audit(1624357631.567:556):
+#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="user_u:object_r:session_dbusd_tmp_t:s0"
+#  class="sock_file" perms="read"
+#  comm="pool-google-chr" exe="" path=""
+#  message="type=AVC msg=audit(1624357631.567:556): avc:  denied  { read } for
+#   pid=12778 comm="pool-google-chr" name="dbus-N0kGENH6lI" dev="tmpfs" ino=68
+#   scontext=user_u:user_r:user_t:s0-s0:c0.c255
+#   tcontext=user_u:object_r:session_dbusd_tmp_t:s0 tclass=sock_file
+#   permissive=0"
+# audit(1624357631.581:557):
+#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="user_u:object_r:session_dbusd_tmp_t:s0"
+#  class="sock_file" perms="read"
+#  comm="pool-google-chr" exe="" path=""
+#  message="type=AVC msg=audit(1624357631.581:557): avc:  denied  { read } for
+#   pid=12778 comm="pool-google-chr" name="dbus-N0kGENH6lI" dev="tmpfs" ino=68
+#   scontext=user_u:user_r:user_t:s0-s0:c0.c255
+#   tcontext=user_u:object_r:session_dbusd_tmp_t:s0 tclass=sock_file
+#   permissive=0"
+allow user_t session_dbusd_tmp_t:sock_file read;
+
+### google chrome
+require {
+	class dir watch;
+	type tmp_t;
+}
+# audit(1624357631.555:554):
+#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="system_u:object_r:tmp_t:s0"
+#  class="dir" perms="watch"
+#  comm="chrome" exe="" path=""
+#  message="type=AVC msg=audit(1624357631.555:554): avc:  denied  { watch } for
+#   pid=12778 comm="chrome" path="/tmp" dev="tmpfs" ino=1
+#   scontext=user_u:user_r:user_t:s0-s0:c0.c255
+#   tcontext=system_u:object_r:tmp_t:s0 tclass=dir permissive=0"
+allow user_t tmp_t:dir watch;
