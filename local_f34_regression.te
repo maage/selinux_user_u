@@ -236,3 +236,20 @@ allow abrt_t xdm_var_lib_t:file read;
 #   ino=17040737 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023
 #   tcontext=system_u:object_r:xdm_var_lib_t:s0 tclass=file permissive=0"
 allow abrt_t xdm_var_lib_t:file open;
+
+require {
+	type init_var_lib_t;
+	type journalctl_t;
+	class file map;
+}
+
+#============= journalctl_t ==============
+#  scontext="user_u:user_r:journalctl_t:s0-s0:c0.c1023" tcontext="unconfined_u:object_r:init_var_lib_t:s0"
+#  class="file" perms="map"
+#  comm="journalctl" exe="" path=""
+#  message="kesä 22 15:32:52 user-hp-eb-lan audit[24885]: AVC avc:  denied  {
+#   map } for  pid=24885 comm="journalctl"
+#   path="/var/lib/systemd/catalog/database" dev="dm-0" ino=23925288
+#   scontext=user_u:user_r:journalctl_t:s0-s0:c0.c1023
+#   tcontext=unconfined_u:object_r:init_var_lib_t:s0 tclass=file permissive=0 "
+allow journalctl_t init_var_lib_t:file map;
