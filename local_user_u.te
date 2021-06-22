@@ -674,3 +674,66 @@ require {
 #   tcontext=unconfined_u:object_r:user_devpts_t:s0 tclass=chr_file permissive=0
 #   "
 allow chkpwd_t user_devpts_t:chr_file { read write };
+
+require {
+	type user_t;
+	type container_ro_file_t;
+	class dir getattr;
+}
+
+#============= user_t ==============
+# 
+#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="user_u:object_r:container_ro_file_t:s0"
+#  class="dir" perms="getattr"
+#  comm="find" exe="" path=""
+#  message="kesä 22 15:16:54 user-hp-eb-lan audit[24306]: AVC avc:  denied  {
+#   getattr } for  pid=24306 comm="find"
+#   path="/home/user/.local/share/containers/storage/overlay-images" dev="dm-2"
+#   ino=1049541 scontext=user_u:user_r:user_t:s0-s0:c0.c255
+#   tcontext=user_u:object_r:container_ro_file_t:s0 tclass=dir permissive=0 "
+# 
+#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="user_u:object_r:container_ro_file_t:s0"
+#  class="dir" perms="getattr"
+#  comm="find" exe="" path=""
+#  message="kesä 22 15:16:54 user-hp-eb-lan audit[24306]: AVC avc:  denied  {
+#   getattr } for  pid=24306 comm="find"
+#   path="/home/user/.local/share/containers/storage/overlay-images" dev="dm-2"
+#   ino=1049541 scontext=user_u:user_r:user_t:s0-s0:c0.c255
+#   tcontext=user_u:object_r:container_ro_file_t:s0 tclass=dir permissive=0 "
+# 
+#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="user_u:object_r:container_ro_file_t:s0"
+#  class="dir" perms="getattr"
+#  comm="find" exe="" path=""
+#  message="kesä 22 15:16:54 user-hp-eb-lan audit[24306]: AVC avc:  denied  {
+#   getattr } for  pid=24306 comm="find"
+#   path="/home/user/.local/share/containers/storage/overlay" dev="dm-2"
+#   ino=1049537 scontext=user_u:user_r:user_t:s0-s0:c0.c255
+#   tcontext=user_u:object_r:container_ro_file_t:s0 tclass=dir permissive=0 "
+# 
+#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="user_u:object_r:container_ro_file_t:s0"
+#  class="dir" perms="getattr"
+#  comm="find" exe="" path=""
+#  message="kesä 22 15:16:54 user-hp-eb-lan audit[24306]: AVC avc:  denied  {
+#   getattr } for  pid=24306 comm="find"
+#   path="/home/user/.local/share/containers/storage/overlay" dev="dm-2"
+#   ino=1049537 scontext=user_u:user_r:user_t:s0-s0:c0.c255
+#   tcontext=user_u:object_r:container_ro_file_t:s0 tclass=dir permissive=0 "
+# 
+#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="user_u:object_r:container_ro_file_t:s0"
+#  class="dir" perms="getattr"
+#  comm="find" exe="" path=""
+#  message="kesä 22 15:16:54 user-hp-eb-lan audit[24306]: AVC avc:  denied  {
+#   getattr } for  pid=24306 comm="find"
+#   path="/home/user/.local/share/containers/storage/overlay-layers" dev="dm-2"
+#   ino=1049545 scontext=user_u:user_r:user_t:s0-s0:c0.c255
+#   tcontext=user_u:object_r:container_ro_file_t:s0 tclass=dir permissive=0 "
+# 
+#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="user_u:object_r:container_ro_file_t:s0"
+#  class="dir" perms="getattr"
+#  comm="find" exe="" path=""
+#  message="kesä 22 15:16:54 user-hp-eb-lan audit[24306]: AVC avc:  denied  {
+#   getattr } for  pid=24306 comm="find"
+#   path="/home/user/.local/share/containers/storage/overlay-layers" dev="dm-2"
+#   ino=1049545 scontext=user_u:user_r:user_t:s0-s0:c0.c255
+#   tcontext=user_u:object_r:container_ro_file_t:s0 tclass=dir permissive=0 "
+allow user_t container_ro_file_t:dir getattr;
