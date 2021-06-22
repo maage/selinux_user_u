@@ -638,3 +638,39 @@ allow user_t NetworkManager_var_run_t:dir read;
 #   tcontext=system_u:object_r:NetworkManager_var_run_t:s0 tclass=dir
 #   permissive=0"
 allow user_t NetworkManager_var_run_t:dir watch;
+
+require {
+	type chkpwd_t;
+	type user_devpts_t;
+	class chr_file { read write };
+}
+
+#============= chkpwd_t ==============
+# 
+#  scontext="unconfined_u:unconfined_r:chkpwd_t:s0-s0:c0.c1023" tcontext="unconfined_u:object_r:user_devpts_t:s0"
+#  class="chr_file" perms="{ read write }"
+#  comm="unix_chkpwd" exe="" path=""
+#  message="kesä 22 14:53:38 user-hp-eb-lan audit[20392]: AVC avc:  denied  {
+#   read write } for  pid=20392 comm="unix_chkpwd" path="/dev/pts/0" dev="devpts"
+#   ino=3 scontext=unconfined_u:unconfined_r:chkpwd_t:s0-s0:c0.c1023
+#   tcontext=unconfined_u:object_r:user_devpts_t:s0 tclass=chr_file permissive=0
+#   "
+# 
+#  scontext="unconfined_u:unconfined_r:chkpwd_t:s0-s0:c0.c1023" tcontext="unconfined_u:object_r:user_devpts_t:s0"
+#  class="chr_file" perms="{ read write }"
+#  comm="unix_chkpwd" exe="" path=""
+#  message="kesä 22 14:55:48 user-hp-eb-lan audit[22115]: AVC avc:  denied  {
+#   read write } for  pid=22115 comm="unix_chkpwd" path="/dev/pts/1" dev="devpts"
+#   ino=4 scontext=unconfined_u:unconfined_r:chkpwd_t:s0-s0:c0.c1023
+#   tcontext=unconfined_u:object_r:user_devpts_t:s0 tclass=chr_file permissive=0
+#   "
+# 
+#  scontext="unconfined_u:unconfined_r:chkpwd_t:s0-s0:c0.c1023" tcontext="unconfined_u:object_r:user_devpts_t:s0"
+#  class="chr_file" perms="{ read write }"
+#  comm="unix_chkpwd" exe="" path=""
+#  message="kesä 22 14:55:56 user-hp-eb-lan audit[22123]: AVC avc:  denied  {
+#   read write } for  pid=22123 comm="unix_chkpwd" path="/dev/pts/1" dev="devpts"
+#   ino=4 scontext=unconfined_u:unconfined_r:chkpwd_t:s0-s0:c0.c1023
+#   tcontext=unconfined_u:object_r:user_devpts_t:s0 tclass=chr_file permissive=0
+#   "
+allow chkpwd_t user_devpts_t:chr_file { read write };
