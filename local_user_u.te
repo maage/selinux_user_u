@@ -475,44 +475,6 @@ require {
 	type systemd_logind_var_run_t;
 	class sock_file write;
 }
-
-#============= user_dbusd_t ==============
-# audit(1624357105.414:407):
-#  scontext="user_u:user_r:user_dbusd_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
-#  class="sock_file" perms="write"
-#  comm="dbus-broker-lau" exe="" path=""
-#  message="type=AVC msg=audit(1624357105.414:407): avc:  denied  { write } for
-#   pid=11373 comm="dbus-broker-lau" name="notify" dev="tmpfs" ino=37
-#   scontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c255
-#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file
-#   permissive=0"
-# audit(1624357105.426:408):
-#  scontext="user_u:user_r:user_dbusd_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
-#  class="sock_file" perms="write"
-#  comm="dbus-broker-lau" exe="" path=""
-#  message="type=AVC msg=audit(1624357105.426:408): avc:  denied  { write } for
-#   pid=11374 comm="dbus-broker-lau" name="notify" dev="tmpfs" ino=37
-#   scontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c255
-#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file
-#   permissive=0"
-# audit(1624357105.437:409):
-#  scontext="user_u:user_r:user_dbusd_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
-#  class="sock_file" perms="write"
-#  comm="dbus-broker-lau" exe="" path=""
-#  message="type=AVC msg=audit(1624357105.437:409): avc:  denied  { write } for
-#   pid=11375 comm="dbus-broker-lau" name="notify" dev="tmpfs" ino=37
-#   scontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c255
-#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file
-#   permissive=0"
-# audit(1624357105.448:410):
-#  scontext="user_u:user_r:user_dbusd_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
-#  class="sock_file" perms="write"
-#  comm="dbus-broker-lau" exe="" path=""
-#  message="type=AVC msg=audit(1624357105.448:410): avc:  denied  { write } for
-#   pid=11376 comm="dbus-broker-lau" name="notify" dev="tmpfs" ino=37
-#   scontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c255
-#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file
-#   permissive=0"
 # audit(1624357105.465:411):
 #  scontext="user_u:user_r:user_dbusd_t:s0-s0:c0.c255" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
 #  class="sock_file" perms="write"
@@ -529,21 +491,11 @@ require {
 	class sock_file read;
 	type session_dbusd_tmp_t;
 }
-#============= user_t ==============
 # audit(1624357631.567:556):
 #  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="user_u:object_r:session_dbusd_tmp_t:s0"
 #  class="sock_file" perms="read"
 #  comm="pool-google-chr" exe="" path=""
 #  message="type=AVC msg=audit(1624357631.567:556): avc:  denied  { read } for
-#   pid=12778 comm="pool-google-chr" name="dbus-N0kGENH6lI" dev="tmpfs" ino=68
-#   scontext=user_u:user_r:user_t:s0-s0:c0.c255
-#   tcontext=user_u:object_r:session_dbusd_tmp_t:s0 tclass=sock_file
-#   permissive=0"
-# audit(1624357631.581:557):
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="user_u:object_r:session_dbusd_tmp_t:s0"
-#  class="sock_file" perms="read"
-#  comm="pool-google-chr" exe="" path=""
-#  message="type=AVC msg=audit(1624357631.581:557): avc:  denied  { read } for
 #   pid=12778 comm="pool-google-chr" name="dbus-N0kGENH6lI" dev="tmpfs" ino=68
 #   scontext=user_u:user_r:user_t:s0-s0:c0.c255
 #   tcontext=user_u:object_r:session_dbusd_tmp_t:s0 tclass=sock_file
@@ -579,15 +531,6 @@ require {
 #   scontext=user_u:user_r:user_t:s0-s0:c0.c255
 #   tcontext=system_u:object_r:NetworkManager_var_run_t:s0 tclass=dir
 #   permissive=0"
-# audit(1624361909.767:1067):
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="system_u:object_r:NetworkManager_var_run_t:s0"
-#  class="dir" perms="read"
-#  comm="ThreadPoolForeg" exe="" path=""
-#  message="type=AVC msg=audit(1624361909.767:1067): avc:  denied  { read } for
-#   pid=18936 comm="ThreadPoolForeg" name="NetworkManager" dev="tmpfs" ino=101
-#   scontext=user_u:user_r:user_t:s0-s0:c0.c255
-#   tcontext=system_u:object_r:NetworkManager_var_run_t:s0 tclass=dir
-#   permissive=0"
 allow user_t NetworkManager_var_run_t:dir read;
 # audit(1624362705.365:1329):
 #  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="system_u:object_r:NetworkManager_var_run_t:s0"
@@ -595,15 +538,6 @@ allow user_t NetworkManager_var_run_t:dir read;
 #  comm="ThreadPoolForeg" exe="" path=""
 #  message="type=AVC msg=audit(1624362705.365:1329): avc:  denied  { watch } for
 #   pid=19769 comm="ThreadPoolForeg" path="/run/NetworkManager" dev="tmpfs"
-#   ino=101 scontext=user_u:user_r:user_t:s0-s0:c0.c255
-#   tcontext=system_u:object_r:NetworkManager_var_run_t:s0 tclass=dir
-#   permissive=0"
-# audit(1624362705.510:1330):
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="system_u:object_r:NetworkManager_var_run_t:s0"
-#  class="dir" perms="watch"
-#  comm="ThreadPoolForeg" exe="" path=""
-#  message="type=AVC msg=audit(1624362705.510:1330): avc:  denied  { watch } for
-#   pid=19812 comm="ThreadPoolForeg" path="/run/NetworkManager" dev="tmpfs"
 #   ino=101 scontext=user_u:user_r:user_t:s0-s0:c0.c255
 #   tcontext=system_u:object_r:NetworkManager_var_run_t:s0 tclass=dir
 #   permissive=0"
