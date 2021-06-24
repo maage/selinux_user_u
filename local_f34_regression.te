@@ -116,7 +116,6 @@ require {
 	type dma_device_t;
 	type mdadm_t;
 }
-
 #============= mdadm_t ==============
 # audit(1622722822.397:176):
 #  scontext="system_u:system_r:mdadm_t:s0" tcontext="system_u:object_r:dma_device_t:s0"
@@ -141,7 +140,6 @@ require {
 	type dma_device_t;
 	type mdadm_t;
 }
-
 #============= mdadm_t ==============
 # audit(1622726629.867:158):
 #  scontext="system_u:system_r:mdadm_t:s0" tcontext="system_u:object_r:dma_device_t:s0"
@@ -158,7 +156,6 @@ require {
 	type dma_device_dir_t;
 	type mdadm_t;
 }
-
 #============= mdadm_t ==============
 # audit(1623654360.269:170):
 #  scontext="system_u:system_r:mdadm_t:s0" tcontext="system_u:object_r:dma_device_dir_t:s0"
@@ -183,7 +180,6 @@ require {
 	type dma_device_t;
 	class dir getattr;
 }
-
 #============= setroubleshootd_t ==============
 # audit(1622726632.928:739):
 #  scontext="system_u:system_r:setroubleshootd_t:s0" tcontext="system_u:object_r:dma_device_t:s0"
@@ -200,7 +196,6 @@ require {
 	type xdm_var_lib_t;
 	class file { open read };
 }
-
 #============= abrt_t ==============
 # audit(1623656221.222:356):
 #  scontext="system_u:system_r:abrt_t:s0-s0:c0.c1023" tcontext="system_u:object_r:xdm_var_lib_t:s0"
@@ -253,3 +248,19 @@ require {
 #   scontext=user_u:user_r:journalctl_t:s0-s0:c0.c1023
 #   tcontext=unconfined_u:object_r:init_var_lib_t:s0 tclass=file permissive=0 "
 allow journalctl_t init_var_lib_t:file map;
+
+require {
+	type sssd_t;
+	type init_var_run_t;
+	class dir watch;
+}
+#============= sssd_t ==============
+# audit(1624350882.464:181):
+#  scontext="system_u:system_r:sssd_t:s0" tcontext="system_u:object_r:init_var_run_t:s0"
+#  class="dir" perms="watch"
+#  comm="sssd" exe="" path=""
+#  message="type=AVC msg=audit(1624350882.464:181): avc:  denied  { watch } for
+#   pid=1020 comm="sssd" path="/run/systemd" dev="tmpfs" ino=2
+#   scontext=system_u:system_r:sssd_t:s0
+#   tcontext=system_u:object_r:init_var_run_t:s0 tclass=dir permissive=0"
+allow sssd_t init_var_run_t:dir watch;
