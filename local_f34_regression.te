@@ -63,7 +63,6 @@ require {
 }
 dontaudit journalctl_t device_node:blk_file getattr;
 dontaudit journalctl_t device_node:chr_file getattr;
-dontaudit journalctl_t dma_device_t:dir list_dir_perms;
 dontaudit journalctl_t initctl_t:fifo_file getattr;
 dontaudit journalctl_t proc_kcore_t:file getattr;
 
@@ -102,12 +101,14 @@ allow fapolicyd_t user_home_t:dir { watch_mount watch_with_perm };
 ')
 
 #### Allow to access: /dev/dma_heap
+optional_policy(`
 require {
 	type init_t;
 	type dma_device_t;
 	type journalctl_t;
 	type udev_t;
 }
+dontaudit journalctl_t dma_device_t:dir list_dir_perms;
 allow init_t dma_device_t:dir list_dir_perms;
 allow udev_t dma_device_t:dir list_dir_perms;
 
@@ -190,6 +191,7 @@ require {
 #   scontext=system_u:system_r:setroubleshootd_t:s0
 #   tcontext=system_u:object_r:dma_device_t:s0 tclass=dir permissive=0"
 allow setroubleshootd_t dma_device_t:dir getattr;
+')
 
 require {
 	type abrt_t;
