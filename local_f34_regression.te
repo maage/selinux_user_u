@@ -101,7 +101,7 @@ allow fapolicyd_t user_home_t:dir { watch_mount watch_with_perm };
 ')
 
 #### Allow to access: /dev/dma_heap
-optional_policy(`
+#optional_policy(`
 require {
 	type init_t;
 	type dma_device_t;
@@ -191,7 +191,7 @@ require {
 #   scontext=system_u:system_r:setroubleshootd_t:s0
 #   tcontext=system_u:object_r:dma_device_t:s0 tclass=dir permissive=0"
 allow setroubleshootd_t dma_device_t:dir getattr;
-')
+#')
 
 require {
 	type abrt_t;
