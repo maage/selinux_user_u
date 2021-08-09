@@ -575,3 +575,20 @@ require {
 #   ino=1049545 scontext=user_u:user_r:user_t:s0-s0:c0.c255
 #   tcontext=user_u:object_r:container_ro_file_t:s0 tclass=dir permissive=0 "
 allow user_t container_ro_file_t:dir getattr;
+
+require {
+	type setroubleshootd_t;
+	type user_t;
+	class dbus send_msg;
+}
+# audit(1628498428.244:316):
+#  scontext="user_u:user_r:user_t:s0-s0:c0.c1023" tcontext="system_u:system_r:setroubleshootd_t:s0"
+#  class="dbus" perms="send_msg"
+#  comm="" exe="/usr/bin/dbus-broker" path=""
+#  message="type=USER_AVC msg=audit(1628498428.244:316): pid=5237 uid=81
+#   auid=4294967295 ses=4294967295
+#   subj=system_u:system_r:system_dbusd_t:s0-s0:c0.c1023 msg='avc:  denied  {
+#   send_msg } for  scontext=user_u:user_r:user_t:s0-s0:c0.c1023
+#   tcontext=system_u:system_r:setroubleshootd_t:s0 tclass=dbus permissive=0
+#   exe="/usr/bin/dbus-broker" sauid=81 hostname=? addr=? terminal=?'"
+allow user_t setroubleshootd_t:dbus send_msg;
