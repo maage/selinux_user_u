@@ -1,5 +1,5 @@
 # selinux_user_u
-SELinux user_u policy to fix Fedora 33 issues
+SELinux user_u policy to fix Fedora 34 issues
 
 Install required packages:
 ```|sh
