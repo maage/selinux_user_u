@@ -7,7 +7,7 @@ my-hop: all
 all: my-commit
 
 my-commit:
-	./commit.sh
+	@./commit.sh
 
 include /usr/share/selinux/devel/Makefile
 
