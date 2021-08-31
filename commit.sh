@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -epux -o pipefail
+set -epu -o pipefail
 rc=0
 git status --porcelain | grep -Eq '^' || rc=$?
 if [ $rc -eq 0 ]; then
