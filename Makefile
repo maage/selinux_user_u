@@ -1,6 +1,6 @@
 QUIET := n
 
-.PHONY: my-hop my-commit lines local_lines
+.PHONY: my-hop all my-commit
 my-hop: all
 	sudo $(MAKE) load
 
