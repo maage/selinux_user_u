@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# SPDX-FileCopyrightText: 2021 Markus Linnala <markus.linnala@cybercom.com>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 set -epu -o pipefail
 rc=0
 git status --porcelain | grep -Eq '^' || rc=$?

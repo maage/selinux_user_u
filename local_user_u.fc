@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021 Markus Linnala <markus.linnala@cybercom.com>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 ### These paths rules are missing
 # source: systemd-analyze unit-paths  --user
 /etc/systemd/user(/.*)?						gen_context(system_u:object_r:systemd_unit_file_t,s0)
