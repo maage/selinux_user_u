@@ -1,3 +1,6 @@
 # SPDX-FileCopyrightText: 2021 Markus Linnala <markus.linnala@cybercom.com>
 #
 # SPDX-License-Identifier: Apache-2.0
+
+/etc/ssh/dracut_ssh_host.*_key		--	gen_context(system_u:object_r:sshd_key_t,s0)
+/etc/ssh/dracut_ssh_host.*_key\.pub	--	gen_context(system_u:object_r:sshd_key_t,s0)
