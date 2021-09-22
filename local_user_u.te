@@ -625,3 +625,21 @@ require {
 #   scontext=user_u:user_r:user_t:s0-s0:c0.c1023
 #   tcontext=system_u:object_r:mnt_t:s0 tclass=dir permissive=0"
 allow user_t mnt_t:dir watch;
+files_manage_mnt_dirs(user_t)
+
+#### Allow ssh askpass to access font cache
+require {
+	type ssh_t;
+	type user_fonts_cache_t;
+	class file { map open };
+}
+# audit(1631517036.779:17359):
+#  scontext="user_u:user_r:ssh_t:s0-s0:c0.c1023" tcontext="user_u:object_r:user_fonts_cache_t:s0"
+#  class="file" perms="map"
+#  comm="B70616E676F5D204663496E697" exe="" path=""
+#  message="type=AVC msg=audit(1631517036.779:17359): avc:  denied  { map } for
+#   pid=280133 comm=5B70616E676F5D204663496E6974 path="/home/user/.cache/fontcon
+#   fig/beeeeb3dfe132a8a0633a017c99ce0c0-le64.cache-7" dev="dm-2" ino=946318
+#   scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023
+#   tcontext=user_u:object_r:user_fonts_cache_t:s0 tclass=file permissive=0"
+allow ssh_t user_fonts_cache_t:file map;
