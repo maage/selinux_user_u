@@ -594,3 +594,34 @@ require {
 #   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file
 #   permissive=0"
 allow user_dbusd_t systemd_logind_var_run_t:sock_file write;
+
+#### Allow to watch /run/media
+require {
+	type mnt_t;
+	class dir watch;
+}
+# audit(1631538712.033:18837):
+#  scontext="user_u:user_r:user_t:s0-s0:c0.c1023" tcontext="system_u:object_r:mnt_t:s0"
+#  class="dir" perms="watch"
+#  comm="nautilus" exe="" path=""
+#  message="type=AVC msg=audit(1631538712.033:18837): avc:  denied  { watch } for
+#   pid=306116 comm="nautilus" path="/run/media/user" dev="tmpfs" ino=25960
+#   scontext=user_u:user_r:user_t:s0-s0:c0.c1023
+#   tcontext=system_u:object_r:mnt_t:s0 tclass=dir permissive=0"
+# audit(1631538716.297:18839):
+#  scontext="user_u:user_r:user_t:s0-s0:c0.c1023" tcontext="system_u:object_r:mnt_t:s0"
+#  class="dir" perms="watch"
+#  comm="gmain" exe="" path=""
+#  message="type=AVC msg=audit(1631538716.297:18839): avc:  denied  { watch } for
+#   pid=306116 comm="gmain" path="/run/media/user" dev="tmpfs" ino=25960
+#   scontext=user_u:user_r:user_t:s0-s0:c0.c1023
+#   tcontext=system_u:object_r:mnt_t:s0 tclass=dir permissive=0"
+# audit(1631604576.038:36826):
+#  scontext="user_u:user_r:user_t:s0-s0:c0.c1023" tcontext="system_u:object_r:mnt_t:s0"
+#  class="dir" perms="watch"
+#  comm="gmain" exe="" path=""
+#  message="type=AVC msg=audit(1631604576.038:36826): avc:  denied  { watch } for
+#   pid=306116 comm="gmain" path="/run/media" dev="tmpfs" ino=1944
+#   scontext=user_u:user_r:user_t:s0-s0:c0.c1023
+#   tcontext=system_u:object_r:mnt_t:s0 tclass=dir permissive=0"
+allow user_t mnt_t:dir watch;
