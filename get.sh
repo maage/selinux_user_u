@@ -20,12 +20,17 @@ myfilter() {
 }
 
 mysource() {
-	journalctl --since -5m SYSLOG_IDENTIFIER=audit
+	journalctl --since -5m -g denied SYSLOG_IDENTIFIER=audit
+	# journalctl -b0 -g denied SYSLOG_IDENTIFIER=audit
+}
+
+myuniq() {
+    cut -d: -f4- | awk '!s[$0]++'
 }
 
 #journalctl --since -2h SYSLOG_IDENTIFIER=audit|sed -r '/  denied /!d;/comm="(gnome-terminal-|cpan|perl|dnf)"/d'|audit2allow -r -R|egrep -v '^#|^$'
 if (($#)); then
-	mysource | myfilter  | audit2allow -r "$@"
+	mysource | myuniq | myfilter | audit2allow -r "$@"
 	exit $?
 fi
-mysource | myfilter | audit2allow -r | a2a-cleanup
+mysource | myuniq | myfilter | audit2allow -r | a2a-cleanup
