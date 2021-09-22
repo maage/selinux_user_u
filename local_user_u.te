@@ -643,3 +643,20 @@ require {
 #   scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023
 #   tcontext=user_u:object_r:user_fonts_cache_t:s0 tclass=file permissive=0"
 allow ssh_t user_fonts_cache_t:file map;
+
+#### Allow setroubleshootd integration
+require {
+	type setroubleshootd_t;
+	class dbus send_msg;
+}
+# audit(1631517040.248:17405):
+#  scontext="system_u:system_r:setroubleshootd_t:s0" tcontext="user_u:user_r:user_t:s0-s0:c0.c1023"
+#  class="dbus" perms="send_msg"
+#  comm="" exe="/usr/bin/dbus-broker" path=""
+#  message="type=USER_AVC msg=audit(1631517040.248:17405): pid=1164 uid=81
+#   auid=4294967295 ses=4294967295
+#   subj=system_u:system_r:system_dbusd_t:s0-s0:c0.c1023 msg='avc:  denied  {
+#   send_msg } for  scontext=system_u:system_r:setroubleshootd_t:s0
+#   tcontext=user_u:user_r:user_t:s0-s0:c0.c1023 tclass=dbus permissive=0
+#   exe="/usr/bin/dbus-broker" sauid=81 hostname=? addr=? terminal=?'"
+allow setroubleshootd_t user_t:dbus send_msg;
