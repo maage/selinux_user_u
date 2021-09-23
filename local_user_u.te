@@ -660,3 +660,29 @@ require {
 #   tcontext=user_u:user_r:user_t:s0-s0:c0.c1023 tclass=dbus permissive=0
 #   exe="/usr/bin/dbus-broker" sauid=81 hostname=? addr=? terminal=?'"
 allow setroubleshootd_t user_t:dbus send_msg;
+
+# Allow user_u to read fwupd_cache_t
+require {
+	type fwupd_cache_t;
+	class file read;
+}
+#  scontext="user_u:user_r:user_t:s0-s0:c0.c1023" tcontext="system_u:object_r:fwupd_cache_t:s0"
+#  class="file" perms="read"
+#  comm="gnome-software" exe="" path=""
+#  message=" AVC avc:  denied  { read } for  pid=332137 comm="gnome-software"
+#   name="copr:copr.fedorainfracloud.org:hdfssk:passwordsafe.xml" dev="dm-2"
+#   ino=33554598 scontext=user_u:user_r:user_t:s0-s0:c0.c1023
+#   tcontext=system_u:object_r:fwupd_cache_t:s0 tclass=file permissive=0 "
+#
+#  scontext="user_u:user_r:user_t:s0-s0:c0.c1023" tcontext="system_u:object_r:fwupd_cache_t:s0"
+#  class="file" perms="read"
+#  comm="pool-org.gnome." exe="" path=""
+#  message=" AVC avc:  denied  { read } for  pid=332137 comm="pool-org.gnome."
+#   name="copr:copr.fedorainfracloud.org:hdfssk:passwordsafe.xml" dev="dm-2"
+#   ino=33554598 scontext=user_u:user_r:user_t:s0-s0:c0.c1023
+#   tcontext=system_u:object_r:fwupd_cache_t:s0 tclass=file permissive=0 "
+# Interface options:
+#   fwupd_read_cache_files(user_t) # [46]
+#   fwupd_manage_cache_files(user_t) # [197]
+allow user_t fwupd_cache_t:file read;
+fwupd_read_cache_files(user_t)
