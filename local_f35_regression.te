@@ -1,0 +1,5 @@
+# SPDX-FileCopyrightText: 2021 Markus Linnala <markus.linnala@cybercom.com>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+policy_module(local_f35_regression, 1.0.0)
