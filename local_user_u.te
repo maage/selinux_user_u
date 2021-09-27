@@ -711,3 +711,16 @@ fwupd_read_cache_files(user_t)
 # Interface options:
 #   systemd_tmpfiles_exec(user_t) # [20]
 systemd_tmpfiles_exec(user_t)
+
+#============= user_t ==============
+# audit(1632749806.173:15792):
+#  scontext="user_u:user_r:user_t:s0-s0:c0.c1023" tcontext="system_u:object_r:gnome_atspi_exec_t:s0"
+#  class="file" perms="getattr"
+#  comm="systemd-xdg-aut" exe="" path=""
+#  message="type=AVC msg=audit(1632749806.173:15792): avc:  denied  { getattr }
+#   for  pid=77379 comm="systemd-xdg-aut" path="/usr/libexec/at-spi-bus-launcher"
+#   dev="dm-1" ino=50345674 scontext=user_u:user_r:user_t:s0-s0:c0.c1023
+#   tcontext=system_u:object_r:gnome_atspi_exec_t:s0 tclass=file permissive=0"
+# Interface options:
+#   gnome_exec_atspi(user_t) # [24]
+gnome_exec_atspi(user_t)
