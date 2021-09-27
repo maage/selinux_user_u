@@ -34,4 +34,4 @@ HOME_DIR/\.local/share/systemd/user(/.*)?			gen_context(system_u:object_r:system
 
 ### Local modification
 # source: --user ssh-agent.service
-/var/run/user/[^/]*/ssh-agent\.socket				gen_context(system_u:object_r:ssh_agent_tmp_t,s0)
+/var/run/user/[^/]*/ssh-agent\.socket		-s		gen_context(system_u:object_r:ssh_agent_tmp_t,s0)
