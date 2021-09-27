@@ -686,3 +686,28 @@ require {
 #   fwupd_manage_cache_files(user_t) # [197]
 allow user_t fwupd_cache_t:file read;
 fwupd_read_cache_files(user_t)
+
+#### Allow to use /usr/bin/systemd-tmpfiles
+# audit(1632749538.281:15561):
+#  scontext="user_u:user_r:user_t:s0-s0:c0.c1023" tcontext="system_u:object_r:systemd_tmpfiles_exec_t:s0"
+#  class="file" perms="execute"
+#  comm="zsh" exe="" path=""
+#  message="type=AVC msg=audit(1632749538.281:15561): avc:  denied  { execute }
+#   for  pid=77022 comm="zsh" name="systemd-tmpfiles" dev="dm-1" ino=33940978
+#   scontext=user_u:user_r:user_t:s0-s0:c0.c1023
+#   tcontext=system_u:object_r:systemd_tmpfiles_exec_t:s0 tclass=file
+#   permissive=0"
+# Interface options:
+#   systemd_tmpfiles_exec(user_t) # [21]
+# audit(1632749635.529:15605):
+#  scontext="user_u:user_r:user_t:s0-s0:c0.c1023" tcontext="system_u:object_r:systemd_tmpfiles_exec_t:s0"
+#  class="file" perms="{ read open }"
+#  comm="zsh" exe="" path=""
+#  message="type=AVC msg=audit(1632749635.529:15605): avc:  denied  { read open }
+#   for  pid=77106 comm="zsh" path="/usr/bin/systemd-tmpfiles" dev="dm-1"
+#   ino=33940978 scontext=user_u:user_r:user_t:s0-s0:c0.c1023
+#   tcontext=system_u:object_r:systemd_tmpfiles_exec_t:s0 tclass=file
+#   permissive=0"
+# Interface options:
+#   systemd_tmpfiles_exec(user_t) # [20]
+systemd_tmpfiles_exec(user_t)
