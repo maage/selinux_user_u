@@ -562,3 +562,27 @@ systemd_tmpfiles_exec(user_t)
 #============= user_t ==============
 # AVC avc:  denied  { getattr } for  pid=77379 comm="systemd-xdg-aut" path="/usr/libexec/at-spi-bus-launcher" dev="dm-1" ino=50345674 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:gnome_atspi_exec_t:s0 tclass=file permissive=0
 gnome_exec_atspi(user_t)
+
+#### Allow: ssh -X / gnome-ssh-askpass
+require {
+	type ssh_t;
+}
+
+#============= ssh_t ==============
+# AVC avc: denied { connectto } for pid=68612 comm="gnome-ssh-askpa" path="/run/user/1000/bus" scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c1023 tclass=unix_stream_socket permissive=0
+dbus_session_client(user, ssh_t)
+
+# AVC avc: denied { getattr } for pid=68612 comm="gnome-ssh-askpa" path="/var/lib/flatpak/exports/share/icons/hicolor/index.theme" dev="dm-0" ino=18172197 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=system_u:object_r:var_lib_t:s0 tclass=file permissive=0
+# AVC avc: denied { read } for pid=68612 comm="gnome-ssh-askpa" name="icon-theme.cache" dev="dm-0" ino=21033510 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=system_u:object_r:var_lib_t:s0 tclass=file permissive=0
+files_read_var_lib_files(ssh_t)
+# AVC avc:  denied  { map } for  pid=70336 comm="gnome-ssh-askpa" path="/var/lib/flatpak/exports/share/icons/hicolor/icon-theme.cache" dev="dm-0" ino=21033510 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=system_u:object_r:var_lib_t:s0 tclass=file permissive=0
+files_map_var_lib_files(ssh_t)
+
+# AVC avc: denied { map } for pid=68612 comm="gnome-ssh-askpa" path="/home/user/.local/share/mime/mime.cache" dev="dm-2" ino=2625349 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0
+gnome_map_generic_data_home_files(ssh_t)
+
+#============= user_t ==============
+# AVC avc:  denied  { getattr associate } for  pid=1871 comm="Xorg" key=0  scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tclass=shm permissive=0
+# AVC avc:  denied  { read write } for  pid=1871 comm="Xorg" key=0 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tclass=shm permissive=0
+# AVC avc: denied { unix_read unix_write } for pid=1871 comm="Xorg" key=0 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tclass=shm permissive=0
+allow user_t ssh_t:shm { associate getattr read unix_read unix_write write };
