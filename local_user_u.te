@@ -442,15 +442,7 @@ require {
 	type pulseaudio_var_lib_t;
 	class sock_file write;
 }
-# audit(1618397152.013:540):
-#  scontext="system_u:system_r:xdm_t:s0-s0:c0.c1023" tcontext="unconfined_u:object_r:pulseaudio_var_lib_t:s0"
-#  class="sock_file" perms="write"
-#  comm="gnome-shell" exe="" path=""
-#  message="type=AVC msg=audit(1618397152.013:540): avc:  denied  { write } for
-#   pid=5179 comm="gnome-shell" name="native" dev="tmpfs" ino=48
-#   scontext=system_u:system_r:xdm_t:s0-s0:c0.c1023
-#   tcontext=unconfined_u:object_r:pulseaudio_var_lib_t:s0 tclass=sock_file
-#   permissive=0"
+# AVC avc:  denied  { write } for pid=5179 comm="gnome-shell" name="native" dev="tmpfs" ino=48 scontext=system_u:system_r:xdm_t:s0-s0:c0.c1023 tcontext=unconfined_u:object_r:pulseaudio_var_lib_t:s0 tclass=sock_file permissive=0
 ## maybe not need actual manage, but it is pointless
 manage_sock_files_pattern(xdm_t, pulseaudio_var_lib_t, pulseaudio_var_lib_t)
 
@@ -477,15 +469,7 @@ require {
 	class sock_file read;
 	type session_dbusd_tmp_t;
 }
-# audit(1624357631.567:556):
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="user_u:object_r:session_dbusd_tmp_t:s0"
-#  class="sock_file" perms="read"
-#  comm="pool-google-chr" exe="" path=""
-#  message="type=AVC msg=audit(1624357631.567:556): avc:  denied  { read } for
-#   pid=12778 comm="pool-google-chr" name="dbus-N0kGENH6lI" dev="tmpfs" ino=68
-#   scontext=user_u:user_r:user_t:s0-s0:c0.c255
-#   tcontext=user_u:object_r:session_dbusd_tmp_t:s0 tclass=sock_file
-#   permissive=0"
+# AVC avc:  denied  { read } for pid=12778 comm="pool-google-chr" name="dbus-N0kGENH6lI" dev="tmpfs" ino=68 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=user_u:object_r:session_dbusd_tmp_t:s0 tclass=sock_file permissive=0
 allow user_t session_dbusd_tmp_t:sock_file read;
 
 ### google chrome
@@ -493,14 +477,7 @@ require {
 	class dir watch;
 	type tmp_t;
 }
-# audit(1624357631.555:554):
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="system_u:object_r:tmp_t:s0"
-#  class="dir" perms="watch"
-#  comm="chrome" exe="" path=""
-#  message="type=AVC msg=audit(1624357631.555:554): avc:  denied  { watch } for
-#   pid=12778 comm="chrome" path="/tmp" dev="tmpfs" ino=1
-#   scontext=user_u:user_r:user_t:s0-s0:c0.c255
-#   tcontext=system_u:object_r:tmp_t:s0 tclass=dir permissive=0"
+# AVC avc:  denied  { watch } for pid=12778 comm="chrome" path="/tmp" dev="tmpfs" ino=1 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=system_u:object_r:tmp_t:s0 tclass=dir permissive=0
 allow user_t tmp_t:dir watch;
 
 require {
@@ -508,25 +485,9 @@ require {
 	type NetworkManager_var_run_t;
 }
 #============= user_t ==============
-# audit(1624361909.618:1066):
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="system_u:object_r:NetworkManager_var_run_t:s0"
-#  class="dir" perms="read"
-#  comm="ThreadPoolForeg" exe="" path=""
-#  message="type=AVC msg=audit(1624361909.618:1066): avc:  denied  { read } for
-#   pid=18891 comm="ThreadPoolForeg" name="NetworkManager" dev="tmpfs" ino=101
-#   scontext=user_u:user_r:user_t:s0-s0:c0.c255
-#   tcontext=system_u:object_r:NetworkManager_var_run_t:s0 tclass=dir
-#   permissive=0"
+# AVC avc:  denied  { read } for pid=18891 comm="ThreadPoolForeg" name="NetworkManager" dev="tmpfs" ino=101 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=system_u:object_r:NetworkManager_var_run_t:s0 tclass=dir permissive=0
 allow user_t NetworkManager_var_run_t:dir read;
-# audit(1624362705.365:1329):
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="system_u:object_r:NetworkManager_var_run_t:s0"
-#  class="dir" perms="watch"
-#  comm="ThreadPoolForeg" exe="" path=""
-#  message="type=AVC msg=audit(1624362705.365:1329): avc:  denied  { watch } for
-#   pid=19769 comm="ThreadPoolForeg" path="/run/NetworkManager" dev="tmpfs"
-#   ino=101 scontext=user_u:user_r:user_t:s0-s0:c0.c255
-#   tcontext=system_u:object_r:NetworkManager_var_run_t:s0 tclass=dir
-#   permissive=0"
+# AVC avc:  denied  { watch } for pid=19769 comm="ThreadPoolForeg" path="/run/NetworkManager" dev="tmpfs" ino=101 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=system_u:object_r:NetworkManager_var_run_t:s0 tclass=dir permissive=0
 allow user_t NetworkManager_var_run_t:dir watch;
 
 require {
@@ -534,32 +495,9 @@ require {
 	type container_ro_file_t;
 }
 #============= user_t ==============
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="user_u:object_r:container_ro_file_t:s0"
-#  class="dir" perms="getattr"
-#  comm="find" exe="" path=""
-#  message="kesä 22 15:16:54 user-hp-eb-lan audit[24306]: AVC avc:  denied  {
-#   getattr } for  pid=24306 comm="find"
-#   path="/home/user/.local/share/containers/storage/overlay-images" dev="dm-2"
-#   ino=1049541 scontext=user_u:user_r:user_t:s0-s0:c0.c255
-#   tcontext=user_u:object_r:container_ro_file_t:s0 tclass=dir permissive=0 "
-# 
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="user_u:object_r:container_ro_file_t:s0"
-#  class="dir" perms="getattr"
-#  comm="find" exe="" path=""
-#  message="kesä 22 15:16:54 user-hp-eb-lan audit[24306]: AVC avc:  denied  {
-#   getattr } for  pid=24306 comm="find"
-#   path="/home/user/.local/share/containers/storage/overlay" dev="dm-2"
-#   ino=1049537 scontext=user_u:user_r:user_t:s0-s0:c0.c255
-#   tcontext=user_u:object_r:container_ro_file_t:s0 tclass=dir permissive=0 "
-# 
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c255" tcontext="user_u:object_r:container_ro_file_t:s0"
-#  class="dir" perms="getattr"
-#  comm="find" exe="" path=""
-#  message="kesä 22 15:16:54 user-hp-eb-lan audit[24306]: AVC avc:  denied  {
-#   getattr } for  pid=24306 comm="find"
-#   path="/home/user/.local/share/containers/storage/overlay-layers" dev="dm-2"
-#   ino=1049545 scontext=user_u:user_r:user_t:s0-s0:c0.c255
-#   tcontext=user_u:object_r:container_ro_file_t:s0 tclass=dir permissive=0 "
+# AVC avc:  denied  { getattr } for  pid=24306 comm="find" path="/home/user/.local/share/containers/storage/overlay-images" dev="dm-2" ino=1049541 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=user_u:object_r:container_ro_file_t:s0 tclass=dir permissive=0
+# AVC avc:  denied  { getattr } for  pid=24306 comm="find" path="/home/user/.local/share/containers/storage/overlay" dev="dm-2" ino=1049537 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=user_u:object_r:container_ro_file_t:s0 tclass=dir permissive=0
+# AVC avc:  denied  { getattr } for  pid=24306 comm="find" path="/home/user/.local/share/containers/storage/overlay-layers" dev="dm-2" ino=1049545 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=user_u:object_r:container_ro_file_t:s0 tclass=dir permissive=0
 allow user_t container_ro_file_t:dir getattr;
 
 require {
@@ -567,16 +505,7 @@ require {
 	type user_t;
 	class dbus send_msg;
 }
-# audit(1628498428.244:316):
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c1023" tcontext="system_u:system_r:setroubleshootd_t:s0"
-#  class="dbus" perms="send_msg"
-#  comm="" exe="/usr/bin/dbus-broker" path=""
-#  message="type=USER_AVC msg=audit(1628498428.244:316): pid=5237 uid=81
-#   auid=4294967295 ses=4294967295
-#   subj=system_u:system_r:system_dbusd_t:s0-s0:c0.c1023 msg='avc:  denied  {
-#   send_msg } for  scontext=user_u:user_r:user_t:s0-s0:c0.c1023
-#   tcontext=system_u:system_r:setroubleshootd_t:s0 tclass=dbus permissive=0
-#   exe="/usr/bin/dbus-broker" sauid=81 hostname=? addr=? terminal=?'"
+# AVC avc:  denied  { send_msg } for  scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:system_r:setroubleshootd_t:s0 tclass=dbus permissive=0 exe="/usr/bin/dbus-broker" sauid=81 hostname=? addr=? terminal=?
 allow user_t setroubleshootd_t:dbus send_msg;
 
 require {
@@ -584,15 +513,7 @@ require {
 	type user_dbusd_t;
 	class sock_file write;
 }
-# audit(1631085684.784:321):
-#  scontext="user_u:user_r:user_dbusd_t:s0-s0:c0.c1023" tcontext="user_u:object_r:systemd_logind_var_run_t:s0"
-#  class="sock_file" perms="write"
-#  comm="dbus-broker-lau" exe="" path=""
-#  message="type=AVC msg=audit(1631085684.784:321): avc:  denied  { write } for
-#   pid=2054 comm="dbus-broker-lau" name="notify" dev="tmpfs" ino=40
-#   scontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c1023
-#   tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file
-#   permissive=0"
+# AVC avc:  denied  { write } for pid=2054 comm="dbus-broker-lau" name="notify" dev="tmpfs" ino=40 scontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c1023 tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file permissive=0
 allow user_dbusd_t systemd_logind_var_run_t:sock_file write;
 
 #### Allow to watch /run/media
@@ -600,30 +521,9 @@ require {
 	type mnt_t;
 	class dir watch;
 }
-# audit(1631538712.033:18837):
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c1023" tcontext="system_u:object_r:mnt_t:s0"
-#  class="dir" perms="watch"
-#  comm="nautilus" exe="" path=""
-#  message="type=AVC msg=audit(1631538712.033:18837): avc:  denied  { watch } for
-#   pid=306116 comm="nautilus" path="/run/media/user" dev="tmpfs" ino=25960
-#   scontext=user_u:user_r:user_t:s0-s0:c0.c1023
-#   tcontext=system_u:object_r:mnt_t:s0 tclass=dir permissive=0"
-# audit(1631538716.297:18839):
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c1023" tcontext="system_u:object_r:mnt_t:s0"
-#  class="dir" perms="watch"
-#  comm="gmain" exe="" path=""
-#  message="type=AVC msg=audit(1631538716.297:18839): avc:  denied  { watch } for
-#   pid=306116 comm="gmain" path="/run/media/user" dev="tmpfs" ino=25960
-#   scontext=user_u:user_r:user_t:s0-s0:c0.c1023
-#   tcontext=system_u:object_r:mnt_t:s0 tclass=dir permissive=0"
-# audit(1631604576.038:36826):
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c1023" tcontext="system_u:object_r:mnt_t:s0"
-#  class="dir" perms="watch"
-#  comm="gmain" exe="" path=""
-#  message="type=AVC msg=audit(1631604576.038:36826): avc:  denied  { watch } for
-#   pid=306116 comm="gmain" path="/run/media" dev="tmpfs" ino=1944
-#   scontext=user_u:user_r:user_t:s0-s0:c0.c1023
-#   tcontext=system_u:object_r:mnt_t:s0 tclass=dir permissive=0"
+# AVC avc:  denied  { watch } for pid=306116 comm="nautilus" path="/run/media/user" dev="tmpfs" ino=25960 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:mnt_t:s0 tclass=dir permissive=0
+# # AVC avc:  denied  { watch } for pid=306116 comm="gmain" path="/run/media/user" dev="tmpfs" ino=25960 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:mnt_t:s0 tclass=dir permissive=0
+# AVC avc:  denied  { watch } for pid=306116 comm="gmain" path="/run/media" dev="tmpfs" ino=1944 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:mnt_t:s0 tclass=dir permissive=0
 allow user_t mnt_t:dir watch;
 files_manage_mnt_dirs(user_t)
 
@@ -633,15 +533,7 @@ require {
 	type user_fonts_cache_t;
 	class file { map open };
 }
-# audit(1631517036.779:17359):
-#  scontext="user_u:user_r:ssh_t:s0-s0:c0.c1023" tcontext="user_u:object_r:user_fonts_cache_t:s0"
-#  class="file" perms="map"
-#  comm="B70616E676F5D204663496E697" exe="" path=""
-#  message="type=AVC msg=audit(1631517036.779:17359): avc:  denied  { map } for
-#   pid=280133 comm=5B70616E676F5D204663496E6974 path="/home/user/.cache/fontcon
-#   fig/beeeeb3dfe132a8a0633a017c99ce0c0-le64.cache-7" dev="dm-2" ino=946318
-#   scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023
-#   tcontext=user_u:object_r:user_fonts_cache_t:s0 tclass=file permissive=0"
+# AVC avc:  denied  { map } for pid=280133 comm=5B70616E676F5D204663496E6974 path="/home/user/.cache/fontconfig/beeeeb3dfe132a8a0633a017c99ce0c0-le64.cache-7" dev="dm-2" ino=946318 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_fonts_cache_t:s0 tclass=file permissive=0
 allow ssh_t user_fonts_cache_t:file map;
 
 #### Allow setroubleshootd integration
@@ -649,16 +541,7 @@ require {
 	type setroubleshootd_t;
 	class dbus send_msg;
 }
-# audit(1631517040.248:17405):
-#  scontext="system_u:system_r:setroubleshootd_t:s0" tcontext="user_u:user_r:user_t:s0-s0:c0.c1023"
-#  class="dbus" perms="send_msg"
-#  comm="" exe="/usr/bin/dbus-broker" path=""
-#  message="type=USER_AVC msg=audit(1631517040.248:17405): pid=1164 uid=81
-#   auid=4294967295 ses=4294967295
-#   subj=system_u:system_r:system_dbusd_t:s0-s0:c0.c1023 msg='avc:  denied  {
-#   send_msg } for  scontext=system_u:system_r:setroubleshootd_t:s0
-#   tcontext=user_u:user_r:user_t:s0-s0:c0.c1023 tclass=dbus permissive=0
-#   exe="/usr/bin/dbus-broker" sauid=81 hostname=? addr=? terminal=?'"
+# AVC avc:  denied  { send_msg } for  scontext=system_u:system_r:setroubleshootd_t:s0 tcontext=user_u:user_r:user_t:s0-s0:c0.c1023 tclass=dbus permissive=0 exe="/usr/bin/dbus-broker" sauid=81 hostname=? addr=? terminal=?
 allow setroubleshootd_t user_t:dbus send_msg;
 
 # Allow user_u to read fwupd_cache_t
@@ -666,61 +549,16 @@ require {
 	type fwupd_cache_t;
 	class file read;
 }
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c1023" tcontext="system_u:object_r:fwupd_cache_t:s0"
-#  class="file" perms="read"
-#  comm="gnome-software" exe="" path=""
-#  message=" AVC avc:  denied  { read } for  pid=332137 comm="gnome-software"
-#   name="copr:copr.fedorainfracloud.org:hdfssk:passwordsafe.xml" dev="dm-2"
-#   ino=33554598 scontext=user_u:user_r:user_t:s0-s0:c0.c1023
-#   tcontext=system_u:object_r:fwupd_cache_t:s0 tclass=file permissive=0 "
-#
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c1023" tcontext="system_u:object_r:fwupd_cache_t:s0"
-#  class="file" perms="read"
-#  comm="pool-org.gnome." exe="" path=""
-#  message=" AVC avc:  denied  { read } for  pid=332137 comm="pool-org.gnome."
-#   name="copr:copr.fedorainfracloud.org:hdfssk:passwordsafe.xml" dev="dm-2"
-#   ino=33554598 scontext=user_u:user_r:user_t:s0-s0:c0.c1023
-#   tcontext=system_u:object_r:fwupd_cache_t:s0 tclass=file permissive=0 "
-# Interface options:
-#   fwupd_read_cache_files(user_t) # [46]
-#   fwupd_manage_cache_files(user_t) # [197]
+# AVC avc:  denied  { read } for  pid=332137 comm="gnome-software" name="copr:copr.fedorainfracloud.org:hdfssk:passwordsafe.xml" dev="dm-2" ino=33554598 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:fwupd_cache_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { read } for  pid=332137 comm="pool-org.gnome." name="copr:copr.fedorainfracloud.org:hdfssk:passwordsafe.xml" dev="dm-2" ino=33554598 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:fwupd_cache_t:s0 tclass=file permissive=0
 allow user_t fwupd_cache_t:file read;
 fwupd_read_cache_files(user_t)
 
 #### Allow to use /usr/bin/systemd-tmpfiles
-# audit(1632749538.281:15561):
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c1023" tcontext="system_u:object_r:systemd_tmpfiles_exec_t:s0"
-#  class="file" perms="execute"
-#  comm="zsh" exe="" path=""
-#  message="type=AVC msg=audit(1632749538.281:15561): avc:  denied  { execute }
-#   for  pid=77022 comm="zsh" name="systemd-tmpfiles" dev="dm-1" ino=33940978
-#   scontext=user_u:user_r:user_t:s0-s0:c0.c1023
-#   tcontext=system_u:object_r:systemd_tmpfiles_exec_t:s0 tclass=file
-#   permissive=0"
-# Interface options:
-#   systemd_tmpfiles_exec(user_t) # [21]
-# audit(1632749635.529:15605):
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c1023" tcontext="system_u:object_r:systemd_tmpfiles_exec_t:s0"
-#  class="file" perms="{ read open }"
-#  comm="zsh" exe="" path=""
-#  message="type=AVC msg=audit(1632749635.529:15605): avc:  denied  { read open }
-#   for  pid=77106 comm="zsh" path="/usr/bin/systemd-tmpfiles" dev="dm-1"
-#   ino=33940978 scontext=user_u:user_r:user_t:s0-s0:c0.c1023
-#   tcontext=system_u:object_r:systemd_tmpfiles_exec_t:s0 tclass=file
-#   permissive=0"
-# Interface options:
-#   systemd_tmpfiles_exec(user_t) # [20]
+# AVC avc:  denied  { execute } for  pid=77022 comm="zsh" name="systemd-tmpfiles" dev="dm-1" ino=33940978 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:systemd_tmpfiles_exec_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { read open } for  pid=77106 comm="zsh" path="/usr/bin/systemd-tmpfiles" dev="dm-1" ino=33940978 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:systemd_tmpfiles_exec_t:s0 tclass=file permissive=0
 systemd_tmpfiles_exec(user_t)
 
 #============= user_t ==============
-# audit(1632749806.173:15792):
-#  scontext="user_u:user_r:user_t:s0-s0:c0.c1023" tcontext="system_u:object_r:gnome_atspi_exec_t:s0"
-#  class="file" perms="getattr"
-#  comm="systemd-xdg-aut" exe="" path=""
-#  message="type=AVC msg=audit(1632749806.173:15792): avc:  denied  { getattr }
-#   for  pid=77379 comm="systemd-xdg-aut" path="/usr/libexec/at-spi-bus-launcher"
-#   dev="dm-1" ino=50345674 scontext=user_u:user_r:user_t:s0-s0:c0.c1023
-#   tcontext=system_u:object_r:gnome_atspi_exec_t:s0 tclass=file permissive=0"
-# Interface options:
-#   gnome_exec_atspi(user_t) # [24]
+# AVC avc:  denied  { getattr } for  pid=77379 comm="systemd-xdg-aut" path="/usr/libexec/at-spi-bus-launcher" dev="dm-1" ino=50345674 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:gnome_atspi_exec_t:s0 tclass=file permissive=0
 gnome_exec_atspi(user_t)
