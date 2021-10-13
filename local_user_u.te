@@ -473,85 +473,47 @@ require {
 allow user_t session_dbusd_tmp_t:sock_file read;
 
 ### google chrome
-require {
-	class dir watch;
-	type tmp_t;
-}
 # AVC avc:  denied  { watch } for pid=12778 comm="chrome" path="/tmp" dev="tmpfs" ino=1 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=system_u:object_r:tmp_t:s0 tclass=dir permissive=0
-allow user_t tmp_t:dir watch;
+files_watch_generic_tmp_dirs(user_t)
 
-require {
-	class dir { read watch };
-	type NetworkManager_var_run_t;
-}
-#============= user_t ==============
 # AVC avc:  denied  { read } for pid=18891 comm="ThreadPoolForeg" name="NetworkManager" dev="tmpfs" ino=101 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=system_u:object_r:NetworkManager_var_run_t:s0 tclass=dir permissive=0
-allow user_t NetworkManager_var_run_t:dir read;
 # AVC avc:  denied  { watch } for pid=19769 comm="ThreadPoolForeg" path="/run/NetworkManager" dev="tmpfs" ino=101 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=system_u:object_r:NetworkManager_var_run_t:s0 tclass=dir permissive=0
-allow user_t NetworkManager_var_run_t:dir watch;
+networkmanager_manage_pid_files(user_t)
 
-require {
-	class dir getattr;
-	type container_ro_file_t;
-}
-#============= user_t ==============
 # AVC avc:  denied  { getattr } for  pid=24306 comm="find" path="/home/user/.local/share/containers/storage/overlay-images" dev="dm-2" ino=1049541 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=user_u:object_r:container_ro_file_t:s0 tclass=dir permissive=0
 # AVC avc:  denied  { getattr } for  pid=24306 comm="find" path="/home/user/.local/share/containers/storage/overlay" dev="dm-2" ino=1049537 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=user_u:object_r:container_ro_file_t:s0 tclass=dir permissive=0
 # AVC avc:  denied  { getattr } for  pid=24306 comm="find" path="/home/user/.local/share/containers/storage/overlay-layers" dev="dm-2" ino=1049545 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=user_u:object_r:container_ro_file_t:s0 tclass=dir permissive=0
-allow user_t container_ro_file_t:dir getattr;
-
-require {
-	type setroubleshootd_t;
-	type user_t;
-	class dbus send_msg;
-}
-# AVC avc:  denied  { send_msg } for  scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:system_r:setroubleshootd_t:s0 tclass=dbus permissive=0 exe="/usr/bin/dbus-broker" sauid=81 hostname=? addr=? terminal=?
-allow user_t setroubleshootd_t:dbus send_msg;
+container_read_share_files(user_t)
 
 require {
 	type systemd_logind_var_run_t;
 	type user_dbusd_t;
-	class sock_file write;
 }
 # AVC avc:  denied  { write } for pid=2054 comm="dbus-broker-lau" name="notify" dev="tmpfs" ino=40 scontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c1023 tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file permissive=0
 allow user_dbusd_t systemd_logind_var_run_t:sock_file write;
 
 #### Allow to watch /run/media
-require {
-	type mnt_t;
-	class dir watch;
-}
 # AVC avc:  denied  { watch } for pid=306116 comm="nautilus" path="/run/media/user" dev="tmpfs" ino=25960 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:mnt_t:s0 tclass=dir permissive=0
 # # AVC avc:  denied  { watch } for pid=306116 comm="gmain" path="/run/media/user" dev="tmpfs" ino=25960 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:mnt_t:s0 tclass=dir permissive=0
 # AVC avc:  denied  { watch } for pid=306116 comm="gmain" path="/run/media" dev="tmpfs" ino=1944 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:mnt_t:s0 tclass=dir permissive=0
-allow user_t mnt_t:dir watch;
 files_manage_mnt_dirs(user_t)
 
 #### Allow ssh askpass to access font cache
 require {
 	type ssh_t;
 	type user_fonts_cache_t;
-	class file { map open };
 }
 # AVC avc:  denied  { map } for pid=280133 comm=5B70616E676F5D204663496E6974 path="/home/user/.cache/fontconfig/beeeeb3dfe132a8a0633a017c99ce0c0-le64.cache-7" dev="dm-2" ino=946318 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_fonts_cache_t:s0 tclass=file permissive=0
 allow ssh_t user_fonts_cache_t:file map;
 
 #### Allow setroubleshootd integration
-require {
-	type setroubleshootd_t;
-	class dbus send_msg;
-}
+# AVC avc:  denied  { send_msg } for  scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:system_r:setroubleshootd_t:s0 tclass=dbus permissive=0 exe="/usr/bin/dbus-broker" sauid=81 hostname=? addr=? terminal=?
 # AVC avc:  denied  { send_msg } for  scontext=system_u:system_r:setroubleshootd_t:s0 tcontext=user_u:user_r:user_t:s0-s0:c0.c1023 tclass=dbus permissive=0 exe="/usr/bin/dbus-broker" sauid=81 hostname=? addr=? terminal=?
-allow setroubleshootd_t user_t:dbus send_msg;
+setroubleshoot_dbus_chat(setroubleshootd_t)
 
 # Allow user_u to read fwupd_cache_t
-require {
-	type fwupd_cache_t;
-	class file read;
-}
 # AVC avc:  denied  { read } for  pid=332137 comm="gnome-software" name="copr:copr.fedorainfracloud.org:hdfssk:passwordsafe.xml" dev="dm-2" ino=33554598 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:fwupd_cache_t:s0 tclass=file permissive=0
 # AVC avc:  denied  { read } for  pid=332137 comm="pool-org.gnome." name="copr:copr.fedorainfracloud.org:hdfssk:passwordsafe.xml" dev="dm-2" ino=33554598 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:fwupd_cache_t:s0 tclass=file permissive=0
-allow user_t fwupd_cache_t:file read;
 fwupd_read_cache_files(user_t)
 
 #### Allow to use /usr/bin/systemd-tmpfiles
