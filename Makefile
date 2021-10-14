@@ -4,7 +4,7 @@
 
 QUIET := n
 
-.PHONY: my-hop all my-commit
+.PHONY: my-hop all my-commit lint
 my-hop: all
 	sudo $(MAKE) load
 
@@ -12,6 +12,11 @@ all: my-commit
 
 my-commit:
 	@./commit.sh
+
+lint:
+	selint --disable=E-005 *.fc
+	selint --disable=S-001 *.te
+	selint *.if
 
 include /usr/share/selinux/devel/Makefile
 
