@@ -4,4 +4,4 @@
 
 /usr/lib/slack/slack		--	gen_context(system_u:object_r:bin_t,s0)
 /usr/lib/slack/chrome-sandbox	--	gen_context(system_u:object_r:chrome_sandbox_exec_t,s0)
-/usr/lib/slack(/.*)?/[^/]*.so	--	gen_context(system_u:object_r:textrel_shlib_t,s0)
+/usr/lib/slack(/.*)?/[^/]*\.so	--	gen_context(system_u:object_r:textrel_shlib_t,s0)
