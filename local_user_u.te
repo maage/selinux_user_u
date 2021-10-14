@@ -548,3 +548,18 @@ gnome_map_generic_data_home_files(ssh_t)
 # AVC avc:  denied  { read write } for  pid=1871 comm="Xorg" key=0 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tclass=shm permissive=0
 # AVC avc: denied { unix_read unix_write } for pid=1871 comm="Xorg" key=0 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tclass=shm permissive=0
 allow user_t ssh_t:shm { associate getattr read unix_read unix_write write };
+
+
+#### Allow: ssh-agent ssh ...
+require {
+	attribute ssh_agent_type;
+	type bin_t;
+	type ssh_exec_t;
+	type ssh_t;
+	type xauth_t;
+	type user_ssh_agent_t;
+}
+# AVC avc:  denied  { execute } for  pid=78917 comm="ssh-agent" name="ssh" dev="dm-0" ino=30736058 scontext=user_u:user_r:user_ssh_agent_t:s0-s0:c0.c1023 tcontext=system_u:object_r:ssh_exec_t:s0 tclass=file permissive=0
+read_lnk_files_pattern(ssh_agent_type, bin_t, ssh_exec_t)
+domtrans_pattern(ssh_agent_type, ssh_exec_t, ssh_t)
+type_transition user_ssh_agent_t ssh_exec_t:process ssh_t;
