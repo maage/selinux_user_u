@@ -553,6 +553,7 @@ allow user_t ssh_t:shm { associate getattr read unix_read unix_write write };
 #### Allow: ssh-agent ssh ...
 require {
 	attribute ssh_agent_type;
+	class dbus send_msg;
 	type bin_t;
 	type ssh_exec_t;
 	type ssh_t;
@@ -563,3 +564,6 @@ require {
 read_lnk_files_pattern(ssh_agent_type, bin_t, ssh_exec_t)
 domtrans_pattern(ssh_agent_type, ssh_exec_t, ssh_t)
 type_transition user_ssh_agent_t ssh_exec_t:process ssh_t;
+
+# AVC avc:  denied { send_msg } for  scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_t:s0-s0:c0.c1023 tclass=dbus permissive=0
+allow ssh_t user_t:dbus send_msg;
