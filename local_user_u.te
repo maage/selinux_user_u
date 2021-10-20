@@ -509,7 +509,7 @@ allow ssh_t user_fonts_cache_t:file map;
 #### Allow setroubleshootd integration
 # AVC avc:  denied  { send_msg } for  scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:system_r:setroubleshootd_t:s0 tclass=dbus permissive=0 exe="/usr/bin/dbus-broker" sauid=81 hostname=? addr=? terminal=?
 # AVC avc:  denied  { send_msg } for  scontext=system_u:system_r:setroubleshootd_t:s0 tcontext=user_u:user_r:user_t:s0-s0:c0.c1023 tclass=dbus permissive=0 exe="/usr/bin/dbus-broker" sauid=81 hostname=? addr=? terminal=?
-setroubleshoot_dbus_chat(setroubleshootd_t)
+setroubleshoot_dbus_chat(user_t)
 
 # Allow user_u to read fwupd_cache_t
 # AVC avc:  denied  { read } for  pid=332137 comm="gnome-software" name="copr:copr.fedorainfracloud.org:hdfssk:passwordsafe.xml" dev="dm-2" ino=33554598 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:fwupd_cache_t:s0 tclass=file permissive=0
