@@ -71,78 +71,28 @@ dontaudit journalctl_t initctl_t:fifo_file getattr;
 dontaudit journalctl_t proc_kcore_t:file getattr;
 
 optional_policy(`
-#### allow: faplolicyd to watch
+#### Allow: faplolicyd to watch
 # mostly mock files
 require {
-	class dir { watch_mount watch_with_perm };
-	class file { watch_mount watch_with_perm };
 	type fapolicyd_t;
 	type user_home_t;
 	type user_tmp_t;
 }
-# audit(1622112295.772:1760):
-#  scontext="system_u:system_r:fapolicyd_t:s0" tcontext="unconfined_u:object_r:user_tmp_t:s0"
-#  class="file" perms="{ watch_mount watch_with_perm }"
-#  comm="fapolicyd" exe="" path=""
-#  message="type=AVC msg=audit(1622112295.772:1760): avc:  denied  { watch_mount
-#   watch_with_perm } for  pid=20253 comm="fapolicyd"
-#   path="/var/lib/mock/fedora-34-x86_64-bootstrap/root/proc/filesystems"
-#   dev="tmpfs" ino=825 scontext=system_u:system_r:fapolicyd_t:s0
-#   tcontext=unconfined_u:object_r:user_tmp_t:s0 tclass=file permissive=0"
+# AVC avc:  denied  { watch_mount watch_with_perm } for  pid=20253 comm="fapolicyd" path="/var/lib/mock/fedora-34-x86_64-bootstrap/root/proc/filesystems" dev="tmpfs" ino=825 scontext=system_u:system_r:fapolicyd_t:s0 tcontext=unconfined_u:object_r:user_tmp_t:s0 tclass=file permissive=0
 allow fapolicyd_t user_tmp_t:file { watch_mount watch_with_perm };
-
-# audit(1622113139.201:1901):
-#  scontext="system_u:system_r:fapolicyd_t:s0" tcontext="unconfined_u:object_r:user_home_t:s0"
-#  class="dir" perms="{ watch_mount watch_with_perm }"
-#  comm="fapolicyd" exe="" path=""
-#  message="type=AVC msg=audit(1622113139.201:1901): avc:  denied  { watch_mount
-#   watch_with_perm } for  pid=20253 comm="fapolicyd" path="/var/lib/mock/fedora-
-#   34-x86_64-bootstrap/root/home/admin/git/rpm/laptop-mode-
-#   tools/results/default" dev="dm-2" ino=1311375
-#   scontext=system_u:system_r:fapolicyd_t:s0
-#   tcontext=unconfined_u:object_r:user_home_t:s0 tclass=dir permissive=0"
+# AVC avc:  denied  { watch_mount watch_with_perm } for  pid=20253 comm="fapolicyd" path="/var/lib/mock/fedora-34-x86_64-bootstrap/root/home/admin/git/rpm/laptop-mode-tools/results/default" dev="dm-2" ino=1311375 scontext=system_u:system_r:fapolicyd_t:s0 tcontext=unconfined_u:object_r:user_home_t:s0 tclass=dir permissive=0
 allow fapolicyd_t user_home_t:dir { watch_mount watch_with_perm };
 ')
 
 require {
 	type abrt_t;
 	type xdm_var_lib_t;
-	class file { open read };
 }
-#============= abrt_t ==============
-# audit(1623656221.222:356):
-#  scontext="system_u:system_r:abrt_t:s0-s0:c0.c1023" tcontext="system_u:object_r:xdm_var_lib_t:s0"
-#  class="file" perms="read"
-#  comm="gdb" exe="" path=""
-#  message="type=AVC msg=audit(1623656221.222:356): avc:  denied  { read } for
-#   pid=7366 comm="gdb" name="index" dev="dm-1" ino=14580458
-#   scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023
-#   tcontext=system_u:object_r:xdm_var_lib_t:s0 tclass=file permissive=0"
-# audit(1623656221.241:357):
-#  scontext="system_u:system_r:abrt_t:s0-s0:c0.c1023" tcontext="system_u:object_r:xdm_var_lib_t:s0"
-#  class="file" perms="read"
-#  comm="gdb" exe="" path=""
-#  message="type=AVC msg=audit(1623656221.241:357): avc:  denied  { read } for
-#   pid=7366 comm="gdb" name="user" dev="dm-1" ino=17040737
-#   scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023
-#   tcontext=system_u:object_r:xdm_var_lib_t:s0 tclass=file permissive=0"
+# AVC avc:  denied  { read } for pid=7366 comm="gdb" name="index" dev="dm-1" ino=14580458 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:xdm_var_lib_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { read } for pid=7366 comm="gdb" name="user" dev="dm-1" ino=17040737 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:xdm_var_lib_t:s0 tclass=file permissive=0
 allow abrt_t xdm_var_lib_t:file read;
-# audit(1623656510.130:593):
-#  scontext="system_u:system_r:abrt_t:s0-s0:c0.c1023" tcontext="system_u:object_r:xdm_var_lib_t:s0"
-#  class="file" perms="open"
-#  comm="gdb" exe="" path=""
-#  message="type=AVC msg=audit(1623656510.130:593): avc:  denied  { open } for
-#   pid=9437 comm="gdb" path="/var/lib/gdm/.cache/mesa_shader_cache/index"
-#   dev="dm-1" ino=14580458 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023
-#   tcontext=system_u:object_r:xdm_var_lib_t:s0 tclass=file permissive=0"
-# audit(1623656510.139:594):
-#  scontext="system_u:system_r:abrt_t:s0-s0:c0.c1023" tcontext="system_u:object_r:xdm_var_lib_t:s0"
-#  class="file" perms="open"
-#  comm="gdb" exe="" path=""
-#  message="type=AVC msg=audit(1623656510.139:594): avc:  denied  { open } for
-#   pid=9437 comm="gdb" path="/var/lib/gdm/.config/dconf/user" dev="dm-1"
-#   ino=17040737 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023
-#   tcontext=system_u:object_r:xdm_var_lib_t:s0 tclass=file permissive=0"
+# AVC avc:  denied  { open } for pid=9437 comm="gdb" path="/var/lib/gdm/.cache/mesa_shader_cache/index" dev="dm-1" ino=14580458 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:xdm_var_lib_t:s0 tclass=file permissive=0"
+# AVC avc:  denied  { open } for pid=9437 comm="gdb" path="/var/lib/gdm/.config/dconf/user" dev="dm-1" ino=17040737 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:xdm_var_lib_t:s0 tclass=file permissive=0
 allow abrt_t xdm_var_lib_t:file open;
 
 require {
@@ -181,18 +131,8 @@ allow sssd_t init_var_run_t:dir watch;
 require {
 	type sssd_t;
 	type var_run_t;
-	class dir watch;
 }
-
-#============= sssd_t ==============
-# audit(1632321873.128:169):
-#  scontext="system_u:system_r:sssd_t:s0" tcontext="system_u:object_r:var_run_t:s0"
-#  class="dir" perms="watch"
-#  comm="sssd" exe="" path=""
-#  message="type=AVC msg=audit(1632321873.128:169): avc:  denied  { watch } for
-#   pid=1017 comm="sssd" path="/run" dev="tmpfs" ino=1
-#   scontext=system_u:system_r:sssd_t:s0 tcontext=system_u:object_r:var_run_t:s0
-#   tclass=dir permissive=0"
+# AVC avc:  denied  { watch } for pid=1017 comm="sssd" path="/run" dev="tmpfs" ino=1 scontext=system_u:system_r:sssd_t:s0 tcontext=system_u:object_r:var_run_t:s0 tclass=dir permissive=0
 allow sssd_t var_run_t:dir watch;
 
 #### Allow gnome-ssh-askpass to read ~/.local/share/mime/
@@ -267,7 +207,6 @@ gnome_read_generic_data_home_files(ssh_t)
 require {
 	type container_file_t;
 	type container_init_t;
-	class sock_file watch;
 }
 # AVC avc:  denied  { watch } for pid=13888 comm="systemd-resolve" path="/run/dbus/system_bus_socket" dev="tmpfs" ino=95 scontext=system_u:system_r:container_init_t:s0:c621,c893 tcontext=system_u:object_r:container_file_t:s0:c621,c893 tclass=sock_file permissive=0
 # AVC avc:  denied  { watch } for pid=13887 comm="systemd-oomd" path="/run/dbus/system_bus_socket" dev="tmpfs" ino=95 scontext=system_u:system_r:container_init_t:s0:c621,c893 tcontext=system_u:object_r:container_file_t:s0:c621,c893 tclass=sock_file permissive=0

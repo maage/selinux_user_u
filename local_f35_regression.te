@@ -5,50 +5,19 @@
 policy_module(local_f35_regression, 1.0.0)
 
 #============= fprintd_t ==============
-# /sys/devices/pci0000:00/0000:00:14.0/usb1/1-7/power/{persist,wakeup}
+#### Allow fprintd to access /sys/devices/pci0000:00/0000:00:14.0/usb1/1-7/power/{persist,wakeup}
 require {
 	type fprintd_t;
 }
-# audit(1632135749.965:433):
-#  scontext="system_u:system_r:fprintd_t:s0" tcontext="system_u:object_r:sysfs_t:s0"
-#  class="file" perms="write"
-#  comm="fprintd" exe="" path=""
-#  message="type=AVC msg=audit(1632135749.965:433): avc:  denied  { write } for
-#   pid=4118 comm="fprintd" name="wakeup" dev="sysfs" ino=34915
-#   scontext=system_u:system_r:fprintd_t:s0 tcontext=system_u:object_r:sysfs_t:s0
-#   tclass=file permissive=0"
-# audit(1632135749.965:434):
-#  scontext="system_u:system_r:fprintd_t:s0" tcontext="system_u:object_r:sysfs_t:s0"
-#  class="file" perms="write"
-#  comm="fprintd" exe="" path=""
-#  message="type=AVC msg=audit(1632135749.965:434): avc:  denied  { write } for
-#   pid=4118 comm="fprintd" name="persist" dev="sysfs" ino=34908
-#   scontext=system_u:system_r:fprintd_t:s0 tcontext=system_u:object_r:sysfs_t:s0
-#   tclass=file permissive=0"
+# AVC avc:  denied  { write } for pid=4118 comm="fprintd" name="wakeup" dev="sysfs" ino=34915 scontext=system_u:system_r:fprintd_t:s0 tcontext=system_u:object_r:sysfs_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { write } for pid=4118 comm="fprintd" name="persist" dev="sysfs" ino=34908 scontext=system_u:system_r:fprintd_t:s0 tcontext=system_u:object_r:sysfs_t:s0 tclass=file permissive=0
 dev_rw_sysfs(fprintd_t)
 
+#============= container_t ==============
 #### Allow container to access home dir
 require {
-	type user_home_t;
 	type container_t;
-	class dir write;
+	type user_home_t;
 }
-
-#============= container_t ==============
-# audit(1633004266.213:52968):
-#  scontext="system_u:system_r:container_t:s0:c386,c791" tcontext="unconfined_u:object_r:user_home_t:s0"
-#  class="dir" perms="write"
-#  comm="java" exe="" path=""
-#  message="type=AVC msg=audit(1633004266.213:52968): avc:  denied  { write } for
-#   pid=221435 comm="java" name="logs" dev="dm-3" ino=34664641
-#   scontext=system_u:system_r:container_t:s0:c386,c791
-#   tcontext=unconfined_u:object_r:user_home_t:s0 tclass=dir permissive=0"
-# Interface options:
-#   userdom_manage_user_home_content_dirs(container_t) # [79]
-#   userdom_manage_user_home_content_symlinks(container_t) # [87]
-#   userdom_manage_user_home_content_sockets(container_t) # [108]
-#   userdom_manage_user_home_content_pipes(container_t) # [112]
-#   userdom_manage_user_home_content_files(container_t) # [136]
-#   gnome_filetrans_home_content(container_t) # [227]
-allow container_t user_home_t:dir write;
+# AVC avc:  denied  { write } for pid=221435 comm="java" name="logs" dev="dm-3" ino=34664641 scontext=system_u:system_r:container_t:s0:c386,c791 tcontext=unconfined_u:object_r:user_home_t:s0 tclass=dir permissive=0
 userdom_manage_user_home_content_dirs(container_t)
