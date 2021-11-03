@@ -33,3 +33,25 @@ require {
 # AVC avc:  denied  { open } for  pid=36021 comm="gnome-ssh-askpa" path="/home/user/.local/share/mime/icons" dev="dm-2" ino=2625347 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0
 # AVC avc:  denied  { open } for  pid=36021 comm="gnome-ssh-askpa" path="/home/user/.local/share/mime/generic-icons" dev="dm-2" ino=2625346 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0
 gnome_read_generic_data_home_files(ssh_t)
+
+require {
+	type abrt_t;
+	class capability net_admin;
+}
+# AVC avc:  denied  { net_admin } for  pid=48545 comm="reporter-system" capability=12  scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tclass=capability permissive=0
+# AVC avc:  denied  { net_admin } for  pid=48722 comm="abrt-server" capability=12  scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tclass=capability permissive=0
+# AVC avc:  denied  { net_admin } for  pid=48732 comm="reporter-system" capability=12  scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tclass=capability permissive=0
+allow abrt_t self:capability net_admin;
+# AVC avc:  denied  { write } for  pid=48416 comm="abrt-action-sav" name="rpmdb.sqlite-wal" dev="dm-0" ino=18501946 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:rpm_var_lib_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { setattr } for  pid=48416 comm="abrt-action-sav" name="rpmdb.sqlite-wal" dev="dm-0" ino=18501946 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:rpm_var_lib_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { write } for  pid=48416 comm="abrt-action-sav" name="rpmdb.sqlite-shm" dev="dm-0" ino=18501947 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:rpm_var_lib_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { setattr } for  pid=48416 comm="abrt-action-sav" name="rpmdb.sqlite-shm" dev="dm-0" ino=18501947 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:rpm_var_lib_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { write } for  pid=48488 comm="rpm" name="rpmdb.sqlite-wal" dev="dm-0" ino=18501946 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:rpm_var_lib_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { setattr } for  pid=48488 comm="rpm" name="rpmdb.sqlite-wal" dev="dm-0" ino=18501946 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:rpm_var_lib_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { write } for  pid=48488 comm="rpm" name="rpmdb.sqlite-shm" dev="dm-0" ino=18501947 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:rpm_var_lib_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { setattr } for  pid=48488 comm="rpm" name="rpmdb.sqlite-shm" dev="dm-0" ino=18501947 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:rpm_var_lib_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { write } for  pid=48725 comm="abrt-action-sav" name="rpmdb.sqlite-wal" dev="dm-0" ino=18501946 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:rpm_var_lib_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { setattr } for  pid=48725 comm="abrt-action-sav" name="rpmdb.sqlite-wal" dev="dm-0" ino=18501946 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:rpm_var_lib_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { write } for  pid=48725 comm="abrt-action-sav" name="rpmdb.sqlite-shm" dev="dm-0" ino=18501947 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:rpm_var_lib_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { setattr } for  pid=48725 comm="abrt-action-sav" name="rpmdb.sqlite-shm" dev="dm-0" ino=18501947 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:rpm_var_lib_t:s0 tclass=file permissive=0
+rpm_manage_db(abrt_t)
