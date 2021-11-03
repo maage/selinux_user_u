@@ -21,3 +21,15 @@ require {
 }
 # AVC avc:  denied  { write } for pid=221435 comm="java" name="logs" dev="dm-3" ino=34664641 scontext=system_u:system_r:container_t:s0:c386,c791 tcontext=unconfined_u:object_r:user_home_t:s0 tclass=dir permissive=0
 userdom_manage_user_home_content_dirs(container_t)
+
+require {
+	type ssh_t;
+}
+# AVC avc:  denied  { open } for  pid=36021 comm="gnome-ssh-askpa" path="/home/user/.local/share/mime/mime.cache" dev="dm-2" ino=2625349 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { open } for  pid=36021 comm="gnome-ssh-askpa" path="/home/user/.local/share/mime/globs2" dev="dm-2" ino=2625334 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { open } for  pid=36021 comm="gnome-ssh-askpa" path="/home/user/.local/share/mime/magic" dev="dm-2" ino=2625335 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { open } for  pid=36021 comm="gnome-ssh-askpa" path="/home/user/.local/share/mime/aliases" dev="dm-2" ino=2625338 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { open } for  pid=36021 comm="gnome-ssh-askpa" path="/home/user/.local/share/mime/subclasses" dev="dm-2" ino=2625337 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { open } for  pid=36021 comm="gnome-ssh-askpa" path="/home/user/.local/share/mime/icons" dev="dm-2" ino=2625347 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { open } for  pid=36021 comm="gnome-ssh-askpa" path="/home/user/.local/share/mime/generic-icons" dev="dm-2" ino=2625346 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0
+gnome_read_generic_data_home_files(ssh_t)
