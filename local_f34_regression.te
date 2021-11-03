@@ -96,113 +96,11 @@ allow abrt_t xdm_var_lib_t:file read;
 allow abrt_t xdm_var_lib_t:file open;
 
 require {
-	type init_var_lib_t;
-	type journalctl_t;
-	class file map;
-}
-
-#============= journalctl_t ==============
-#  scontext="user_u:user_r:journalctl_t:s0-s0:c0.c1023" tcontext="unconfined_u:object_r:init_var_lib_t:s0"
-#  class="file" perms="map"
-#  comm="journalctl" exe="" path=""
-#  message="kesä 22 15:32:52 user-hp-eb-lan audit[24885]: AVC avc:  denied  {
-#   map } for  pid=24885 comm="journalctl"
-#   path="/var/lib/systemd/catalog/database" dev="dm-0" ino=23925288
-#   scontext=user_u:user_r:journalctl_t:s0-s0:c0.c1023
-#   tcontext=unconfined_u:object_r:init_var_lib_t:s0 tclass=file permissive=0 "
-allow journalctl_t init_var_lib_t:file map;
-
-require {
-	type sssd_t;
-	type init_var_run_t;
-	class dir watch;
-}
-#============= sssd_t ==============
-# audit(1624350882.464:181):
-#  scontext="system_u:system_r:sssd_t:s0" tcontext="system_u:object_r:init_var_run_t:s0"
-#  class="dir" perms="watch"
-#  comm="sssd" exe="" path=""
-#  message="type=AVC msg=audit(1624350882.464:181): avc:  denied  { watch } for
-#   pid=1020 comm="sssd" path="/run/systemd" dev="tmpfs" ino=2
-#   scontext=system_u:system_r:sssd_t:s0
-#   tcontext=system_u:object_r:init_var_run_t:s0 tclass=dir permissive=0"
-allow sssd_t init_var_run_t:dir watch;
-
-require {
 	type sssd_t;
 	type var_run_t;
 }
 # AVC avc:  denied  { watch } for pid=1017 comm="sssd" path="/run" dev="tmpfs" ino=1 scontext=system_u:system_r:sssd_t:s0 tcontext=system_u:object_r:var_run_t:s0 tclass=dir permissive=0
 allow sssd_t var_run_t:dir watch;
-
-#### Allow gnome-ssh-askpass to read ~/.local/share/mime/
-require {
-	type data_home_t;
-	type ssh_t;
-	class file open;
-}
-# audit(1631517036.837:17395):
-#  scontext="user_u:user_r:ssh_t:s0-s0:c0.c1023" tcontext="user_u:object_r:data_home_t:s0"
-#  class="file" perms="open"
-#  comm="gnome-ssh-askpa" exe="" path=""
-#  message="type=AVC msg=audit(1631517036.837:17395): avc:  denied  { open } for
-#   pid=280133 comm="gnome-ssh-askpa"
-#   path="/home/user/.local/share/mime/mime.cache" dev="dm-2" ino=2625349
-#   scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023
-#   tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0"
-# audit(1631517036.838:17396):
-#  scontext="user_u:user_r:ssh_t:s0-s0:c0.c1023" tcontext="user_u:object_r:data_home_t:s0"
-#  class="file" perms="open"
-#  comm="gnome-ssh-askpa" exe="" path=""
-#  message="type=AVC msg=audit(1631517036.838:17396): avc:  denied  { open } for
-#   pid=280133 comm="gnome-ssh-askpa" path="/home/user/.local/share/mime/globs2"
-#   dev="dm-2" ino=2625334 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023
-#   tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0"
-# audit(1631517036.838:17397):
-#  scontext="user_u:user_r:ssh_t:s0-s0:c0.c1023" tcontext="user_u:object_r:data_home_t:s0"
-#  class="file" perms="open"
-#  comm="gnome-ssh-askpa" exe="" path=""
-#  message="type=AVC msg=audit(1631517036.838:17397): avc:  denied  { open } for
-#   pid=280133 comm="gnome-ssh-askpa" path="/home/user/.local/share/mime/magic"
-#   dev="dm-2" ino=2625335 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023
-#   tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0"
-# audit(1631517036.839:17398):
-#  scontext="user_u:user_r:ssh_t:s0-s0:c0.c1023" tcontext="user_u:object_r:data_home_t:s0"
-#  class="file" perms="open"
-#  comm="gnome-ssh-askpa" exe="" path=""
-#  message="type=AVC msg=audit(1631517036.839:17398): avc:  denied  { open } for
-#   pid=280133 comm="gnome-ssh-askpa"
-#   path="/home/user/.local/share/mime/aliases" dev="dm-2" ino=2625338
-#   scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023
-#   tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0"
-# audit(1631517036.839:17399):
-#  scontext="user_u:user_r:ssh_t:s0-s0:c0.c1023" tcontext="user_u:object_r:data_home_t:s0"
-#  class="file" perms="open"
-#  comm="gnome-ssh-askpa" exe="" path=""
-#  message="type=AVC msg=audit(1631517036.839:17399): avc:  denied  { open } for
-#   pid=280133 comm="gnome-ssh-askpa"
-#   path="/home/user/.local/share/mime/subclasses" dev="dm-2" ino=2625337
-#   scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023
-#   tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0"
-# audit(1631517036.839:17400):
-#  scontext="user_u:user_r:ssh_t:s0-s0:c0.c1023" tcontext="user_u:object_r:data_home_t:s0"
-#  class="file" perms="open"
-#  comm="gnome-ssh-askpa" exe="" path=""
-#  message="type=AVC msg=audit(1631517036.839:17400): avc:  denied  { open } for
-#   pid=280133 comm="gnome-ssh-askpa" path="/home/user/.local/share/mime/icons"
-#   dev="dm-2" ino=2625347 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023
-#   tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0"
-# audit(1631517036.839:17401):
-#  scontext="user_u:user_r:ssh_t:s0-s0:c0.c1023" tcontext="user_u:object_r:data_home_t:s0"
-#  class="file" perms="open"
-#  comm="gnome-ssh-askpa" exe="" path=""
-#  message="type=AVC msg=audit(1631517036.839:17401): avc:  denied  { open } for
-#   pid=280133 comm="gnome-ssh-askpa"
-#   path="/home/user/.local/share/mime/generic-icons" dev="dm-2" ino=2625346
-#   scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023
-#   tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0"
-allow ssh_t data_home_t:file open;
-gnome_read_generic_data_home_files(ssh_t)
 
 require {
 	type container_file_t;
