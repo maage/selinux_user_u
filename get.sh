@@ -5,6 +5,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 set -x
+
+declare -i OPT_boot=0
+
 myfilter() {
     sed -r '
 /  denied /!d;
@@ -47,16 +50,27 @@ get_cursor() {
 }
 
 mysource() {
-    journalctl --cursor="$(get_cursor)" --no-hostname --quiet -g denied SYSLOG_IDENTIFIER=audit
-    # journalctl --since -5m -g denied SYSLOG_IDENTIFIER=audit
-    # journalctl -b0 -g denied SYSLOG_IDENTIFIER=audit
+    local args=()
+    if (( OPT_boot )); then
+        args=(-b0)
+    else
+        args=(--cursor="$(get_cursor)")
+    fi
+    journalctl "${args[@]}" --no-hostname --quiet -g denied SYSLOG_IDENTIFIER=audit
 }
 
 myuniq() {
     cut -d: -f4- | awk '!s[$0]++'
 }
 
-#journalctl --since -2h SYSLOG_IDENTIFIER=audit|sed -r '/  denied /!d;/comm="(gnome-terminal-|cpan|perl|dnf)"/d'|audit2allow -r -R|egrep -v '^#|^$'
+while (($#)); do
+    case "$1" in
+        --boot) shift; OPT_boot=1 ;;
+        --) shift; break ;;
+        *) break ;;
+    esac
+done
+
 if (($#)); then
     mysource | myuniq | myfilter | audit2allow -r "$@" | my_cleaning_filter
     exit $?
