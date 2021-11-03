@@ -35,8 +35,8 @@ require {
 gnome_read_generic_data_home_files(ssh_t)
 
 require {
-	type abrt_t;
 	class capability net_admin;
+	type abrt_t;
 }
 # AVC avc:  denied  { net_admin } for  pid=48545 comm="reporter-system" capability=12  scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tclass=capability permissive=0
 # AVC avc:  denied  { net_admin } for  pid=48722 comm="abrt-server" capability=12  scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tclass=capability permissive=0
