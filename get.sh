@@ -19,6 +19,29 @@ myfilter() {
     '
 }
 
+my_cleaning_filter() {
+    sed -r '
+/^#  scontext=/,/^#  message=/{
+    /^#  message=/!d;
+    s/^#  message=" (AVC avc:)/# \1/;
+}
+/^# AVC avc:/,/ "$/{
+    H;
+    / "$/{
+        g;
+        s/^\n+//;
+        s/\n#   / /g;
+        s/ "$//;
+        p;
+        z;
+        x;
+    }
+    d;
+}
+/^#?[[:space:]]*$/d;
+    '
+}
+
 get_cursor() {
     journalctl -r --system _AUDIT_TYPE_NAME=MAC_POLICY_LOAD -o json | jq -nr 'input|.__CURSOR'
 }
@@ -35,7 +58,7 @@ myuniq() {
 
 #journalctl --since -2h SYSLOG_IDENTIFIER=audit|sed -r '/  denied /!d;/comm="(gnome-terminal-|cpan|perl|dnf)"/d'|audit2allow -r -R|egrep -v '^#|^$'
 if (($#)); then
-    mysource | myuniq | myfilter | audit2allow -r "$@"
+    mysource | myuniq | myfilter | audit2allow -r "$@" | my_cleaning_filter
     exit $?
 fi
-mysource | myuniq | myfilter | audit2allow -r | a2a-cleanup
+mysource | myuniq | myfilter | audit2allow -r | a2a-cleanup | my_cleaning_filter
