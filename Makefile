@@ -30,19 +30,16 @@ include /usr/share/selinux/devel/Makefile
 SEMODULE ?= $(SBINDIR)/semodule -v
 
 # lint
-
-tmp/lint.fc.flag: $(all_packages:.pp=.fc)
-	$(SELINT) --disable=E-005 $?
-	@touch -- $@
-lint: tmp/lint.fc.flag
-tmp/lint.te.flag: $(all_packages:.pp=.te)
-	$(SELINT) --disable=S-001 $?
-	@touch -- $@
-lint: tmp/lint.te.flag
-tmp/lint.if.flag: $(all_packages:.pp=.if)
-	$(SELINT) $?
-	@touch -- $@
-lint: tmp/lint.if.flag
+SELINT_ARGS_fc = --disable=E-005
+SELINT_ARGS_te = --disable=S-001
+SELINT_ARGS_if =
+define selint_template
+tmp/lint.$(1).flag: $$(all_packages:.pp=.$(1))
+	$(SELINT) $$(SELINT_ARGS_$(1)) $$?
+	@touch -- $$@
+lint: tmp/lint.$(1).flag
+endef
+$(foreach suf,fc if te,$(eval $(call selint_template,$(suf))))
 
 check: lint
 
