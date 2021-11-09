@@ -6,7 +6,7 @@ MLSENABLED ?=
 QUIET := n
 verbose ?=
 
-SELINT = ?= selint
+SELINT ?= selint
 SEMOD_LNK ?= semodule_link # -v
 SEMOD_EXP ?= semodule_expand
 SEPOLGEN ?= sepolgen-ifgen -v
