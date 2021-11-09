@@ -4,13 +4,13 @@
 
 QUIET := n
 
-.PHONY: my-hop all my-commit lint
-my-hop: all
+.PHONY: default all commit lint
+default: all
 	sudo $(MAKE) load
 
-all: my-commit
+all: commit
 
-my-commit:
+commit:
 	@./commit.sh
 
 lint:
