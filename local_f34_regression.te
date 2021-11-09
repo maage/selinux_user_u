@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 policy_module(local_f34_regression, 1.0.0)
+optional_policy(`
 
 #### Fix: laptop_mode.service lock /run/lock/lmt-req.lock
 # contexts used to create the file
@@ -109,3 +110,5 @@ require {
 # AVC avc:  denied  { watch } for pid=13888 comm="systemd-resolve" path="/run/dbus/system_bus_socket" dev="tmpfs" ino=95 scontext=system_u:system_r:container_init_t:s0:c621,c893 tcontext=system_u:object_r:container_file_t:s0:c621,c893 tclass=sock_file permissive=0
 # AVC avc:  denied  { watch } for pid=13887 comm="systemd-oomd" path="/run/dbus/system_bus_socket" dev="tmpfs" ino=95 scontext=system_u:system_r:container_init_t:s0:c621,c893 tcontext=system_u:object_r:container_file_t:s0:c621,c893 tclass=sock_file permissive=0
 allow container_init_t container_file_t:sock_file watch;
+
+')

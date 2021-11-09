@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 policy_module(local_user_bwrap, 1.0.0)
+optional_policy(`
 
 require {
 	attribute login_userdomain;
@@ -89,3 +90,5 @@ require {
 	class process2 { nnp_transition nosuid_transition };
 }
 allow login_userdomain self:process2 { nnp_transition nosuid_transition };
+
+')

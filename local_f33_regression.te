@@ -3,17 +3,20 @@
 # SPDX-License-Identifier: Apache-2.0
 
 policy_module(local_f33_regression, 1.0.0)
+optional_policy(`
 
 ### regression
 require {
-        class process setsched;
-        type geoclue_t;
+	class process setsched;
+	type geoclue_t;
 }
 allow geoclue_t self:process setsched;
 
 ### Bug???: smartd
 require {
-        class capability net_admin;
-        type fsdaemon_t;
+	class capability net_admin;
+	type fsdaemon_t;
 }
 allow fsdaemon_t self:capability net_admin;
+
+')

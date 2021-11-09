@@ -18,6 +18,8 @@ gen_tunable(local_user_u_debug, false)
 ## </desc>
 gen_tunable(local_user_u_journalctl, true)
 
+optional_policy(`
+
 # TODO: optional_policy stuff missing?
 require {
 	# Should always use login_userdomain for all stuff allowed to all
@@ -568,3 +570,5 @@ type_transition user_ssh_agent_t ssh_exec_t:process ssh_t;
 
 # AVC avc:  denied { send_msg } for  scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_t:s0-s0:c0.c1023 tclass=dbus permissive=0
 allow ssh_t login_userdomain:dbus send_msg;
+
+')

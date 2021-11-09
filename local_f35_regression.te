@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 policy_module(local_f35_regression, 1.0.0)
+optional_policy(`
 
 #============= fprintd_t ==============
 #### Allow fprintd to access /sys/devices/pci0000:00/0000:00:14.0/usb1/1-7/power/{persist,wakeup}
@@ -55,3 +56,5 @@ allow abrt_t self:capability net_admin;
 # AVC avc:  denied  { write } for  pid=48725 comm="abrt-action-sav" name="rpmdb.sqlite-shm" dev="dm-0" ino=18501947 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:rpm_var_lib_t:s0 tclass=file permissive=0
 # AVC avc:  denied  { setattr } for  pid=48725 comm="abrt-action-sav" name="rpmdb.sqlite-shm" dev="dm-0" ino=18501947 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:rpm_var_lib_t:s0 tclass=file permissive=0
 rpm_manage_db(abrt_t)
+
+')
