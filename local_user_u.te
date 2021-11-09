@@ -24,7 +24,8 @@ require {
 	attribute login_userdomain;
 	# type sysadm_t;
 	# type staff_t;
-	type user_t;
+	# Alway use login_userdomain instead
+	# type user_t;
 	# role user_r;
 	role system_r;
 }
@@ -470,20 +471,20 @@ require {
 	type session_dbusd_tmp_t;
 }
 # AVC avc:  denied  { read } for pid=12778 comm="pool-google-chr" name="dbus-N0kGENH6lI" dev="tmpfs" ino=68 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=user_u:object_r:session_dbusd_tmp_t:s0 tclass=sock_file permissive=0
-allow user_t session_dbusd_tmp_t:sock_file read;
+allow login_userdomain session_dbusd_tmp_t:sock_file read;
 
 ### google chrome
 # AVC avc:  denied  { watch } for pid=12778 comm="chrome" path="/tmp" dev="tmpfs" ino=1 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=system_u:object_r:tmp_t:s0 tclass=dir permissive=0
-files_watch_generic_tmp_dirs(user_t)
+files_watch_generic_tmp_dirs(login_userdomain)
 
 # AVC avc:  denied  { read } for pid=18891 comm="ThreadPoolForeg" name="NetworkManager" dev="tmpfs" ino=101 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=system_u:object_r:NetworkManager_var_run_t:s0 tclass=dir permissive=0
 # AVC avc:  denied  { watch } for pid=19769 comm="ThreadPoolForeg" path="/run/NetworkManager" dev="tmpfs" ino=101 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=system_u:object_r:NetworkManager_var_run_t:s0 tclass=dir permissive=0
-networkmanager_manage_pid_files(user_t)
+networkmanager_manage_pid_files(login_userdomain)
 
 # AVC avc:  denied  { getattr } for  pid=24306 comm="find" path="/home/user/.local/share/containers/storage/overlay-images" dev="dm-2" ino=1049541 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=user_u:object_r:container_ro_file_t:s0 tclass=dir permissive=0
 # AVC avc:  denied  { getattr } for  pid=24306 comm="find" path="/home/user/.local/share/containers/storage/overlay" dev="dm-2" ino=1049537 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=user_u:object_r:container_ro_file_t:s0 tclass=dir permissive=0
 # AVC avc:  denied  { getattr } for  pid=24306 comm="find" path="/home/user/.local/share/containers/storage/overlay-layers" dev="dm-2" ino=1049545 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=user_u:object_r:container_ro_file_t:s0 tclass=dir permissive=0
-container_read_share_files(user_t)
+container_read_share_files(login_userdomain)
 
 require {
 	type systemd_logind_var_run_t;
@@ -496,7 +497,7 @@ allow user_dbusd_t systemd_logind_var_run_t:sock_file write;
 # AVC avc:  denied  { watch } for pid=306116 comm="nautilus" path="/run/media/user" dev="tmpfs" ino=25960 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:mnt_t:s0 tclass=dir permissive=0
 # # AVC avc:  denied  { watch } for pid=306116 comm="gmain" path="/run/media/user" dev="tmpfs" ino=25960 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:mnt_t:s0 tclass=dir permissive=0
 # AVC avc:  denied  { watch } for pid=306116 comm="gmain" path="/run/media" dev="tmpfs" ino=1944 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:mnt_t:s0 tclass=dir permissive=0
-files_manage_mnt_dirs(user_t)
+files_manage_mnt_dirs(login_userdomain)
 
 #### Allow ssh askpass to access font cache
 require {
@@ -509,21 +510,21 @@ allow ssh_t user_fonts_cache_t:file map;
 #### Allow setroubleshootd integration
 # AVC avc:  denied  { send_msg } for  scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:system_r:setroubleshootd_t:s0 tclass=dbus permissive=0 exe="/usr/bin/dbus-broker" sauid=81 hostname=? addr=? terminal=?
 # AVC avc:  denied  { send_msg } for  scontext=system_u:system_r:setroubleshootd_t:s0 tcontext=user_u:user_r:user_t:s0-s0:c0.c1023 tclass=dbus permissive=0 exe="/usr/bin/dbus-broker" sauid=81 hostname=? addr=? terminal=?
-setroubleshoot_dbus_chat(user_t)
+setroubleshoot_dbus_chat(login_userdomain)
 
 # Allow user_u to read fwupd_cache_t
 # AVC avc:  denied  { read } for  pid=332137 comm="gnome-software" name="copr:copr.fedorainfracloud.org:hdfssk:passwordsafe.xml" dev="dm-2" ino=33554598 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:fwupd_cache_t:s0 tclass=file permissive=0
 # AVC avc:  denied  { read } for  pid=332137 comm="pool-org.gnome." name="copr:copr.fedorainfracloud.org:hdfssk:passwordsafe.xml" dev="dm-2" ino=33554598 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:fwupd_cache_t:s0 tclass=file permissive=0
-fwupd_read_cache_files(user_t)
+fwupd_read_cache_files(login_userdomain)
 
 #### Allow to use /usr/bin/systemd-tmpfiles
 # AVC avc:  denied  { execute } for  pid=77022 comm="zsh" name="systemd-tmpfiles" dev="dm-1" ino=33940978 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:systemd_tmpfiles_exec_t:s0 tclass=file permissive=0
 # AVC avc:  denied  { read open } for  pid=77106 comm="zsh" path="/usr/bin/systemd-tmpfiles" dev="dm-1" ino=33940978 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:systemd_tmpfiles_exec_t:s0 tclass=file permissive=0
-systemd_tmpfiles_exec(user_t)
+systemd_tmpfiles_exec(login_userdomain)
 
 #============= user_t ==============
 # AVC avc:  denied  { getattr } for  pid=77379 comm="systemd-xdg-aut" path="/usr/libexec/at-spi-bus-launcher" dev="dm-1" ino=50345674 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:gnome_atspi_exec_t:s0 tclass=file permissive=0
-gnome_exec_atspi(user_t)
+gnome_exec_atspi(login_userdomain)
 
 #### Allow: ssh -X / gnome-ssh-askpass
 require {
@@ -547,7 +548,7 @@ gnome_map_generic_data_home_files(ssh_t)
 # AVC avc:  denied  { getattr associate } for  pid=1871 comm="Xorg" key=0  scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tclass=shm permissive=0
 # AVC avc:  denied  { read write } for  pid=1871 comm="Xorg" key=0 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tclass=shm permissive=0
 # AVC avc: denied { unix_read unix_write } for pid=1871 comm="Xorg" key=0 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tclass=shm permissive=0
-allow user_t ssh_t:shm { associate getattr read unix_read unix_write write };
+allow login_userdomain ssh_t:shm { associate getattr read unix_read unix_write write };
 
 
 #### Allow: ssh-agent ssh ...
@@ -566,4 +567,4 @@ domtrans_pattern(ssh_agent_type, ssh_exec_t, ssh_t)
 type_transition user_ssh_agent_t ssh_exec_t:process ssh_t;
 
 # AVC avc:  denied { send_msg } for  scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_t:s0-s0:c0.c1023 tclass=dbus permissive=0
-allow ssh_t user_t:dbus send_msg;
+allow ssh_t login_userdomain:dbus send_msg;
