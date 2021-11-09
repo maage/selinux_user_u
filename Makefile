@@ -2,17 +2,21 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+MLSENABLED ?=
 QUIET := n
+verbose ?=
 
+SELINT = ?= selint
 SEMOD_LNK ?= semodule_link # -v
 SEMOD_EXP ?= semodule_expand
 SEPOLGEN ?= sepolgen-ifgen -v
+SUDO ?= sudo
 base_pkg = base.pp
 
 .PHONY: all check commit default lint validate
 
 default: all
-	sudo $(MAKE) load
+	$(SUDO) $(MAKE) load
 
 all: commit
 
@@ -28,15 +32,15 @@ SEMODULE ?= $(SBINDIR)/semodule -v
 # lint
 
 tmp/lint.fc.flag: $(all_packages:.pp=.fc)
-	selint --disable=E-005 $?
+	$(SELINT) --disable=E-005 $?
 	@touch -- $@
 lint: tmp/lint.fc.flag
 tmp/lint.te.flag: $(all_packages:.pp=.te)
-	selint --disable=S-001 $?
+	$(SELINT) --disable=S-001 $?
 	@touch -- $@
 lint: tmp/lint.te.flag
 tmp/lint.if.flag: $(all_packages:.pp=.if)
-	selint $?
+	$(SELINT) $?
 	@touch -- $@
 lint: tmp/lint.if.flag
 
@@ -45,7 +49,7 @@ check: lint
 # validate
 
 $(base_pkg):
-	sudo $(SEMODULE) --hll --extract=$(@:.pp=)
+	$(verbose) $(SUDO) $(SEMODULE) --hll --extract=$(@:.pp=)
 tmp/validate.lnk: $(base_pkg) $(all_packages)
 	$(verbose) $(SEMOD_LNK) -o $@ $^
 tmp/validate.policy.bin: tmp/validate.lnk
