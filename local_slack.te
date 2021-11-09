@@ -3,3 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 policy_module(local_slack, 1.0.0)
+
+require {
+	# selint requires a body
+	type bin_t;
+}
