@@ -57,6 +57,8 @@ allow login_userdomain init_var_run_t:service status;
 ### Allow: login/logout w/ my systemd_logind_var_run_t/systemd_unit_file_t fc
 # systemctl --user daemon-reexec: does not still work, it does not start systemd user instance
 require {
+	attribute gkeyringd_domain;
+	type gkeyringd_tmp_t;
 	type gpg_agent_t;
 	type gpg_agent_tmp_t;
 	type gpg_secret_t;
@@ -78,6 +80,10 @@ manage_sock_files_pattern({ login_userdomain systemd_logind_t }, user_tmp_t, sys
 ## /run/user/<uid>/gnupg
 userdom_user_tmp_filetrans({ gpg_t login_userdomain systemd_logind_t xdm_t }, gpg_agent_tmp_t, dir, "gnupg")
 manage_dirs_pattern({ gpg_t login_userdomain systemd_logind_t xdm_t }, user_tmp_t, gpg_agent_tmp_t)
+
+#### /run/user/<uid>/keyring
+userdom_user_tmp_filetrans({ gkeyringd_domain login_userdomain systemd_logind_t }, gkeyringd_tmp_t, dir, "keyring")
+manage_dirs_pattern({ gkeyringd_domain login_userdomain systemd_logind_t }, user_tmp_t, gkeyringd_tmp_t)
 
 ## /run/user/<uid>/pipewire-0.lock
 userdom_user_tmp_filetrans({ login_userdomain systemd_logind_t }, pulseaudio_var_lib_t, file, "pipewire-0.lock")
