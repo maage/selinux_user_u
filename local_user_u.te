@@ -76,10 +76,8 @@ require {
 manage_sock_files_pattern({ login_userdomain systemd_logind_t }, user_tmp_t, system_dbusd_var_run_t)
 
 ## /run/user/<uid>/gnupg
-userdom_user_tmp_filetrans({ gpg_t login_userdomain systemd_logind_t }, gpg_secret_t, dir, "gnupg")
-manage_dirs_pattern({ gpg_t login_userdomain systemd_logind_t xdm_t }, user_tmp_t, gpg_secret_t)
-filetrans_pattern(gpg_agent_t, gpg_secret_t, gpg_agent_tmp_t, sock_file)
-manage_sock_files_pattern({ login_userdomain systemd_logind_t }, gpg_secret_t, gpg_agent_tmp_t)
+userdom_user_tmp_filetrans({ gpg_t login_userdomain systemd_logind_t xdm_t }, gpg_agent_tmp_t, dir, "gnupg")
+manage_dirs_pattern({ gpg_t login_userdomain systemd_logind_t xdm_t }, user_tmp_t, gpg_agent_tmp_t)
 
 ## /run/user/<uid>/pipewire-0.lock
 userdom_user_tmp_filetrans({ login_userdomain systemd_logind_t }, pulseaudio_var_lib_t, file, "pipewire-0.lock")
