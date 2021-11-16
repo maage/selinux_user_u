@@ -42,7 +42,7 @@ require {
 	attribute systemd_unit_file_type;
 	type user_dbusd_t;
 }
-allow user_dbusd_t login_userdomain:system reload;
+allow user_dbusd_t login_userdomain:system { reload status };
 allow user_dbusd_t systemd_unit_file_type:service start;
 
 ### Allow: loginctl session-status <id>
@@ -353,13 +353,11 @@ require {
 }
 allow login_userdomain init_var_run_t:file open;
 
-### start stuff
+### systemctl
 require {
 	type etc_t;
-	type user_dbusd_t;
 	type usr_t;
 }
-allow user_dbusd_t login_userdomain:system status;
 allow login_userdomain { etc_t usr_t }:service { reload start status stop };
 
 ### gpg?
