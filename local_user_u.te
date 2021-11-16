@@ -212,16 +212,6 @@ allow login_userdomain var_lib_t:lnk_file { getattr read };
 allow user_dbusd_t var_lib_t:file { open read };
 allow user_dbusd_t var_lib_t:lnk_file read;
 
-### journalctl needs to access: /var/lib/systemd/catalog/database
-tunable_policy(`local_user_u_journalctl',`
-	init_read_var_lib_files(login_userdomain)
-	init_read_var_lib_files(journalctl_t)
-	require {
-		type init_var_lib_t;
-	}
-	allow login_userdomain init_var_lib_t:dir { read search };
-')
-
 ### chrome uses this
 # $ setsebool -P selinuxuser_udp_server 1
 
@@ -313,17 +303,6 @@ require {
 	type security_t;
 }
 dontaudit login_userdomain security_t:security read_policy;
-
-### Debug
-tunable_policy(`local_user_u_debug',`
-require {
-	type journalctl_t;
-	type syslogd_t;
-}
-allow syslogd_t self:cap_userns sys_ptrace;
-allow login_userdomain journalctl_t:process ptrace;
-allow login_userdomain self:cap_userns sys_ptrace;
-')
 
 ### watch
 require {
@@ -525,4 +504,32 @@ type_transition user_ssh_agent_t ssh_exec_t:process ssh_t;
 # AVC avc:  denied { send_msg } for  scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_t:s0-s0:c0.c1023 tclass=dbus permissive=0
 allow ssh_t login_userdomain:dbus send_msg;
 
+')
+
+### journalctl needs to access: /var/lib/systemd/catalog/database
+optional_policy(`
+tunable_policy(`local_user_u_journalctl',`
+	require {
+		attribute login_userdomain;
+		type init_var_lib_t;
+		type journalctl_t;
+	}
+	init_read_var_lib_files(login_userdomain)
+	init_read_var_lib_files(journalctl_t)
+	allow login_userdomain init_var_lib_t:dir { read search };
+')
+')
+
+### Debug
+optional_policy(`
+tunable_policy(`local_user_u_debug',`
+require {
+	attribute login_userdomain;
+	type journalctl_t;
+	type syslogd_t;
+}
+allow syslogd_t self:cap_userns sys_ptrace;
+allow login_userdomain journalctl_t:process ptrace;
+allow login_userdomain self:cap_userns sys_ptrace;
+')
 ')
