@@ -71,10 +71,10 @@ require {
 	type xdm_t;
 }
 
-## /run/user/<uid>/bus
+### /run/user/<uid>/bus
 manage_sock_files_pattern({ login_userdomain systemd_logind_t }, user_tmp_t, system_dbusd_var_run_t)
 
-## /run/user/<uid>/gnupg
+### /run/user/<uid>/gnupg
 userdom_user_tmp_filetrans({ gpg_t login_userdomain systemd_logind_t xdm_t }, gpg_agent_tmp_t, dir, "gnupg")
 manage_dirs_pattern({ gpg_t login_userdomain systemd_logind_t xdm_t }, user_tmp_t, gpg_agent_tmp_t)
 # AVC avc:  denied  { unlink } for pid=201566 comm="systemd-user-ru" name="S.scdaemon" dev="tmpfs" ino=246 scontext=system_u:system_r:systemd_logind_t:s0 tcontext=user_u:object_r:gpg_agent_tmp_t:s0 tclass=sock_file permissive=0
@@ -84,14 +84,14 @@ manage_dirs_pattern({ gpg_t login_userdomain systemd_logind_t xdm_t }, user_tmp_
 # AVC avc:  denied  { unlink } for pid=201566 comm="systemd-user-ru" name="S.gpg-agent" dev="tmpfs" ino=242 scontext=system_u:system_r:systemd_logind_t:s0 tcontext=user_u:object_r:gpg_agent_tmp_t:s0 tclass=sock_file permissive=0
 manage_sock_files_pattern({ gpg_t login_userdomain systemd_logind_t xdm_t }, user_tmp_t, gpg_agent_tmp_t)
 
-#### /run/user/<uid>/keyring
+### /run/user/<uid>/keyring
 userdom_user_tmp_filetrans({ gkeyringd_domain login_userdomain systemd_logind_t }, gkeyringd_tmp_t, dir, "keyring")
 manage_dirs_pattern({ gkeyringd_domain login_userdomain systemd_logind_t }, user_tmp_t, gkeyringd_tmp_t)
 
-## /run/user/<uid>/pipewire-0.lock
+### /run/user/<uid>/pipewire-0.lock
 userdom_user_tmp_filetrans({ login_userdomain systemd_logind_t }, pulseaudio_var_lib_t, file, "pipewire-0.lock")
 
-## /run/user/<uid>/pulse
+### /run/user/<uid>/pulse
 manage_dirs_pattern({ login_userdomain systemd_logind_t xdm_t }, user_tmp_t, pulseaudio_var_lib_t)
 userdom_user_tmp_filetrans({ login_userdomain systemd_logind_t }, pulseaudio_var_lib_t, dir, "pulse")
 # /run/user/<uid>/pulse/native: all these can create/remove it
@@ -100,7 +100,7 @@ manage_sock_files_pattern({ login_userdomain pulseaudio_t systemd_logind_t }, pu
 # /run/user/<uid>/systemd/units
 userdom_user_tmp_filetrans({ login_userdomain systemd_logind_t }, systemd_logind_var_run_t, dir, "systemd")
 
-## /run/user/<uid>/systemd/inaccessible: both of these can create/remove these files
+### /run/user/<uid>/systemd/inaccessible: both of these can create/remove these files
 # /run/user/<uid>/systemd/inaccessible/chr
 manage_chr_files_pattern({ login_userdomain systemd_logind_t }, systemd_logind_var_run_t, systemd_logind_var_run_t)
 # /run/user/<uid>/systemd/inaccessible/dir
@@ -437,13 +437,13 @@ require {
 # AVC avc:  denied  { write } for pid=2054 comm="dbus-broker-lau" name="notify" dev="tmpfs" ino=40 scontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c1023 tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file permissive=0
 allow user_dbusd_t systemd_logind_var_run_t:sock_file write;
 
-#### Allow to watch /run/media
+### Allow to watch /run/media
 # AVC avc:  denied  { watch } for pid=306116 comm="nautilus" path="/run/media/user" dev="tmpfs" ino=25960 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:mnt_t:s0 tclass=dir permissive=0
 # # AVC avc:  denied  { watch } for pid=306116 comm="gmain" path="/run/media/user" dev="tmpfs" ino=25960 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:mnt_t:s0 tclass=dir permissive=0
 # AVC avc:  denied  { watch } for pid=306116 comm="gmain" path="/run/media" dev="tmpfs" ino=1944 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:mnt_t:s0 tclass=dir permissive=0
 files_manage_mnt_dirs(login_userdomain)
 
-#### Allow setroubleshootd integration
+### Allow setroubleshootd integration
 # AVC avc:  denied  { send_msg } for  scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:system_r:setroubleshootd_t:s0 tclass=dbus permissive=0 exe="/usr/bin/dbus-broker" sauid=81 hostname=? addr=? terminal=?
 # AVC avc:  denied  { send_msg } for  scontext=system_u:system_r:setroubleshootd_t:s0 tcontext=user_u:user_r:user_t:s0-s0:c0.c1023 tclass=dbus permissive=0 exe="/usr/bin/dbus-broker" sauid=81 hostname=? addr=? terminal=?
 setroubleshoot_dbus_chat(login_userdomain)
@@ -453,7 +453,7 @@ setroubleshoot_dbus_chat(login_userdomain)
 # AVC avc:  denied  { read } for  pid=332137 comm="pool-org.gnome." name="copr:copr.fedorainfracloud.org:hdfssk:passwordsafe.xml" dev="dm-2" ino=33554598 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:fwupd_cache_t:s0 tclass=file permissive=0
 fwupd_read_cache_files(login_userdomain)
 
-#### Allow to use /usr/bin/systemd-tmpfiles
+### Allow to use /usr/bin/systemd-tmpfiles
 # AVC avc:  denied  { execute } for  pid=77022 comm="zsh" name="systemd-tmpfiles" dev="dm-1" ino=33940978 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:systemd_tmpfiles_exec_t:s0 tclass=file permissive=0
 # AVC avc:  denied  { read open } for  pid=77106 comm="zsh" path="/usr/bin/systemd-tmpfiles" dev="dm-1" ino=33940978 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:systemd_tmpfiles_exec_t:s0 tclass=file permissive=0
 systemd_tmpfiles_exec(login_userdomain)
