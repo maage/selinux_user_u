@@ -89,13 +89,17 @@ userdom_user_tmp_filetrans({ gkeyringd_domain login_userdomain systemd_logind_t 
 manage_dirs_pattern({ gkeyringd_domain login_userdomain systemd_logind_t }, user_tmp_t, gkeyringd_tmp_t)
 
 ### /run/user/<uid>/pipewire-0.lock
+# Note, pipewire components are unconfined / user_t as of F35
 userdom_user_tmp_filetrans({ login_userdomain systemd_logind_t }, pulseaudio_var_lib_t, file, "pipewire-0.lock")
+manage_files_pattern({ login_userdomain systemd_logind_t }, pulseaudio_var_lib_t, pulseaudio_var_lib_t)
 
 ### /run/user/<uid>/pulse
-manage_dirs_pattern({ login_userdomain systemd_logind_t xdm_t }, user_tmp_t, pulseaudio_var_lib_t)
-userdom_user_tmp_filetrans({ login_userdomain systemd_logind_t }, pulseaudio_var_lib_t, dir, "pulse")
+manage_dirs_pattern({ login_userdomain pulseaudio_t systemd_logind_t xdm_t }, user_tmp_t, pulseaudio_var_lib_t)
+userdom_user_tmp_filetrans({ login_userdomain pulseaudio_t systemd_logind_t }, pulseaudio_var_lib_t, dir, "pulse")
 # /run/user/<uid>/pulse/native: all these can create/remove it
-manage_sock_files_pattern({ login_userdomain pulseaudio_t systemd_logind_t }, pulseaudio_var_lib_t, pulseaudio_var_lib_t)
+# AVC avc:  denied  { write } for pid=5179 comm="gnome-shell" name="native" dev="tmpfs" ino=48 scontext=system_u:system_r:xdm_t:s0-s0:c0.c1023 tcontext=unconfined_u:object_r:pulseaudio_var_lib_t:s0 tclass=sock_file permissive=0
+manage_sock_files_pattern({ login_userdomain pulseaudio_t systemd_logind_t xdm_t }, pulseaudio_var_lib_t, pulseaudio_var_lib_t)
+allow pulseaudio_t login_userdomain:unix_stream_socket { read write };
 
 # /run/user/<uid>/systemd/units
 userdom_user_tmp_filetrans({ login_userdomain systemd_logind_t }, systemd_logind_var_run_t, dir, "systemd")
@@ -227,12 +231,6 @@ require {
 }
 allow policykit_auth_t login_userdomain:unix_stream_socket { read write };
 
-### pulseaudio
-require {
-	type pulseaudio_t;
-}
-allow pulseaudio_t login_userdomain:unix_stream_socket { read write };
-
 ### /usr/lib/systemd/systemd-user-runtime-dir
 require {
 	type systemd_logind_t;
@@ -333,11 +331,9 @@ allow login_userdomain var_run_t:dir watch;
 ### What?
 require {
 	type init_var_run_t;
-	type pulseaudio_var_lib_t;
 	type session_dbusd_tmp_t;
 }
 allow login_userdomain init_var_run_t:file read;
-allow login_userdomain pulseaudio_var_lib_t:file create;
 allow login_userdomain session_dbusd_tmp_t:sock_file write;
 
 ### Allow: use journalctl
@@ -357,18 +353,6 @@ require {
 }
 allow login_userdomain init_var_run_t:file open;
 
-### login: create /run/user/<uid>/pipewire*
-require {
-	type pulseaudio_var_lib_t;
-}
-allow login_userdomain pulseaudio_var_lib_t:file { getattr lock open write };
-
-#### logout: remove /run/user/<uid>/pipewire*
-require {
-	type pulseaudio_var_lib_t;
-}
-allow login_userdomain pulseaudio_var_lib_t:file { read unlink };
-
 ### start stuff
 require {
 	type etc_t;
@@ -383,22 +367,6 @@ require {
 	type gpg_agent_t;
 }
 allow login_userdomain gpg_agent_t:process signull;
-
-#### /run/user/<uid>/pulse/native
-require {
-	type pulseaudio_var_lib_t;
-	type xdm_t;
-}
-# AVC avc:  denied  { write } for pid=5179 comm="gnome-shell" name="native" dev="tmpfs" ino=48 scontext=system_u:system_r:xdm_t:s0-s0:c0.c1023 tcontext=unconfined_u:object_r:pulseaudio_var_lib_t:s0 tclass=sock_file permissive=0
-## maybe not need actual manage, but it is pointless
-manage_sock_files_pattern(xdm_t, pulseaudio_var_lib_t, pulseaudio_var_lib_t)
-
-### Allow: during logout logind removes /run/user/<uid>/ files
-require {
-	type pulseaudio_var_lib_t;
-	type systemd_logind_t;
-}
-allow systemd_logind_t pulseaudio_var_lib_t:file unlink;
 
 require {
 	type alsa_var_lib_t;
