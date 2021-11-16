@@ -31,7 +31,7 @@ SEMODULE ?= $(SBINDIR)/semodule -v
 
 # lint
 SELINT_ARGS_fc = --disable=E-005
-SELINT_ARGS_te = --disable=S-001
+SELINT_ARGS_te = --disable=C-001 --disable=S-001
 SELINT_ARGS_if =
 define selint_template
 tmp/lint.$(1).flag: $$(all_packages:.pp=.$(1))
