@@ -158,15 +158,6 @@ systemd_manage_all_unit_files(login_userdomain)
 # maybe not allow?
 allow login_userdomain self:netlink_generic_socket create;
 
-### start /usr/bin/sepolicy gui
-# maybe not allow?
-#allow login_userdomain semanage_t:dbus send_msg;
-#seutil_dbus_chat_semanage(login_userdomain)
-
-### run seinfo
-# maybe not allow
-#allow login_userdomain security_t:security read_policy;
-
 ### gnome-shell gsd-color
 # why not? missing in roles/unprivuser.te
 systemd_hwdb_mmap_config(login_userdomain)
@@ -177,7 +168,6 @@ require {
 }
 allow login_userdomain cache_home_t:dir mounton;
 
-### FIX: logout via gnome
 # allow user_t mount_t:process { sigkill signal };
 # bug: staff_t has this: selinux-policy a90f520338893e913011073937221c0ce3391347 BZ(1544272)
 # reported as https://github.com/fedora-selinux/selinux-policy/issues/520
@@ -220,9 +210,6 @@ allow login_userdomain var_lib_t:file map;
 allow login_userdomain var_lib_t:lnk_file { getattr read };
 allow user_dbusd_t var_lib_t:file { open read };
 allow user_dbusd_t var_lib_t:lnk_file read;
-
-### chrome uses this
-# $ setsebool -P selinuxuser_udp_server 1
 
 ### gnome-software /var/cache/app-info
 require {
