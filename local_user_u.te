@@ -441,7 +441,8 @@ dontaudit user_t self:capability sys_admin;
 ### Deny: sudo
 dontaudit user_t self:capability sys_resource;
 
-### Deny: write sudo ts file
+### Deny: write /var/run/sudo/ts/<username> file
+# why is /var/run/sudo pam_var_run_t?
 require {
 	type pam_var_run_t;
 }
@@ -460,6 +461,12 @@ require {
 	type security_t;
 }
 dontaudit user_t security_t:security read_policy;
+
+### Deny: container stuff for now
+require {
+	type container_ro_file_t;
+}
+dontaudit user_t container_ro_file_t:dir mounton;
 
 
 ')
