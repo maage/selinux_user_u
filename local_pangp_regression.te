@@ -25,4 +25,5 @@ allow pangp_user_ui_t self:netlink_kobject_uevent_socket { bind create getattr s
 allow pangp_user_ui_t sysfs_t:dir read;
 allow pangp_user_ui_t udev_var_run_t:file { getattr open read };
 allow pangp_user_ui_t var_lib_t:file { getattr map open read };
+
 ')

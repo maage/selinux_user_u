@@ -56,10 +56,10 @@ allow login_userdomain init_var_run_t:service status;
 require {
 	attribute gkeyringd_domain;
 	type gkeyringd_tmp_t;
+	type gpg_t;
 	type gpg_agent_t;
 	type gpg_agent_tmp_t;
 	type gpg_secret_t;
-	type gpg_t;
 	type init_t;
 	type pulseaudio_t;
 	type pulseaudio_var_lib_t;
@@ -364,8 +364,8 @@ allow login_userdomain session_dbusd_tmp_t:sock_file write;
 ### Allow: use journalctl
 require {
 	type journalctl_t;
-	type user_home_dir_t;
 	type user_home_t;
+	type user_home_dir_t;
 }
 # without this .lesshst etc has domain user_home_dir_t and that is just wrong
 filetrans_pattern(journalctl_t, user_home_dir_t, user_home_t, file)
@@ -407,8 +407,8 @@ allow login_userdomain gpg_agent_t:process signull;
 
 #### /run/user/<uid>/pulse/native
 require {
-	type xdm_t;
 	type pulseaudio_var_lib_t;
+	type xdm_t;
 }
 # AVC avc:  denied  { write } for pid=5179 comm="gnome-shell" name="native" dev="tmpfs" ino=48 scontext=system_u:system_r:xdm_t:s0-s0:c0.c1023 tcontext=unconfined_u:object_r:pulseaudio_var_lib_t:s0 tclass=sock_file permissive=0
 ## maybe not need actual manage, but it is pointless
@@ -520,10 +520,10 @@ allow login_userdomain ssh_t:shm { associate getattr read unix_read unix_write w
 require {
 	attribute ssh_agent_type;
 	type bin_t;
-	type ssh_exec_t;
 	type ssh_t;
-	type xauth_t;
+	type ssh_exec_t;
 	type user_ssh_agent_t;
+	type xauth_t;
 }
 # AVC avc:  denied  { execute } for  pid=78917 comm="ssh-agent" name="ssh" dev="dm-0" ino=30736058 scontext=user_u:user_r:user_ssh_agent_t:s0-s0:c0.c1023 tcontext=system_u:object_r:ssh_exec_t:s0 tclass=file permissive=0
 read_lnk_files_pattern(ssh_agent_type, bin_t, ssh_exec_t)

@@ -20,15 +20,15 @@ filetrans_pattern({ udev_t unconfined_service_t }, var_lock_t, apmd_lock_t, file
 
 ## Allow: iw to write the lock too
 require {
-	type ifconfig_t;
 	type apmd_lock_t;
+	type ifconfig_t;
 }
 allow ifconfig_t apmd_lock_t:file write;
 
 ### What?
 require {
-	type tmpfs_t;
 	type tmp_t;
+	type tmpfs_t;
 	type xdm_t;
 }
 allow xdm_t tmp_t:sock_file write;
