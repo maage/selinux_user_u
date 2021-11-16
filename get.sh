@@ -6,7 +6,7 @@
 
 set -x
 
-declare -i OPT_boot=0
+OPT_boot=
 
 myfilter() {
     sed -r '
@@ -51,8 +51,8 @@ get_cursor() {
 
 mysource() {
     local args=()
-    if (( OPT_boot )); then
-        args=(-b0)
+    if [[ "$OPT_boot" ]]; then
+        args=(-b"$OPT_boot")
     else
         args=(--cursor="$(get_cursor)")
     fi
@@ -65,7 +65,8 @@ myuniq() {
 
 while (($#)); do
     case "$1" in
-        --boot) shift; OPT_boot=1 ;;
+        --boot) OPT_boot=0; shift ;;
+        --boot=*) OPT_boot="${1#--boot=}"; shift ;;
         --) shift; break ;;
         *) break ;;
     esac
