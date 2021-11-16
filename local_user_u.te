@@ -68,6 +68,7 @@ require {
 	type systemd_logind_var_run_t;
 	type systemd_unit_file_t;
 	type unconfined_service_t; # /usr/libexec/uresourced
+	type user_dbusd_t;
 	type xdm_t;
 }
 
@@ -101,8 +102,12 @@ userdom_user_tmp_filetrans({ login_userdomain pulseaudio_t systemd_logind_t }, p
 manage_sock_files_pattern({ login_userdomain pulseaudio_t systemd_logind_t xdm_t }, pulseaudio_var_lib_t, pulseaudio_var_lib_t)
 allow pulseaudio_t login_userdomain:unix_stream_socket { read write };
 
-# /run/user/<uid>/systemd/units
+# /run/user/<uid>/systemd
 userdom_user_tmp_filetrans({ login_userdomain systemd_logind_t }, systemd_logind_var_run_t, dir, "systemd")
+
+### /run/user/<uid>/systemd/notify
+# AVC avc:  denied  { write } for pid=2054 comm="dbus-broker-lau" name="notify" dev="tmpfs" ino=40 scontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c1023 tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file permissive=0
+allow user_dbusd_t systemd_logind_var_run_t:sock_file write;
 
 ### /run/user/<uid>/systemd/inaccessible: both of these can create/remove these files
 # /run/user/<uid>/systemd/inaccessible/chr
@@ -395,13 +400,6 @@ networkmanager_manage_pid_files(login_userdomain)
 # AVC avc:  denied  { getattr } for  pid=24306 comm="find" path="/home/user/.local/share/containers/storage/overlay" dev="dm-2" ino=1049537 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=user_u:object_r:container_ro_file_t:s0 tclass=dir permissive=0
 # AVC avc:  denied  { getattr } for  pid=24306 comm="find" path="/home/user/.local/share/containers/storage/overlay-layers" dev="dm-2" ino=1049545 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=user_u:object_r:container_ro_file_t:s0 tclass=dir permissive=0
 container_read_share_files(login_userdomain)
-
-require {
-	type systemd_logind_var_run_t;
-	type user_dbusd_t;
-}
-# AVC avc:  denied  { write } for pid=2054 comm="dbus-broker-lau" name="notify" dev="tmpfs" ino=40 scontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c1023 tcontext=user_u:object_r:systemd_logind_var_run_t:s0 tclass=sock_file permissive=0
-allow user_dbusd_t systemd_logind_var_run_t:sock_file write;
 
 ### Allow to watch /run/media
 # AVC avc:  denied  { watch } for pid=306116 comm="nautilus" path="/run/media/user" dev="tmpfs" ino=25960 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:mnt_t:s0 tclass=dir permissive=0
