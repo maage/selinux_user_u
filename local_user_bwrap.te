@@ -64,16 +64,12 @@ fs_all_mount_fs_perms_tmpfs(login_userdomain)
 allow login_userdomain tracefs_t:filesystem remount;
 
 #### because: --unshare-user-try
-require {
-	class cap_userns dac_override;
-}
 dontaudit login_userdomain self:cap_userns dac_override;
 
 
 #### xterm ???
 require {
 	type utempter_t;
-	class process2 { nnp_transition nosuid_transition };
 }
 # audit(1615465057.346:7867):
 #  scontext="user_u:user_r:user_t:s0" tcontext="user_u:user_r:utempter_t:s0"
@@ -86,9 +82,6 @@ require {
 allow login_userdomain utempter_t:process2 { nnp_transition nosuid_transition };
 
 #### allow bwrap to change exec context
-require {
-	class process2 { nnp_transition nosuid_transition };
-}
 allow login_userdomain self:process2 { nnp_transition nosuid_transition };
 
 ')

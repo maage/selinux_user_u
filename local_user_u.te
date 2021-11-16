@@ -40,8 +40,6 @@ require {
 # /usr/bin/dbus-broker-launch --scope user
 require {
 	attribute systemd_unit_file_type;
-	class service start;
-	class system reload;
 	type user_dbusd_t;
 }
 allow user_dbusd_t login_userdomain:system reload;
@@ -50,7 +48,6 @@ allow user_dbusd_t systemd_unit_file_type:service start;
 ### Allow: loginctl session-status <id>
 require {
 	type init_var_run_t;
-	class service status;
 }
 allow login_userdomain init_var_run_t:service status;
 
@@ -126,7 +123,6 @@ filetrans_pattern({ init_t systemd_logind_t unconfined_service_t }, init_var_run
 
 ### Allow some: ps: /proc/<pid>
 require {
-	class dir getattr;
 	type fprintd_t;
 	type fwupd_cache_t;
 	type kernel_t;
@@ -169,7 +165,6 @@ systemd_hwdb_mmap_config(login_userdomain)
 ### Allow gvfsd-fuse /home/user/.cache/gvfs
 require {
 	type cache_home_t;
-	class dir mounton;
 }
 allow login_userdomain cache_home_t:dir mounton;
 
@@ -199,7 +194,6 @@ allow login_userdomain boot_t:file manage_file_perms;
 optional_policy(`
 	require {
 		type flatpak_helper_t;
-		class dbus send_msg;
 	}
 	allow login_userdomain flatpak_helper_t:dbus send_msg;
 ')
@@ -207,9 +201,6 @@ optional_policy(`
 ### flatpack files: /var/lib/flatpak
 # bwrap
 require {
-	class cap_userns setpcap;
-	class file { getattr map open read };
-	class lnk_file { getattr read };
 	type nsfs_t;
 	type user_dbusd_t;
 	type var_lib_t;
@@ -226,7 +217,6 @@ tunable_policy(`local_user_u_journalctl',`
 	init_read_var_lib_files(login_userdomain)
 	init_read_var_lib_files(journalctl_t)
 	require {
-		class dir { read search };
 		type init_var_lib_t;
 	}
 	allow login_userdomain init_var_lib_t:dir { read search };
@@ -237,56 +227,45 @@ tunable_policy(`local_user_u_journalctl',`
 
 ### gnome-software /var/cache/app-info
 require {
-	class dir { read search };
 	type fwupd_cache_t;
 }
 allow login_userdomain fwupd_cache_t:dir { read search };
 
 ### /usr/lib/polkit-1/polkit-agent-helper-1
 require {
-	class unix_stream_socket { read write };
 	type policykit_auth_t;
 }
 allow policykit_auth_t login_userdomain:unix_stream_socket { read write };
 
 ### pulseaudio
 require {
-	class unix_stream_socket { read write };
 	type pulseaudio_t;
 }
 allow pulseaudio_t login_userdomain:unix_stream_socket { read write };
 
 ### /usr/lib/systemd/systemd-user-runtime-dir
 require {
-	class capability net_admin;
 	type systemd_logind_t;
 }
 allow systemd_logind_t self:capability net_admin;
 
 ### Allow: systemd to kill processes
 require {
-	class process signal;
 	type mount_t;
 }
 allow login_userdomain mount_t:process signal;
 
 ### Allow: nice gnome-shell
-require {
-	class capability sys_nice;
-}
 allow login_userdomain self:capability sys_nice;
 
 ### Allow: gnome-terminal something
 require {
-	class process getpgid;
 	type kernel_t;
 }
 allow login_userdomain kernel_t:process getpgid;
 
 ### Deny: ls /run/systemd/inaccessible/
 require {
-	class blk_file getattr;
-	class chr_file getattr;
 	type init_var_run_t;
 }
 dontaudit login_userdomain init_var_run_t:blk_file getattr;
@@ -297,7 +276,6 @@ dontaudit login_userdomain init_var_run_t:chr_file getattr;
 ### login etc
 # prob should not be allowed
 require {
-	class chr_file { getattr read write };
 	type dri_device_t;
 	type journalctl_t;
 	type utempter_t;
@@ -312,7 +290,6 @@ dontaudit utempter_t dri_device_t:chr_file { read write };
 ### login etc
 # dunno if this should be allowed
 require {
-	class file read;
 	type journalctl_t;
 	type ssh_t;
 	type utempter_t;
@@ -320,27 +297,19 @@ require {
 dontaudit { journalctl_t ssh_t utempter_t } login_userdomain:file read;
 
 ### Deny: Xorg
-require {
-	class capability sys_admin;
-}
 dontaudit login_userdomain self:capability sys_admin;
 
 ### Deny: sudo
-require {
-	class capability sys_resource;
-}
 dontaudit login_userdomain self:capability sys_resource;
 
 ### Deny: write sudo ts file
 require {
 	type pam_var_run_t;
-	class dir write;
 }
 dontaudit login_userdomain pam_var_run_t:dir write;
 
 ### Deny: run audit2allow
 require {
-	class security read_policy;
 	type security_t;
 }
 dontaudit login_userdomain security_t:security read_policy;
@@ -348,8 +317,6 @@ dontaudit login_userdomain security_t:security read_policy;
 ### Debug
 tunable_policy(`local_user_u_debug',`
 require {
-	class cap_userns sys_ptrace;
-	class process ptrace;
 	type journalctl_t;
 	type syslogd_t;
 }
@@ -360,7 +327,6 @@ allow login_userdomain self:cap_userns sys_ptrace;
 
 ### watch
 require {
-	class dir watch;
 	type bin_t;
 	type fonts_t;
 	type fwupd_cache_t;
@@ -387,8 +353,6 @@ allow login_userdomain var_run_t:dir watch;
 
 ### What?
 require {
-	class file { create read };
-	class sock_file write;
 	type init_var_run_t;
 	type pulseaudio_var_lib_t;
 	type session_dbusd_tmp_t;
@@ -399,8 +363,6 @@ allow login_userdomain session_dbusd_tmp_t:sock_file write;
 
 ### Allow: use journalctl
 require {
-	class dir { add_name write };
-	class file { create open read rename setattr unlink write };
 	type journalctl_t;
 	type user_home_dir_t;
 	type user_home_t;
@@ -412,29 +374,24 @@ allow journalctl_t user_home_t:file { create open read rename setattr unlink wri
 
 ### login
 require {
-	class file { open write };
 	type init_var_run_t;
 }
 allow login_userdomain init_var_run_t:file open;
 
 ### login: create /run/user/<uid>/pipewire*
 require {
-	class file { getattr lock open write };
 	type pulseaudio_var_lib_t;
 }
 allow login_userdomain pulseaudio_var_lib_t:file { getattr lock open write };
 
 #### logout: remove /run/user/<uid>/pipewire*
 require {
-	class file { read unlink };
 	type pulseaudio_var_lib_t;
 }
 allow login_userdomain pulseaudio_var_lib_t:file { read unlink };
 
 ### start stuff
 require {
-	class service { reload start status stop };
-	class system status;
 	type etc_t;
 	type user_dbusd_t;
 	type usr_t;
@@ -444,7 +401,6 @@ allow login_userdomain { etc_t usr_t }:service { reload start status stop };
 
 ### gpg?
 require {
-	class process signull;
 	type gpg_agent_t;
 }
 allow login_userdomain gpg_agent_t:process signull;
@@ -453,7 +409,6 @@ allow login_userdomain gpg_agent_t:process signull;
 require {
 	type xdm_t;
 	type pulseaudio_var_lib_t;
-	class sock_file write;
 }
 # AVC avc:  denied  { write } for pid=5179 comm="gnome-shell" name="native" dev="tmpfs" ino=48 scontext=system_u:system_r:xdm_t:s0-s0:c0.c1023 tcontext=unconfined_u:object_r:pulseaudio_var_lib_t:s0 tclass=sock_file permissive=0
 ## maybe not need actual manage, but it is pointless
@@ -461,7 +416,6 @@ manage_sock_files_pattern(xdm_t, pulseaudio_var_lib_t, pulseaudio_var_lib_t)
 
 ### Allow: during logout logind removes /run/user/<uid>/ files
 require {
-	class file unlink;
 	type pulseaudio_var_lib_t;
 	type systemd_logind_t;
 }
@@ -479,7 +433,6 @@ watch_reads_dirs_pattern(login_userdomain, init_var_run_t, systemd_machined_var_
 
 ### google chrome
 require {
-	class sock_file read;
 	type session_dbusd_tmp_t;
 }
 # AVC avc:  denied  { read } for pid=12778 comm="pool-google-chr" name="dbus-N0kGENH6lI" dev="tmpfs" ino=68 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=user_u:object_r:session_dbusd_tmp_t:s0 tclass=sock_file permissive=0
@@ -566,7 +519,6 @@ allow login_userdomain ssh_t:shm { associate getattr read unix_read unix_write w
 #### Allow: ssh-agent ssh ...
 require {
 	attribute ssh_agent_type;
-	class dbus send_msg;
 	type bin_t;
 	type ssh_exec_t;
 	type ssh_t;

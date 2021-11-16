@@ -7,14 +7,12 @@ optional_policy(`
 
 ### regression
 require {
-	class process setsched;
 	type geoclue_t;
 }
 allow geoclue_t self:process setsched;
 
 ### Bug???: smartd
 require {
-	class capability net_admin;
 	type fsdaemon_t;
 }
 allow fsdaemon_t self:capability net_admin;
