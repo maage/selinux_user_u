@@ -27,7 +27,7 @@ require {
 	# type sysadm_t;
 	# type staff_t;
 	# Alway use login_userdomain instead
-	# type user_t;
+	type user_t;
 	# role user_r;
 	role system_r;
 }
@@ -140,7 +140,7 @@ require {
 	type udev_t;
 	type xdm_t;
 }
-dontaudit login_userdomain { fprintd_t udev_t xdm_t }:dir getattr;
+dontaudit user_t { fprintd_t udev_t xdm_t }:dir getattr;
 allow login_userdomain fprintd_t:dir getattr;
 allow login_userdomain fwupd_cache_t:dir { getattr open };
 allow login_userdomain kernel_t:dir getattr;
@@ -243,56 +243,6 @@ require {
 	type kernel_t;
 }
 allow login_userdomain kernel_t:process getpgid;
-
-### Deny: ls /run/systemd/inaccessible/
-require {
-	type init_var_run_t;
-}
-dontaudit login_userdomain init_var_run_t:blk_file getattr;
-dontaudit login_userdomain init_var_run_t:chr_file getattr;
-
-### dri_device_t, seems harmless?
-### journalctl
-### login etc
-# prob should not be allowed
-require {
-	type dri_device_t;
-	type journalctl_t;
-	type utempter_t;
-}
-# some programs access: /dev/dri/card0
-dontaudit journalctl_t dri_device_t:chr_file { read write };
-dontaudit user_dbusd_t dri_device_t:chr_file { read write };
-dontaudit utempter_t dri_device_t:chr_file { read write };
-
-### login_userdomain:file read /proc/<pid>/mountinfo harmless?
-### journalctl
-### login etc
-# dunno if this should be allowed
-require {
-	type journalctl_t;
-	type ssh_t;
-	type utempter_t;
-}
-dontaudit { journalctl_t ssh_t utempter_t } login_userdomain:file read;
-
-### Deny: Xorg
-dontaudit login_userdomain self:capability sys_admin;
-
-### Deny: sudo
-dontaudit login_userdomain self:capability sys_resource;
-
-### Deny: write sudo ts file
-require {
-	type pam_var_run_t;
-}
-dontaudit login_userdomain pam_var_run_t:dir write;
-
-### Deny: run audit2allow
-require {
-	type security_t;
-}
-dontaudit login_userdomain security_t:security read_policy;
 
 ### watch
 require {
@@ -454,6 +404,63 @@ type_transition user_ssh_agent_t ssh_exec_t:process ssh_t;
 
 # AVC avc:  denied { send_msg } for  scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_t:s0-s0:c0.c1023 tclass=dbus permissive=0
 allow ssh_t login_userdomain:dbus send_msg;
+
+### Deny: ls /run/systemd/inaccessible/
+require {
+	type init_var_run_t;
+}
+dontaudit user_t init_var_run_t:blk_file getattr;
+dontaudit user_t init_var_run_t:chr_file getattr;
+
+### dri_device_t, seems harmless?
+### journalctl
+### login etc
+# prob should not be allowed
+require {
+	type dri_device_t;
+	type journalctl_t;
+	type utempter_t;
+}
+# some programs access: /dev/dri/card0
+dontaudit { journalctl_t user_dbusd_t utempter_t } dri_device_t:chr_file { read write };
+
+### login_userdomain:file read /proc/<pid>/mountinfo harmless?
+### journalctl
+### login etc
+# dunno if this should be allowed
+require {
+	type journalctl_t;
+	type ssh_t;
+	type utempter_t;
+}
+dontaudit { journalctl_t ssh_t utempter_t } login_userdomain:file read;
+
+### Deny: Xorg
+dontaudit user_t self:capability sys_admin;
+
+### Deny: sudo
+dontaudit user_t self:capability sys_resource;
+
+### Deny: write sudo ts file
+require {
+	type pam_var_run_t;
+}
+dontaudit user_t pam_var_run_t:dir write;
+
+### Deny: find / -ls
+require {
+	type configfs_t;
+	type krb5_keytab_t;
+}
+dontaudit user_t configfs_t:dir read;
+dontaudit user_t krb5_keytab_t:dir read;
+
+### Deny: run audit2allow
+require {
+	type security_t;
+}
+dontaudit user_t security_t:security read_policy;
+
 
 ')
 
