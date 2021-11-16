@@ -80,6 +80,12 @@ manage_sock_files_pattern({ login_userdomain systemd_logind_t }, user_tmp_t, sys
 ## /run/user/<uid>/gnupg
 userdom_user_tmp_filetrans({ gpg_t login_userdomain systemd_logind_t xdm_t }, gpg_agent_tmp_t, dir, "gnupg")
 manage_dirs_pattern({ gpg_t login_userdomain systemd_logind_t xdm_t }, user_tmp_t, gpg_agent_tmp_t)
+# AVC avc:  denied  { unlink } for pid=201566 comm="systemd-user-ru" name="S.scdaemon" dev="tmpfs" ino=246 scontext=system_u:system_r:systemd_logind_t:s0 tcontext=user_u:object_r:gpg_agent_tmp_t:s0 tclass=sock_file permissive=0
+# AVC avc:  denied  { unlink } for pid=201566 comm="systemd-user-ru" name="S.gpg-agent.ssh" dev="tmpfs" ino=245 scontext=system_u:system_r:systemd_logind_t:s0 tcontext=user_u:object_r:gpg_agent_tmp_t:s0 tclass=sock_file permissive=0
+# AVC avc:  denied  { unlink } for pid=201566 comm="systemd-user-ru" name="S.gpg-agent.browser" dev="tmpfs" ino=244 scontext=system_u:system_r:systemd_logind_t:s0 tcontext=user_u:object_r:gpg_agent_tmp_t:s0 tclass=sock_file permissive=0
+# AVC avc:  denied  { unlink } for pid=201566 comm="systemd-user-ru" name="S.gpg-agent.extra" dev="tmpfs" ino=243 scontext=system_u:system_r:systemd_logind_t:s0 tcontext=user_u:object_r:gpg_agent_tmp_t:s0 tclass=sock_file permissive=0
+# AVC avc:  denied  { unlink } for pid=201566 comm="systemd-user-ru" name="S.gpg-agent" dev="tmpfs" ino=242 scontext=system_u:system_r:systemd_logind_t:s0 tcontext=user_u:object_r:gpg_agent_tmp_t:s0 tclass=sock_file permissive=0
+manage_sock_files_pattern({ gpg_t login_userdomain systemd_logind_t xdm_t }, user_tmp_t, gpg_agent_tmp_t)
 
 #### /run/user/<uid>/keyring
 userdom_user_tmp_filetrans({ gkeyringd_domain login_userdomain systemd_logind_t }, gkeyringd_tmp_t, dir, "keyring")
