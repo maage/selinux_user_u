@@ -24,12 +24,14 @@ There usually is some during:
 - logout
 - reboot (kill)
 
+As most AVC come when resources are created/started or deleted/stopped. Usually if you can create/delete a resource you can then use it, so it is quite rare to see AVC otherwise.
+
 ### systemctl works
 
 systemctl
 -> no AVC
 
-Each subsystem should survive start, stop, kill -9 (or similar) without AVC.
+Each subsystem should survive start, stop, kill -9 (or similar unplanned stop) without AVC.
 
 This kind of continues login/logout.
 
@@ -48,16 +50,38 @@ restorecon -nvRx /
 There is regression with `/var/lib/mock/.../distribution-gpg-keys(/.*)?`
 because python copies files wrongly.
 
+Each subsystem should create all directories and files needed with right fcontext. So if subsystem creates/deletes filesystem resources, then you should test it with said resources not existing too. Even if during normal boot some other subsystem creates those resources.
+
 ### Contained user does not generate spurious AVC
+System probing commands should not produce AVC:s.
+
+For example:
 ```
 find / -ls
 ps -fe
+systemctl status
 ```
+
+If this is not implemented, then contained user can overload auditd by running those commands.
+
+Add dontaudit rules or limit access to resources in other way.
 
 ### Try to achieve some contain
 Use contained selinux users.
 
-Minimize usage of `user_tmp_t`.
+Limit uncontained daemons to 3rd party daemons not in distro control.
+Currenty in F35 I see:
+```
+system_u:system_r:unconfined_service_t:s0 /usr/libexec/low-memory-monitor
+system_u:system_r:unconfined_service_t:s0 /usr/libexec/switcheroo-control
+system_u:system_r:unconfined_service_t:s0 /usr/sbin/thermald --systemd --dbus-enable --adaptive
+system_u:system_r:unconfined_service_t:s0 /usr/libexec/uresourced
+```
+To implement contain for thermald should be easy. But anyways all of these should be contained.
+
+Usage of `user_tmp_t` should be minimized to /run/user/<uid> dir and rest should have per subsystem domains with discrete subdirectory and then you can use randomized files if needed. This allows nice `filetrans_pattern`. Using random filenames means proper selinux context handling needs application selinux support.
+
+Generally it is not good idea to put things in /tmp as there is also similar issue with contain and need to have randomized names.
 
 ### Add: booleans
 
