@@ -368,7 +368,6 @@ require {
 	attribute ssh_agent_type;
 	type ssh_t;
 	type ssh_exec_t;
-	type user_ssh_agent_t;
 }
 
 ### Allow: ssh -X / gnome-ssh-askpass
@@ -400,7 +399,20 @@ require {
 # AVC avc:  denied  { execute } for  pid=78917 comm="ssh-agent" name="ssh" dev="dm-0" ino=30736058 scontext=user_u:user_r:user_ssh_agent_t:s0-s0:c0.c1023 tcontext=system_u:object_r:ssh_exec_t:s0 tclass=file permissive=0
 read_lnk_files_pattern(ssh_agent_type, bin_t, ssh_exec_t)
 domtrans_pattern(ssh_agent_type, ssh_exec_t, ssh_t)
-type_transition user_ssh_agent_t ssh_exec_t:process ssh_t;
+type_transition ssh_agent_type ssh_exec_t:process ssh_t;
+
+# AVC avc:  denied  { write } for  pid=4696 comm="gnome-ssh-askpa" path="pipe:[48218]" dev="pipefs" ino=48218 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_ssh_agent_t:s0-s0:c0.c1023 tclass=fifo_file permissive=0
+# AVC avc:  denied  { write } for  pid=7373 comm="gnome-ssh-askpa" path="pipe:[77652]" dev="pipefs" ino=77652 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_ssh_agent_t:s0-s0:c0.c1023 tclass=fifo_file permissive=0
+# AVC avc:  denied  { write } for  pid=12849 comm="gnome-ssh-askpa" path="pipe:[138775]" dev="pipefs" ino=138775 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_ssh_agent_t:s0-s0:c0.c1023 tclass=fifo_file permissive=0
+# AVC avc:  denied  { write } for  pid=14907 comm="gnome-ssh-askpa" path="pipe:[162420]" dev="pipefs" ino=162420 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_ssh_agent_t:s0-s0:c0.c1023 tclass=fifo_file permissive=0
+# AVC avc:  denied  { write } for  pid=15930 comm="gnome-ssh-askpa" path="pipe:[175663]" dev="pipefs" ino=175663 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_ssh_agent_t:s0-s0:c0.c1023 tclass=fifo_file permissive=0
+# AVC avc:  denied  { write } for  pid=17161 comm="gnome-ssh-askpa" path="pipe:[187568]" dev="pipefs" ino=187568 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_ssh_agent_t:s0-s0:c0.c1023 tclass=fifo_file permissive=0
+# AVC avc:  denied  { write } for  pid=17486 comm="gnome-ssh-askpa" path="pipe:[189801]" dev="pipefs" ino=189801 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_ssh_agent_t:s0-s0:c0.c1023 tclass=fifo_file permissive=0
+# AVC avc:  denied  { write } for  pid=17876 comm="gnome-ssh-askpa" path="pipe:[193678]" dev="pipefs" ino=193678 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_ssh_agent_t:s0-s0:c0.c1023 tclass=fifo_file permissive=0
+# AVC avc:  denied  { write } for  pid=19083 comm="gnome-ssh-askpa" path="pipe:[207883]" dev="pipefs" ino=207883 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_ssh_agent_t:s0-s0:c0.c1023 tclass=fifo_file permissive=0
+# AVC avc:  denied  { write } for  pid=19943 comm="gnome-ssh-askpa" path="pipe:[214606]" dev="pipefs" ino=214606 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_ssh_agent_t:s0-s0:c0.c1023 tclass=fifo_file permissive=0
+# AVC avc:  denied  { write } for  pid=61685 comm="gnome-ssh-askpa" path="pipe:[641620]" dev="pipefs" ino=641620 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_ssh_agent_t:s0-s0:c0.c1023 tclass=fifo_file permissive=0
+allow login_userdomain ssh_agent_type:fifo_file write;
 
 # AVC avc:  denied { send_msg } for  scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_t:s0-s0:c0.c1023 tclass=dbus permissive=0
 allow ssh_t login_userdomain:dbus send_msg;
