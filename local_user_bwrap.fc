@@ -1,3 +1,5 @@
 # SPDX-FileCopyrightText: 2021 Markus Linnala <markus.linnala@cybercom.com>
 #
 # SPDX-License-Identifier: Apache-2.0
+
+/usr/bin/bwrap		-- gen_context(system_u:object_r:bwrap_exec_t,s0)

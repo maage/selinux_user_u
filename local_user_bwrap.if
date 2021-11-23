@@ -1,3 +1,109 @@
 # SPDX-FileCopyrightText: 2021 Markus Linnala <markus.linnala@cybercom.com>
 #
 # SPDX-License-Identifier: Apache-2.0
+
+#######################################
+## <summary>
+##	Role access for bwrap
+## </summary>
+## <param name="role_prefix">
+##	<summary>
+##	The prefix of the role (e.g., user
+##	is the prefix for user_r).
+##	</summary>
+## </param>
+## <param name="role">
+##	<summary>
+##	Role allowed access
+##	</summary>
+## </param>
+## <param name="domain">
+##	<summary>
+##	User domain for the role
+##	</summary>
+## </param>
+## <rolecap/>
+#
+template(`bwrap_role_template',`
+	gen_require(`
+		attribute bwrap_type;
+		type NetworkManager_var_run_t;
+		type bwrap_t;
+		type bwrap_exec_t;
+		type bwrap_tmp_t;
+		type cert_t;
+		type devlog_t;
+		type devpts_t;
+		type init_var_run_t;
+		type net_conf_t;
+		type proc_net_t;
+		type security_t;
+		type sysctl_net_t;
+		type sysctl_t;
+		type system_dbusd_var_run_t;
+		type root_t;
+	')
+
+	##############################
+	#
+	# Declarations
+	#
+
+	role $2 types bwrap_t;
+
+	type $1_bwrap_t, bwrap_type;
+	role $2 types $1_bwrap_t;
+
+	userdom_user_application_domain($1_bwrap_t, bwrap_exec_t)
+	# domain_interactive_fd($1_bwrap_t)
+
+	##############################
+	#
+	# Local policy
+	#
+
+	# Transition from the domain to the derived domain.
+	domtrans_pattern($3, bwrap_exec_t, bwrap_t)
+
+	# AVC avc:  denied  { read write } for  pid=127967 comm="bwrap" path="socket:[1590736]" dev="sockfs" ino=1590736 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_t:s0-s0:c0.c1023 tclass=unix_stream_socket permissive=0
+	# AVC avc:  denied  { ioctl } for  pid=173584 comm="bwrap" path="socket:[2283111]" dev="sockfs" ino=2283111 ioctlcmd=0x5401 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_t:s0-s0:c0.c1023 tclass=unix_stream_socket permissive=0
+	allow bwrap_t $3:unix_stream_socket { ioctl read write };
+
+	#### Allow: to execute programs actually
+	# AVC avc:  denied  { transition } for  pid=138035 comm="bwrap" path="/usr/bin/evince" dev="dm-0" ino=31980270 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_t:s0-s0:c1.c254 tclass=process permissive=1
+	allow bwrap_t $3:process transition;
+	# AVC avc:  denied  { nnp_transition nosuid_transition } for pid=138035 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_t:s0-s0:c1.c254 tclass=process2 permissive=1
+	allow bwrap_t $3:process2 { nnp_transition nosuid_transition };
+
+	#### Allow: to signal bwrap
+	# AVC avc:  denied  { signal } for  pid=7276 comm="zsh" scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=process permissive=0
+	allow $3 bwrap_t:process signal;
+	allow $3 bwrap_t:process { sigkill signull };
+
+	# ???
+	allow bwrap_t $3:process { noatsecure rlimitinh siginh };
+	allow $3 bwrap_t:process { noatsecure rlimitinh siginh };
+
+	#### Allow: to access bwrap files under /proc/<pid>
+	# AVC avc:  denied  { search } for  pid=2289 comm="systemd" name="165710" dev="proc" ino=2149888 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=dir permissive=0
+	# AVC avc:  denied  { getattr } for  pid=177338 comm="pidof" path="/proc/1" dev="proc" ino=2309442 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=dir permissive=0
+	# AVC avc:  denied  { read } for  pid=2289 comm="systemd" name="comm" dev="proc" ino=2162433 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=file permissive=0
+	# AVC avc:  denied  { read } for  pid=2289 comm="systemd" name="cgroup" dev="proc" ino=2162434 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=file permissive=0
+	# AVC avc:  denied  { open } for  pid=2289 comm="systemd" path="/proc/167096/comm" dev="proc" ino=2173892 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=file permissive=0
+	# AVC avc:  denied  { open } for  pid=2289 comm="systemd" path="/proc/167096/cgroup" dev="proc" ino=2173893 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=file permissive=0
+	# AVC avc:  denied  { getattr } for  pid=2289 comm="systemd" path="/proc/168522/comm" dev="proc" ino=2200940 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=file permissive=0
+	# AVC avc:  denied  { getattr } for  pid=2289 comm="systemd" path="/proc/168522/cgroup" dev="proc" ino=2200941 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=file permissive=0
+	# AVC avc:  denied  { ioctl } for  pid=2289 comm="systemd" path="/proc/168522/comm" dev="proc" ino=2200940 ioctlcmd=0x5401 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=file permissive=0
+	# AVC avc:  denied  { ioctl } for  pid=2289 comm="systemd" path="/proc/168522/cgroup" dev="proc" ino=2200941 ioctlcmd=0x5401 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=file permissive=0
+	# AVC avc:  denied  { read } for  pid=177842 comm="pidof" name="exe" dev="proc" ino=2343590 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=lnk_file permissive=0
+	allow $3 bwrap_t:dir { getattr search };
+	allow $3 bwrap_t:file { getattr ioctl open read };
+	allow $3 bwrap_t:lnk_file read;
+
+	manage_dirs_pattern($3, bwrap_tmp_t, bwrap_tmp_t)
+	manage_files_pattern($3, bwrap_tmp_t, bwrap_tmp_t)
+	manage_lnk_files_pattern($3, bwrap_tmp_t, bwrap_tmp_t)
+	# AVC avc:  denied  { map } for  pid=192731 comm="GeckoMain" path="/run/user/100/dconf/user" dev="tmpfs" ino=8 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:object_r:bwrap_tmp_t:s0 tclass=file permissive=0
+	allow $3 bwrap_tmp_t:file map;
+
+')
