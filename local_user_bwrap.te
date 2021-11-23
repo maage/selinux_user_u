@@ -152,7 +152,7 @@ optional_policy(`
 	allow bwrap_t self:netlink_route_socket read;
 ')
 
-#### Allow: access dbus
+#### Allow: access system dbus sockets
 # bwrap: Cant find source path /run/dbus/system_bus_socket: Permission denied
 # AVC avc:  denied  { search } for  pid=142643 comm="bwrap" name="dbus" dev="tmpfs" ino=53 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:system_dbusd_var_run_t:s0 tclass=dir permissive=0
 # bwrap: Cant get type of source /run/dbus/system_bus_socket: Permission denied
@@ -461,6 +461,11 @@ optional_policy(`
 ')
 
 ')
+### END of main module
+
+###
+### Tunables
+###
 
 ### Debug: use strace
 optional_policy(`
