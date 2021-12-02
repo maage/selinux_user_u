@@ -253,6 +253,7 @@ require {
 	type lib_t;
 	type locale_t;
 	type root_t;
+	type rpm_var_lib_t;
 	type system_conf_t;
 	type systemd_logind_var_run_t;
 	type user_dbusd_t;
@@ -269,6 +270,8 @@ allow login_userdomain locale_t:dir watch;
 allow login_userdomain root_t:dir watch;
 allow login_userdomain system_conf_t:dir watch;
 allow login_userdomain var_run_t:dir watch;
+# AVC avc:  denied  { watch } for  pid=87785 comm="gmain" path="/var/lib/PackageKit" dev="dm-0" ino=82036 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:rpm_var_lib_t:s0 tclass=dir permissive=0
+allow login_userdomain rpm_var_lib_t:dir watch;
 
 ### What?
 require {
