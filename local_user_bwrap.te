@@ -110,6 +110,10 @@ allow bwrap_t self:cap_userns sys_admin;
 # AVC avc:  denied  { sys_ptrace } for  pid=140949 comm="bwrap" capability=19  scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=cap_userns permissive=0
 dontaudit bwrap_t self:cap_userns sys_ptrace;
 
+#### Deny: write proc files for bwrap / /proc/1/oom_score_adj
+# AVC avc:  denied  { write } for  pid=88366 comm="chrome" name="oom_score_adj" dev="proc" ino=425527 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=file permissive=0
+dontaudit login_userdomain bwrap_t:file write;
+
 #### Allow: loopback
 # bwrap: loopback: Failed to look up lo: No such file or directory
 # AVC avc:  denied  { read } for  pid=141093 comm="bwrap" name="unix" dev="proc" ino=4026533667 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:proc_net_t:s0 tclass=file permissive=0
