@@ -294,7 +294,9 @@ allow bwrap_t self:process setcap;
 optional_policy(`
 	gen_require(`
 		attribute gnome_home_type;
+		attribute user_home_type;
 	')
+	allow bwrap_t user_home_type:dir mounton;
 	allow bwrap_t gnome_home_type:dir mounton;
 ')
 
