@@ -506,10 +506,12 @@ tunable_policy(`local_user_u_debug',`
 require {
 	attribute login_userdomain;
 	type journalctl_t;
+	type nsfs_t;
 	type syslogd_t;
 }
 allow syslogd_t self:cap_userns sys_ptrace;
 allow login_userdomain journalctl_t:process ptrace;
 allow login_userdomain self:cap_userns sys_ptrace;
+allow login_userdomain nsfs_t:file read_file_perms;
 ')
 ')
