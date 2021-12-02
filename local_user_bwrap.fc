@@ -3,3 +3,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 /usr/bin/bwrap		-- gen_context(system_u:object_r:bwrap_exec_t,s0)
+HOME_DIR/\.local/share/my-bwrap/[^/]+/bwrap-home	-d	gen_context(system_u:object_r:user_home_dir_t,s0)
+HOME_DIR/\.local/share/my-bwrap/[^/]+/bwrap-home/tmp	-d	gen_context(system_u:object_r:user_tmp_t,s0)
+HOME_DIR/\.local/share/my-bwrap/[^/]+/bwrap-home/.*		<<none>>
