@@ -442,6 +442,13 @@ optional_policy(`
 	allow login_userdomain udev_var_run_t:sock_file getattr;
 ')
 
+#### Allow: libreoffice to create socket under /tmp
+# libreoffice does not follow TEMP env
+# AVC avc:  denied  { create } for  pid=120747 comm="soffice.bin" name="OSL_PIPE_1000_SingleOfficeIPC_681b2d38e2b5c9693de54ca467f9bf55" scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:object_r:bwrap_tmp_t:s0 tclass=sock_file permissive=0
+# AVC avc:  denied  { unlink } for  pid=121736 comm="soffice.bin" name="OSL_PIPE_1000_SingleOfficeIPC_681b2d38e2b5c9693de54ca467f9bf55" dev="tmpfs" ino=8 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:object_r:bwrap_tmp_t:s0 tclass=sock_file permissive=0
+# AVC avc:  denied  { write } for  pid=121757 comm="soffice.bin" name="OSL_PIPE_1000_SingleOfficeIPC_681b2d38e2b5c9693de54ca467f9bf55" dev="tmpfs" ino=8 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:object_r:bwrap_tmp_t:s0 tclass=sock_file permissive=0
+allow user_t bwrap_tmp_t:sock_file manage_sock_file_perms;
+
 # - xterm
 # AVC avc:  denied  { read write } for  pid=180723 comm="utempter" path="/dev/pts/ptmx" dev="devpts" ino=2 scontext=user_u:user_r:utempter_t:s0-s0:c1.c254 tcontext=user_u:object_r:devpts_t:s0 tclass=chr_file permissive=0
 # AVC avc:  denied  { getattr } for  pid=181024 comm="utempter" path="/dev/pts/ptmx" dev="devpts" ino=2 scontext=user_u:user_r:utempter_t:s0-s0:c1.c254 tcontext=user_u:object_r:devpts_t:s0 tclass=chr_file permissive=0
