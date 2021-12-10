@@ -1,0 +1,167 @@
+policy_module(local_dnscrypt_proxy, 1.0.0)
+
+# Very simple policy for dnscrypt-proxy
+#
+# Only normal init_nnp transition
+# TODO:
+# - add config domain
+# - add var_lib domain
+#
+# This requires:
+# - systemd socket activation
+# - already created user
+#
+# When dnscrypt-proxy is started in root and changes to different user,
+# it requires much more permissions with very little benefit.
+#
+# Tested with this config, F35 package
+#
+# % cat /etc/sysusers.d/dnscrypt-proxy.conf
+# u dnscrypt-proxy /sbin/nologin DNSCrypt-Proxy /etc/dnscrypt-proxy
+#
+# % cat /etc/systemd/system/dnscrypt-proxy.service.d/override.conf
+# [Unit]
+# Requires=dnscrypt-proxy.socket
+#
+# [Service]
+# User=dnscrypt-proxy
+# Group=dnscrypt-proxy
+# NonBlocking=true
+# ProtectHome=yes
+# ProtectControlGroups=yes
+# ProtectKernelModules=yes
+# CacheDirectory=dnscrypt-proxy
+# LogsDirectory=dnscrypt-proxy
+# RuntimeDirectory=dnscrypt-proxy
+#
+# % cat /etc/systemd/system/dnscrypt-proxy.socket
+# [Unit]
+# Description=DNSCrypt-proxy socket
+# Documentation=https://github.com/jedisct1/dnscrypt-proxy/wiki
+# Before=nss-lookup.target
+# Wants=nss-lookup.target
+#
+# [Socket]
+# ListenStream=127.0.0.53:53
+# ListenDatagram=127.0.0.53:53
+# NoDelay=true
+# DeferAcceptSec=1
+#
+# [Install]
+# WantedBy=sockets.target
+
+########################################
+#
+# Declarations
+#
+
+type dnscrypt_proxy_t;
+type dnscrypt_proxy_exec_t;
+init_daemon_domain(dnscrypt_proxy_t, dnscrypt_proxy_exec_t)
+
+# AVC avc:  denied  { nnp_transition } for  pid=381496 comm="(pt- proxy)" scontext=system_u:system_r:init_t:s0 tcontext=system_u:system_r:dnscrypt_proxy_t:s0 tclass=process2 permissive=0
+init_nnp_daemon_domain(dnscrypt_proxy_t)
+
+########################################
+#
+# dnscrypt_proxy local policy
+#
+allow dnscrypt_proxy_t self:fifo_file rw_fifo_file_perms;
+allow dnscrypt_proxy_t self:unix_stream_socket create_stream_socket_perms;
+
+domain_use_interactive_fds(dnscrypt_proxy_t)
+
+files_read_etc_files(dnscrypt_proxy_t)
+
+### Allow: read things from /proc
+# AVC avc:  denied  { read } for  pid=381665 comm="dnscrypt-proxy" name="cmdline" dev="proc" ino=4026532019 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:proc_t:s0 tclass=file permissive=1
+# AVC avc:  denied  { open } for  pid=381665 comm="dnscrypt-proxy" path="/proc/cmdline" dev="proc" ino=4026532019 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:proc_t:s0 tclass=file permissive=1
+# AVC avc:  denied  { getattr } for  pid=381665 comm="dnscrypt-proxy" path="/proc/cmdline" dev="proc" ino=4026532019 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:proc_t:s0 tclass=file permissive=1
+# AVC avc:  denied  { ioctl } for  pid=381665 comm="dnscrypt-proxy" path="/proc/cmdline" dev="proc" ino=4026532019 ioctlcmd=0x5401 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:proc_t:s0 tclass=file permissive=1
+require {
+	type proc_t;
+}
+allow dnscrypt_proxy_t proc_t:file read_file_perms;
+# AVC avc:  denied  { read } for  pid=381881 comm="dnscrypt-proxy" name="hpage_pmd_size" dev="sysfs" ino=3647 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:sysfs_t:s0 tclass=file permissive=1
+# AVC avc:  denied  { open } for  pid=381881 comm="dnscrypt-proxy" path="/sys/kernel/mm/transparent_hugepage/hpage_pmd_size" dev="sysfs" ino=3647 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:sysfs_t:s0 tclass=file permissive=1
+dev_read_sysfs(dnscrypt_proxy_t)
+
+### Allow: network connectivity
+# AVC avc:  denied  { getopt } for  pid=381665 comm="dnscrypt-proxy" laddr=127.0.0.53 lport=53 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:system_r:dnscrypt_proxy_t:s0 tclass=tcp_socket permissive=1
+# AVC avc:  denied  { getattr } for  pid=381665 comm="dnscrypt-proxy" laddr=127.0.0.53 lport=53 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:system_r:dnscrypt_proxy_t:s0 tclass=tcp_socket permissive=1
+# AVC avc:  denied  { create } for  pid=381665 comm="dnscrypt-proxy" scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:system_r:dnscrypt_proxy_t:s0 tclass=tcp_socket permissive=1
+# AVC avc:  denied  { connect } for  pid=381665 comm="dnscrypt-proxy" scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:system_r:dnscrypt_proxy_t:s0 tclass=tcp_socket permissive=1
+# AVC avc:  denied  { setopt } for  pid=381665 comm="dnscrypt-proxy" laddr=192.168.1.1 lport=42928 faddr=1.1.1.1 fport=443 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:system_r:dnscrypt_proxy_t:s0 tclass=tcp_socket permissive=1
+# AVC avc:  denied  { accept } for  pid=381881 comm="dnscrypt-proxy" laddr=127.0.0.53 lport=53 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:system_r:dnscrypt_proxy_t:s0 tclass=tcp_socket permissive=1
+# AVC avc:  denied  { write } for  pid=383967 comm="dnscrypt-proxy" path="socket:[3488374]" dev="sockfs" ino=3488374 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:system_r:dnscrypt_proxy_t:s0 tclass=tcp_socket permissive=0
+allow dnscrypt_proxy_t self:tcp_socket { connected_stream_socket_perms rw_socket_perms };
+# AVC avc:  denied  { create } for  pid=381665 comm="dnscrypt-proxy" scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:system_r:dnscrypt_proxy_t:s0 tclass=udp_socket permissive=1
+# AVC avc:  denied  { setopt } for  pid=381665 comm="dnscrypt-proxy" scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:system_r:dnscrypt_proxy_t:s0 tclass=udp_socket permissive=1
+# AVC avc:  denied  { connect } for  pid=381665 comm="dnscrypt-proxy" scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:system_r:dnscrypt_proxy_t:s0 tclass=udp_socket permissive=1
+# AVC avc:  denied  { getattr } for  pid=381665 comm="dnscrypt-proxy" laddr=192.168.1.1 lport=58652 faddr=9.9.9.9 fport=53 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:system_r:dnscrypt_proxy_t:s0 tclass=udp_socket permissive=1
+# AVC avc:  denied  { getopt } for  pid=381665 comm="dnscrypt-proxy" laddr=127.0.0.53 lport=53 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:system_r:dnscrypt_proxy_t:s0 tclass=udp_socket permissive=1
+allow dnscrypt_proxy_t self:udp_socket { connected_socket_perms rw_socket_perms };
+# AVC avc:  denied  { create } for  pid=381665 comm="dnscrypt-proxy" scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:system_r:dnscrypt_proxy_t:s0 tclass=unix_dgram_socket permissive=1
+# AVC avc:  denied  { connect } for  pid=381665 comm="dnscrypt-proxy" scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:system_r:dnscrypt_proxy_t:s0 tclass=unix_dgram_socket permissive=1
+# AVC avc:  denied  { getattr } for  pid=381665 comm="dnscrypt-proxy" scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:system_r:dnscrypt_proxy_t:s0 tclass=unix_dgram_socket permissive=1
+allow dnscrypt_proxy_t self:unix_dgram_socket { connect create getattr write };
+# AVC avc:  denied  { name_connect } for  pid=381881 comm="dnscrypt- proxy" dest=443 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:http_port_t:s0 tclass=tcp_socket permissive=1
+corenet_tcp_connect_http_port(dnscrypt_proxy_t)
+# AVC avc:  denied  { name_connect } for  pid=383269 comm="dnscrypt- proxy" dest=53 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:dns_port_t:s0 tclass=tcp_socket permissive=0
+corenet_tcp_connect_dns_port(dnscrypt_proxy_t)
+# AVC avc:  denied  { name_connect } for  pid=383269 comm="dnscrypt- proxy" dest=453 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:reserved_port_t:s0 tclass=tcp_socket permissive=0
+corenet_tcp_connect_reserved_port(dnscrypt_proxy_t)
+# AVC avc:  denied  { name_connect } for  pid=383269 comm="dnscrypt- proxy" dest=5053 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:unreserved_port_t:s0 tclass=tcp_socket permissive=0
+corenet_tcp_connect_generic_port(dnscrypt_proxy_t)
+
+
+# Allow: to read certs from /etc/pki
+# AVC avc:  denied  { search } for  pid=381665 comm="dnscrypt-proxy" name="ssl" dev="dm-0" ino=1676 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:cert_t:s0 tclass=dir permissive=1
+# AVC avc:  denied  { read } for  pid=381665 comm="dnscrypt-proxy" name="certs" dev="dm-0" ino=1673 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:cert_t:s0 tclass=dir permissive=1
+# AVC avc:  denied  { open } for  pid=381665 comm="dnscrypt-proxy" path="/etc/pki/tls/certs" dev="dm-0" ino=1673 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:cert_t:s0 tclass=dir permissive=1
+# AVC avc:  denied  { read } for  pid=381665 comm="dnscrypt-proxy" name="certs" dev="dm-0" ino=31843878 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:cert_t:s0 tclass=lnk_file permissive=1
+# AVC avc:  denied  { read } for  pid=381665 comm="dnscrypt-proxy" name="tls-ca-bundle.pem" dev="dm-0" ino=34719024 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=unconfined_u:object_r:cert_t:s0 tclass=file permissive=1
+# AVC avc:  denied  { open } for  pid=381665 comm="dnscrypt-proxy" path="/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem" dev="dm-0" ino=34719024 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=unconfined_u:object_r:cert_t:s0 tclass=file permissive=1
+# AVC avc:  denied  { getattr } for  pid=381665 comm="dnscrypt-proxy" path="/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem" dev="dm-0" ino=34719024 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=unconfined_u:object_r:cert_t:s0 tclass=file permissive=1
+# AVC avc:  denied  { read } for  pid=381665 comm="dnscrypt-proxy" name="postfix.pem" dev="dm-0" ino=20203330 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:cert_t:s0 tclass=file permissive=1
+# AVC avc:  denied  { open } for  pid=381665 comm="dnscrypt-proxy" path="/etc/pki/tls/certs/postfix.pem" dev="dm-0" ino=20203330 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:cert_t:s0 tclass=file permissive=1
+# AVC avc:  denied  { getattr } for  pid=381665 comm="dnscrypt-proxy" path="/etc/pki/tls/certs/postfix.pem" dev="dm-0" ino=20203330 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:cert_t:s0 tclass=file permissive=1
+miscfiles_read_certs(dnscrypt_proxy_t)
+
+### Allow: our own cache
+# AVC avc:  denied  { read } for  pid=381881 comm="dnscrypt-proxy" name="public-resolvers.md" dev="dm-0" ino=34730443 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:var_t:s0 tclass=file permissive=1
+# AVC avc:  denied  { open } for  pid=381881 comm="dnscrypt-proxy" path="/var/cache/dnscrypt-proxy/public-resolvers.md" dev="dm-0" ino=34730443 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:var_t:s0 tclass=file permissive=1
+# AVC avc:  denied  { getattr } for  pid=381881 comm="dnscrypt-proxy" path="/var/cache/dnscrypt-proxy/public-resolvers.md" dev="dm-0" ino=34730443 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:var_t:s0 tclass=file permissive=1
+files_read_var_files(dnscrypt_proxy_t)
+
+### Allow: logging via journal
+# AVC avc:  denied  { sendto } for  pid=381665 comm="dnscrypt-proxy" path="/run/systemd/journal/dev-log" scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:system_r:kernel_t:s0 tclass=unix_dgram_socket permissive=1
+kernel_dgram_send(dnscrypt_proxy_t)
+# AVC avc:  denied  { read } for  pid=381881 comm="dnscrypt-proxy" name="log" dev="devtmpfs" ino=206 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:devlog_t:s0 tclass=lnk_file permissive=1
+# AVC avc:  denied  { write } for  pid=381881 comm="dnscrypt-proxy" name="dev-log" dev="tmpfs" ino=56 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:devlog_t:s0 tclass=sock_file permissive=1
+require {
+	type devlog_t;
+}
+allow dnscrypt_proxy_t devlog_t:lnk_file read;
+allow dnscrypt_proxy_t devlog_t:sock_file write;
+# AVC avc:  denied  { search } for  pid=381881 comm="dnscrypt-proxy" name="journal" dev="tmpfs" ino=55 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:syslogd_var_run_t:s0 tclass=dir permissive=1
+logging_stream_connect_syslog(dnscrypt_proxy_t)
+
+### Allow: to read /etc/resolv.conf
+# AVC avc:  denied  { read } for  pid=383269 comm="dnscrypt-proxy" name="resolv.conf" dev="dm-0" ino=15409287 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:net_conf_t:s0 tclass=lnk_file permissive=0
+sysnet_read_config(dnscrypt_proxy_t)
+
+### Allow: some probing
+# AVC avc:  denied  { getattr } for  pid=383269 comm="dnscrypt-proxy" name="/" dev="cgroup2" ino=1 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:cgroup_t:s0 tclass=filesystem permissive=0
+fs_getattr_cgroup(dnscrypt_proxy_t)
+# AVC avc:  denied  { search } for  pid=383495 comm="dnscrypt-proxy" name="/" dev="cgroup2" ino=1 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:cgroup_t:s0 tclass=dir permissive=0
+fs_search_cgroup_dirs(dnscrypt_proxy_t)
+# AVC avc:  denied  { getattr } for  pid=383269 comm="dnscrypt-proxy" name="/" dev="dm-0" ino=256 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:fs_t:s0 tclass=filesystem permissive=0
+fs_getattr_xattr_fs(dnscrypt_proxy_t)
+
+# IDK what is this
+# AVC avc:  denied  { search } for  pid=383269 comm="dnscrypt-proxy" name="machines" dev="tmpfs" ino=97 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:systemd_machined_var_run_t:s0 tclass=dir permissive=0
+require {
+	type systemd_machined_var_run_t;
+}
+dontaudit dnscrypt_proxy_t systemd_machined_var_run_t:dir manage_dir_perms;

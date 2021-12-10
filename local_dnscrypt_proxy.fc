@@ -1,0 +1,1 @@
+/usr/bin/dnscrypt-proxy		--	gen_context(system_u:object_r:dnscrypt_proxy_exec_t,s0)
