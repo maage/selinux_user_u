@@ -10,13 +10,6 @@ policy_module(local_user_bwrap, 1.0.0)
 ## </desc>
 gen_tunable(local_bwrap_debug, false)
 
-## <desc>
-## <p>
-## Enable bwrap usage via flatpak
-## </p>
-## </desc>
-gen_tunable(local_bwrap_flatpak, false)
-
 optional_policy(`
 
 require {
@@ -502,89 +495,6 @@ optional_policy(`
 ###
 ### Tunables
 ###
-
-#### Allow: bwrap usage w/o my-bwrap, policy is not working
-optional_policy(`
-tunable_policy(`local_bwrap_flatpak',`
-require {
-	type bwrap_t;
-}
-# AVC avc:  denied  { create } for  pid=285570 comm="bwrap" name="newroot" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:tmpfs_t:s0 tclass=dir permissive=0
-fs_manage_tmpfs_dirs(bwrap_t)
-# AVC avc:  denied  { create } for  pid=286516 comm="bwrap" name="bin" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:tmpfs_t:s0 tclass=lnk_file permissive=0
-fs_manage_tmpfs_symlinks(bwrap_t)
-# AVC avc:  denied  { search } for  pid=286516 comm="bwrap" name="fs" dev="proc" ino=14354 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:sysctl_fs_t:s0 tclass=dir permissive=0
-kernel_read_fs_sysctls(bwrap_t)
-# AVC avc:  denied  { create } for  pid=286694 comm="bwrap" name=".flatpak-info" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:tmpfs_t:s0 tclass=file permissive=0
-fs_manage_tmpfs_files(bwrap_t)
-# AVC avc:  denied  { execute_no_trans } for  pid=286873 comm="bwrap" path="/usr/bin/xdg-dbus-proxy" dev="dm-0" ino=31881763 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:bin_t:s0 tclass=file permissive=0
-corecmd_exec_bin(bwrap_t)
-# AVC avc:  denied  { setsched } for  pid=287037 comm="xdg-dbus-proxy" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=process permissive=0
-allow bwrap_t self:process setsched;
-# AVC avc:  denied  { search } for  pid=287045 comm="bwrap" name="/" dev="fuse" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:fusefs_t:s0 tclass=dir permissive=0
-fs_search_fusefs(bwrap_t)
-# AVC avc:  denied  { getattr } for  pid=287713 comm="bwrap" path="/ol droot/var/lib/flatpak/runtime/org.fedoraproject.Platform/x86_64/f33/89c71bffa b47184d0fd0b4d35cfdb535f001567d1e257576486cc69fb8467013/files/etc/.pwd.lock" dev="dm-0" ino=22511375 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:var_lib_t:s0 tclass=file permissive=0
-files_read_var_lib_files(bwrap_t)
-# AVC avc:  denied  { getattr } for  pid=288218 comm="bwrap" path="/oldroot/run/systemd/journal/socket" dev="tmpfs" ino=57 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:syslogd_var_run_t:s0 tclass=sock_file permissive=0
-logging_stream_connect_syslog(bwrap_t)
-
-# AVC avc:  denied  { mounton } for  pid=285842 comm="bwrap" path="/tmp/newroot" dev="tmpfs" ino=2 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:tmpfs_t:s0 tclass=dir permissive=0
-# AVC avc:  denied  { mounton } for  pid=287218 comm="bwrap" path="/newroot/run/.userns" dev="tmpfs" ino=21 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:tmpfs_t:s0 tclass=file permissive=0
-# AVC avc:  denied  { mounton } for  pid=287878 comm="bwrap" path="/newroot/usr/share/zoneinfo" dev="dm-0" ino=22519785 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:var_lib_t:s0 tclass=dir permissive=0
-# AVC avc:  denied  { mounton } for  pid=288025 comm="bwrap" path="/newroot/home/user/.var/app/ca.desrt.dconf-editor/config/user- dirs.dirs" dev="dm-2" ino=962217 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_home_t:s0 tclass=file permissive=0
-# AVC avc:  denied  { remount } for  pid=286140 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:device_t:s0 tclass=filesystem permissive=0
-# AVC avc:  denied  { remount } for  pid=286278 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:devpts_t:s0 tclass=filesystem permissive=0
-# AVC avc:  denied  { remount } for  pid=286278 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:hugetlbfs_t:s0 tclass=filesystem permissive=0
-# AVC avc:  denied  { remount } for  pid=286278 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:proc_t:s0 tclass=filesystem permissive=0
-# AVC avc:  denied  { remount } for  pid=286516 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:bpf_t:s0 tclass=filesystem permissive=0
-# AVC avc:  denied  { remount } for  pid=286516 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:cgroup_t:s0 tclass=filesystem permissive=0
-# AVC avc:  denied  { remount } for  pid=286516 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:configfs_t:s0 tclass=filesystem permissive=0
-# AVC avc:  denied  { remount } for  pid=286516 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:debugfs_t:s0 tclass=filesystem permissive=0
-# AVC avc:  denied  { remount } for  pid=286516 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:fusefs_t:s0 tclass=filesystem permissive=0
-# AVC avc:  denied  { remount } for  pid=286516 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:pstore_t:s0 tclass=filesystem permissive=0
-# AVC avc:  denied  { remount } for  pid=286516 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:tracefs_t:s0 tclass=filesystem permissive=0
-# AVC avc:  denied  { remount } for  pid=286694 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:binfmt_misc_fs_t:s0 tclass=filesystem permissive=0
-# AVC avc:  denied  { remount } for  pid=287362 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:nsfs_t:s0 tclass=filesystem permissive=0
-#optional_policy(`
-	gen_require(`
-		type cgroup_t;
-		type device_t;
-		type devpts_t;
-		type debugfs_t;
-		type hugetlbfs_t;
-		type proc_t;
-		type bpf_t;
-		type configfs_t;
-		type fusefs_t;
-		type pstore_t;
-		type tracefs_t;
-		type binfmt_misc_fs_t;
-		type tmpfs_t;
-		type nsfs_t;
-		type var_lib_t;
-		type user_home_t;
-	')
-	allow bwrap_t tmpfs_t:dir mounton;
-	allow bwrap_t tmpfs_t:file mounton;
-	allow bwrap_t user_home_t:file mounton;
-	allow bwrap_t var_lib_t:dir mounton;
-
-	allow bwrap_t binfmt_misc_fs_t:filesystem remount;
-	allow bwrap_t bpf_t:filesystem remount;
-	allow bwrap_t cgroup_t:filesystem remount;
-	allow bwrap_t configfs_t:filesystem remount;
-	allow bwrap_t debugfs_t:filesystem remount;
-	allow bwrap_t device_t:filesystem remount;
-	allow bwrap_t devpts_t:filesystem remount;
-	allow bwrap_t fusefs_t:filesystem remount;
-	allow bwrap_t hugetlbfs_t:filesystem remount;
-	allow bwrap_t nsfs_t:filesystem remount;
-	allow bwrap_t proc_t:filesystem remount;
-	allow bwrap_t pstore_t:filesystem remount;
-	allow bwrap_t tracefs_t:filesystem remount;
-#')
-')
-')
 
 ### Debug: use strace
 optional_policy(`
