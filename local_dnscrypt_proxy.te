@@ -5,7 +5,6 @@ policy_module(local_dnscrypt_proxy, 1.0.0)
 # Only normal init_nnp transition
 # TODO:
 # - add config domain
-# - add var_lib domain
 #
 # This requires:
 # - systemd socket activation
@@ -61,6 +60,9 @@ init_daemon_domain(dnscrypt_proxy_t, dnscrypt_proxy_exec_t)
 
 # AVC avc:  denied  { nnp_transition } for  pid=381496 comm="(pt- proxy)" scontext=system_u:system_r:init_t:s0 tcontext=system_u:system_r:dnscrypt_proxy_t:s0 tclass=process2 permissive=0
 init_nnp_daemon_domain(dnscrypt_proxy_t)
+
+type dnscrypt_proxy_cache_t;
+files_type(dnscrypt_proxy_cache_t)
 
 ########################################
 #
@@ -128,11 +130,12 @@ corenet_tcp_connect_generic_port(dnscrypt_proxy_t)
 # AVC avc:  denied  { getattr } for  pid=381665 comm="dnscrypt-proxy" path="/etc/pki/tls/certs/postfix.pem" dev="dm-0" ino=20203330 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:cert_t:s0 tclass=file permissive=1
 miscfiles_read_certs(dnscrypt_proxy_t)
 
-### Allow: our own cache
+### Allow: our own cache, init to create
 # AVC avc:  denied  { read } for  pid=381881 comm="dnscrypt-proxy" name="public-resolvers.md" dev="dm-0" ino=34730443 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:var_t:s0 tclass=file permissive=1
 # AVC avc:  denied  { open } for  pid=381881 comm="dnscrypt-proxy" path="/var/cache/dnscrypt-proxy/public-resolvers.md" dev="dm-0" ino=34730443 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:var_t:s0 tclass=file permissive=1
 # AVC avc:  denied  { getattr } for  pid=381881 comm="dnscrypt-proxy" path="/var/cache/dnscrypt-proxy/public-resolvers.md" dev="dm-0" ino=34730443 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:var_t:s0 tclass=file permissive=1
-files_read_var_files(dnscrypt_proxy_t)
+filetrans_pattern(init_t, var_t, dnscrypt_proxy_cache_t, dir, "dnscrypt-proxy")
+manage_files_pattern(dnscrypt_proxy_t, dnscrypt_proxy_cache_t, dnscrypt_proxy_cache_t)
 
 ### Allow: logging via journal
 # AVC avc:  denied  { sendto } for  pid=381665 comm="dnscrypt-proxy" path="/run/systemd/journal/dev-log" scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:system_r:kernel_t:s0 tclass=unix_dgram_socket permissive=1
