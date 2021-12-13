@@ -68,10 +68,6 @@ files_type(dnscrypt_proxy_cache_t)
 #
 # dnscrypt_proxy local policy
 #
-allow dnscrypt_proxy_t self:fifo_file rw_fifo_file_perms;
-allow dnscrypt_proxy_t self:unix_stream_socket create_stream_socket_perms;
-
-domain_use_interactive_fds(dnscrypt_proxy_t)
 
 ### Allow: configs are at /etc/dnscrypt-proxy
 files_read_etc_files(dnscrypt_proxy_t)
