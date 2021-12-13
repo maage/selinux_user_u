@@ -327,12 +327,7 @@ optional_policy(`
 ')
 
 # AVC avc:  denied  { remount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:security_t:s0 tclass=filesystem permissive=1
-optional_policy(`
-	gen_require(`
-		type security_t;
-	')
-	allow bwrap_t security_t:filesystem remount;
-')
+selinux_remount_fs(bwrap_t)
 
 # AVC avc:  denied  { remount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:sysfs_t:s0 tclass=filesystem permissive=1
 optional_policy(`
