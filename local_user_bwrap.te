@@ -306,12 +306,7 @@ optional_policy(`
 fs_all_mount_fs_perms_xattr_fs(bwrap_t)
 
 # AVC avc:  denied  { mount } for  pid=138701 comm="bwrap" name="/" dev="proc" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:proc_t:s0 tclass=filesystem permissive=1
-optional_policy(`
-	gen_require(`
-		type proc_t;
-	')
-	allow bwrap_t proc_t:filesystem mount;
-')
+kernel_mount_proc(bwrap_t)
 
 # AVC avc:  denied  { mounton } for  pid=138701 comm="bwrap" path="/" dev="dm-0" ino=256 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:root_t:s0 tclass=dir permissive=1
 optional_policy(`
