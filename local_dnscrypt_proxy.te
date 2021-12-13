@@ -76,16 +76,6 @@ domain_use_interactive_fds(dnscrypt_proxy_t)
 ### Allow: configs are at /etc/dnscrypt-proxy
 files_read_etc_files(dnscrypt_proxy_t)
 
-### Allow: read things from /proc
-# AVC avc:  denied  { getattr } for  pid=381665 comm="dnscrypt-proxy" path="/proc/cmdline" dev="proc" ino=4026532019 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:proc_t:s0 tclass=file permissive=1
-# AVC avc:  denied  { ioctl } for  pid=381665 comm="dnscrypt-proxy" path="/proc/cmdline" dev="proc" ino=4026532019 ioctlcmd=0x5401 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:proc_t:s0 tclass=file permissive=1
-# AVC avc:  denied  { open } for  pid=381665 comm="dnscrypt-proxy" path="/proc/cmdline" dev="proc" ino=4026532019 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:proc_t:s0 tclass=file permissive=1
-# AVC avc:  denied  { read } for  pid=381665 comm="dnscrypt-proxy" name="cmdline" dev="proc" ino=4026532019 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:proc_t:s0 tclass=file permissive=1
-require {
-	type proc_t;
-}
-allow dnscrypt_proxy_t proc_t:file read_file_perms;
-
 ### Allow: to read some sysfs files
 # AVC avc:  denied  { open } for  pid=381881 comm="dnscrypt-proxy" path="/sys/kernel/mm/transparent_hugepage/hpage_pmd_size" dev="sysfs" ino=3647 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:sysfs_t:s0 tclass=file permissive=1
 # AVC avc:  denied  { read } for  pid=381881 comm="dnscrypt-proxy" name="hpage_pmd_size" dev="sysfs" ino=3647 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:sysfs_t:s0 tclass=file permissive=1
@@ -167,4 +157,12 @@ fs_getattr_xattr_fs(dnscrypt_proxy_t)
 require {
 	type systemd_machined_var_run_t;
 }
-dontaudit dnscrypt_proxy_t systemd_machined_var_run_t:dir manage_dir_perms;
+dontaudit dnscrypt_proxy_t systemd_machined_var_run_t:dir search_dir_perms;
+
+### Deny: read cmdline
+# IDK why it does that, but it seems not to be required
+# AVC avc:  denied  { getattr } for  pid=381665 comm="dnscrypt-proxy" path="/proc/cmdline" dev="proc" ino=4026532019 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:proc_t:s0 tclass=file permissive=1
+# AVC avc:  denied  { ioctl } for  pid=381665 comm="dnscrypt-proxy" path="/proc/cmdline" dev="proc" ino=4026532019 ioctlcmd=0x5401 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:proc_t:s0 tclass=file permissive=1
+# AVC avc:  denied  { open } for  pid=381665 comm="dnscrypt-proxy" path="/proc/cmdline" dev="proc" ino=4026532019 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:proc_t:s0 tclass=file permissive=1
+# AVC avc:  denied  { read } for  pid=381665 comm="dnscrypt-proxy" name="cmdline" dev="proc" ino=4026532019 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:proc_t:s0 tclass=file permissive=1
+kernel_dontaudit_read_system_state(dnscrypt_proxy_t)
