@@ -288,14 +288,9 @@ optional_policy(`
 # AVC avc:  denied  { mount } for  pid=138701 comm="bwrap" name="/" dev="devpts" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:devpts_t:s0 tclass=filesystem permissive=1
 # AVC avc:  denied  { search } for  pid=178789 comm="bwrap" name="/" dev="devpts" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:devpts_t:s0 tclass=dir permissive=0
 # AVC avc:  denied  { setattr } for  pid=194443 comm="bwrap" name="ptmx" dev="devpts" ino=2 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:devpts_t:s0 tclass=chr_file permissive=0
-optional_policy(`
-	gen_require(`
-		type devpts_t;
-	')
-	allow bwrap_t devpts_t:filesystem mount;
-	term_search_ptys(bwrap_t)
-	term_setattr_generic_ptys(bwrap_t)
-')
+term_mount_pty_fs(bwrap_t)
+term_search_ptys(bwrap_t)
+term_setattr_generic_ptys(bwrap_t)
 
 # AVC avc:  denied  { mounton } for  pid=138701 comm="bwrap" path="/newroot/etc/dconf/profile/user" dev="dm-0" ino=31848549 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:etc_t:s0 tclass=file permissive=1
 optional_policy(`
