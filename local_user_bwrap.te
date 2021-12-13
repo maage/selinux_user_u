@@ -95,9 +95,7 @@ optional_policy(`
 	gen_require(`
 		type security_t;
 	')
-	allow bwrap_t security_t:file write;
-	allow bwrap_t security_t:file read;
-	allow bwrap_t security_t:file open;
+	allow bwrap_t security_t:file { open read write };
 	allow bwrap_t security_t:security check_context;
 ')
 
@@ -139,18 +137,12 @@ optional_policy(`
 		type sysctl_net_t;
 	')
 	allow bwrap_t proc_net_t:file read;
-	allow bwrap_t self:cap_userns setpcap;
-	allow bwrap_t self:udp_socket create;
-	allow bwrap_t sysctl_net_t:dir search;
-	allow bwrap_t self:udp_socket ioctl;
-	allow bwrap_t self:unix_dgram_socket create;
-	allow bwrap_t self:unix_dgram_socket ioctl;
-	allow bwrap_t self:netlink_route_socket create;
-	allow bwrap_t self:netlink_route_socket bind;
-	allow bwrap_t self:netlink_route_socket write;
-	allow bwrap_t self:netlink_route_socket nlmsg_write;
 	allow bwrap_t self:cap_userns net_admin;
-	allow bwrap_t self:netlink_route_socket read;
+	allow bwrap_t self:cap_userns setpcap;
+	allow bwrap_t self:netlink_route_socket { bind create nlmsg_write read write };
+	allow bwrap_t self:udp_socket { create ioctl };
+	allow bwrap_t self:unix_dgram_socket { create ioctl };
+	allow bwrap_t sysctl_net_t:dir search;
 ')
 
 #### Allow: access system dbus sockets
@@ -168,9 +160,9 @@ optional_policy(`
 		type system_dbusd_var_lib_t;
 		type system_dbusd_var_run_t;
 	')
-	allow bwrap_t system_dbusd_var_run_t:sock_file getattr;
 	allow bwrap_t system_dbusd_var_lib_t:dir getattr;
 	allow bwrap_t system_dbusd_var_lib_t:dir mounton;
+	allow bwrap_t system_dbusd_var_run_t:sock_file getattr;
 	allow bwrap_t system_dbusd_var_run_t:sock_file mounton;
 ')
 optional_policy(`
@@ -189,8 +181,7 @@ optional_policy(`
 	gen_require(`
 		type cert_t;
 	')
-	allow bwrap_t cert_t:dir getattr;
-	allow bwrap_t cert_t:dir search;
+	allow bwrap_t cert_t:dir { getattr search };
 	allow bwrap_t cert_t:dir mounton;
 ')
 
@@ -204,69 +195,70 @@ optional_policy(`
 		type NetworkManager_var_run_t;
 		type net_conf_t;
 	')
-	allow bwrap_t net_conf_t:lnk_file read;
-	allow bwrap_t net_conf_t:file getattr;
 	allow bwrap_t NetworkManager_var_run_t:dir search;
+	allow bwrap_t net_conf_t:file getattr;
+	allow bwrap_t net_conf_t:lnk_file read;
 ')
 
 #### Allow: access log
 # AVC avc:  denied  { read } for  pid=149530 comm="bwrap" name="log" dev="devtmpfs" ino=202 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:devlog_t:s0 tclass=lnk_file permissive=0
-# AVC avc:  denied  { getattr } for  pid=149530 comm="bwrap" path="/run/initctl" dev="tmpfs" ino=930 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:initctl_t:s0 tclass=fifo_file permissive=0
-# AVC avc:  denied  { getattr } for  pid=149530 comm="bwrap" path="/proc/kcore" dev="proc" ino=4026532030 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:proc_kcore_t:s0 tclass=file permissive=0
 # AVC avc:  denied  { search } for  pid=155617 comm="bwrap" name="journal" dev="tmpfs" ino=55 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:syslogd_var_run_t:s0 tclass=dir permissive=0
 # AVC avc:  denied  { getattr } for  pid=156984 comm="bwrap" path="/run/systemd/journal/dev-log" dev="tmpfs" ino=56 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:devlog_t:s0 tclass=sock_file permissive=0
 optional_policy(`
 	gen_require(`
 		type devlog_t;
-		type initctl_t;
-		type proc_kcore_t;
 		type syslogd_var_run_t;
 	')
 	allow bwrap_t devlog_t:lnk_file read;
+	allow bwrap_t devlog_t:sock_file getattr;
+	allow bwrap_t syslogd_var_run_t:dir search;
+')
+
+# AVC avc:  denied  { getattr } for  pid=149530 comm="bwrap" path="/run/initctl" dev="tmpfs" ino=930 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:initctl_t:s0 tclass=fifo_file permissive=0
+# AVC avc:  denied  { getattr } for  pid=149530 comm="bwrap" path="/proc/kcore" dev="proc" ino=4026532030 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:proc_kcore_t:s0 tclass=file permissive=0
+optional_policy(`
+	gen_require(`
+		type initctl_t;
+		type proc_kcore_t;
+	')
 	allow bwrap_t initctl_t:fifo_file getattr;
 	allow bwrap_t proc_kcore_t:file getattr;
-	allow bwrap_t syslogd_var_run_t:dir search;
-	allow bwrap_t devlog_t:sock_file getattr;
 ')
 
-
-#### Allow: access machine-id file
-# TODO: contained directory here
-# bwrap: Cant find source path /home/user/.local/share/my-bwrap/machine-id: Permission denied
-# AVC avc:  denied  { getattr } for  pid=149549 comm="bwrap" path="/oldroot/home/user/.local/share/my-bwrap/machine-id" dev="dm-2" ino=1071514 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0
-# AVC avc:  denied  { search } for  pid=144244 comm="bwrap" name="user" dev="dm-2" ino=786433 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_home_dir_t:s0 tclass=dir permissive=0
-# AVC avc:  denied  { search } for  pid=145419 comm="bwrap" name=".local" dev="dm-2" ino=786460 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:gconf_home_t:s0 tclass=dir permissive=0
-# AVC avc:  denied  { search } for  pid=145600 comm="bwrap" name="share" dev="dm-2" ino=786461 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=dir permissive=0
-optional_policy(`
-	gen_require(`
-		type data_home_t;
-		type gconf_home_t;
-		type user_home_dir_t;
-	')
-	allow bwrap_t data_home_t:file getattr;
-	allow bwrap_t user_home_dir_t:dir search;
-	allow bwrap_t gconf_home_t:dir search;
-	allow bwrap_t data_home_t:dir search;
-')
 
 # bwrap: Cant get type of source /run/user/1000/pulse: Permission denied
-# AVC avc:  denied  { getattr } for pid=153109 comm="bwrap" path="/oldroot/run/user/1000/pulse" dev="tmpfs" ino=46 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:pulseaudio_var_lib_t:s0 tclass=dir permissive=0
-# AVC avc:  denied  { search } for  pid=154219 comm="bwrap" name="systemd" dev="tmpfs" ino=2 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:init_var_run_t:s0 tclass=dir permissive=0
-# AVC avc:  denied  { getattr } for  pid=154237 comm="bwrap" path="/oldroot/tmp/.X11-unix/X0" dev="tmpfs" ino=63 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_tmp_t:s0 tclass=sock_file permissive=0
-# AVC avc:  denied  { search } for  pid=179687 comm="bwrap" name="udev" dev="tmpfs" ino=59 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:udev_var_run_t:s0 tclass=dir permissive=0
-# AVC avc:  denied  { getattr } for  pid=179820 comm="bwrap" path="/oldroot/run/udev/control" dev="tmpfs" ino=931 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:udev_var_run_t:s0 tclass=sock_file permissive=0
 # AVC avc:  denied  { getattr } for  pid=365192 comm="bwrap" path="/oldroot/run/user/1000/pipewire-0" dev="tmpfs" ino=48 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:pulseaudio_var_lib_t:s0 tclass=sock_file permissive=1
+# AVC avc:  denied  { getattr } for pid=153109 comm="bwrap" path="/oldroot/run/user/1000/pulse" dev="tmpfs" ino=46 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:pulseaudio_var_lib_t:s0 tclass=dir permissive=0
 optional_policy(`
 	gen_require(`
-		type init_var_run_t;
 		type pulseaudio_var_lib_t;
-		type udev_var_run_t;
-		type user_tmp_t;
 	')
 	allow bwrap_t pulseaudio_var_lib_t:dir getattr;
 	allow bwrap_t pulseaudio_var_lib_t:sock_file getattr;
+')
+
+# AVC avc:  denied  { search } for  pid=154219 comm="bwrap" name="systemd" dev="tmpfs" ino=2 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:init_var_run_t:s0 tclass=dir permissive=0
+optional_policy(`
+	gen_require(`
+		type init_var_run_t;
+	')
 	allow bwrap_t init_var_run_t:dir search;
+')
+
+# AVC avc:  denied  { getattr } for  pid=154237 comm="bwrap" path="/oldroot/tmp/.X11-unix/X0" dev="tmpfs" ino=63 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_tmp_t:s0 tclass=sock_file permissive=0
+optional_policy(`
+	gen_require(`
+		type user_tmp_t;
+	')
 	allow bwrap_t user_tmp_t:sock_file getattr;
+')
+
+# AVC avc:  denied  { getattr } for  pid=179820 comm="bwrap" path="/oldroot/run/udev/control" dev="tmpfs" ino=931 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:udev_var_run_t:s0 tclass=sock_file permissive=0
+# AVC avc:  denied  { search } for  pid=179687 comm="bwrap" name="udev" dev="tmpfs" ino=59 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:udev_var_run_t:s0 tclass=dir permissive=0
+optional_policy(`
+	gen_require(`
+		type udev_var_run_t;
+	')
 	allow bwrap_t udev_var_run_t:dir search;
 	allow bwrap_t udev_var_run_t:sock_file getattr;
 ')
@@ -320,8 +312,8 @@ optional_policy(`
 		type devpts_t;
 	')
 	allow bwrap_t devpts_t:filesystem mount;
-	allow bwrap_t devpts_t:dir search;
-	allow bwrap_t devpts_t:chr_file setattr;
+	term_search_ptys(bwrap_t)
+	term_setattr_generic_ptys(bwrap_t)
 ')
 
 # AVC avc:  denied  { mounton } for  pid=138701 comm="bwrap" path="/newroot/etc/dconf/profile/user" dev="dm-0" ino=31848549 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:etc_t:s0 tclass=file permissive=1
@@ -393,19 +385,30 @@ optional_policy(`
 ')
 
 #### Allow: access ~
+#### Allow: access machine-id file
+# TODO: contained directory here
 # bwrap: Cant find source path /home/user/.config/dconf/user: Permission denied
 # AVC avc:  denied  { search } for  pid=145768 comm="bwrap" name=".config" dev="dm-2" ino=786443 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:config_home_t:s0 tclass=dir permissive=0
 # AVC avc:  denied  { getattr } for  pid=150655 comm="bwrap" path="/oldroot/home/user/.config/dconf/user" dev="dm-2" ino=790184 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:config_home_t:s0 tclass=file permissive=0
 # AVC avc:  denied  { getattr } for  pid=155210 comm="bwrap" path="/oldroot/home/user/.local/share/my- bwrap/06514ed7439b9f48401d5c4b4a10e92ad969bf4053789ee2aa6d6feef8c233e0/home" dev="dm-2" ino=1070959 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=dir permissive=0
 # AVC avc:  denied  { getattr } for  pid=155636 comm="bwrap" path="/oldroot/home/user/.config/evince" dev="dm-2" ino=1573171 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:config_home_t:s0 tclass=dir permissive=0
+# bwrap: Cant find source path /home/user/.local/share/my-bwrap/machine-id: Permission denied
+# AVC avc:  denied  { getattr } for  pid=149549 comm="bwrap" path="/oldroot/home/user/.local/share/my-bwrap/machine-id" dev="dm-2" ino=1071514 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { search } for  pid=144244 comm="bwrap" name="user" dev="dm-2" ino=786433 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_home_dir_t:s0 tclass=dir permissive=0
+# AVC avc:  denied  { search } for  pid=145419 comm="bwrap" name=".local" dev="dm-2" ino=786460 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:gconf_home_t:s0 tclass=dir permissive=0
+# AVC avc:  denied  { search } for  pid=145600 comm="bwrap" name="share" dev="dm-2" ino=786461 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=dir permissive=0
 optional_policy(`
 	gen_require(`
 		type config_home_t;
 		type data_home_t;
+		type gconf_home_t;
+		type user_home_dir_t;
 	')
-	userdom_manage_user_home_content(bwrap_t)
 	gnome_read_home_config(bwrap_t)
 	gnome_read_generic_data_home_dirs(bwrap_t)
+	allow bwrap_t data_home_t:file getattr;
+	allow bwrap_t gconf_home_t:dir search;
+	allow bwrap_t user_home_dir_t:dir search;
 ')
 
 #### Allow: cups / printing
