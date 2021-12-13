@@ -89,13 +89,7 @@ userdom_use_inherited_user_ptys(bwrap_t)
 # AVC avc:  denied  { write } for  pid=139852 comm="bwrap" name="context" dev="selinuxfs" ino=5 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:security_t:s0 tclass=file permissive=0
 # AVC avc:  denied  { check_context } for  pid=139630 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:security_t:s0 tclass=security permissive=1
 # AVC avc:  denied  { open } for  pid=140293 comm="bwrap" path="/sys/fs/selinux/context" dev="selinuxfs" ino=5 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:security_t:s0 tclass=file permissive=0
-optional_policy(`
-	gen_require(`
-		type security_t;
-	')
-	allow bwrap_t security_t:file { open read write };
-	allow bwrap_t security_t:security check_context;
-')
+selinux_validate_context(bwrap_t)
 
 #### Allow: --unshare-all --share-net --unshare-net
 # bwrap: No permissions to creating new namespace
