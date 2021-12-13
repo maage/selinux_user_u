@@ -404,10 +404,8 @@ optional_policy(`
 		type data_home_t;
 	')
 	userdom_manage_user_home_content(bwrap_t)
-	allow bwrap_t config_home_t:dir search;
-	allow bwrap_t config_home_t:file getattr;
-	allow bwrap_t data_home_t:dir getattr;
-	allow bwrap_t config_home_t:dir getattr;
+	gnome_read_home_config(bwrap_t)
+	gnome_read_generic_data_home_dirs(bwrap_t)
 ')
 
 #### Allow: cups / printing
