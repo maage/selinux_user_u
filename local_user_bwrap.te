@@ -245,9 +245,7 @@ dev_remount_sysfs_fs(bwrap_t)
 # AVC avc:  denied  { mount } for  pid=138701 comm="bwrap" name="/" dev="tmpfs" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=1
 # AVC avc:  denied  { remount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=1
 # AVC avc:  denied  { unmount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=1
-fs_mount_tmpfs(tmpfs_t)
-fs_remount_tmpfs(tmpfs_t)
-fs_unmount_tmpfs(tmpfs_t)
+fs_all_mount_fs_perms_tmpfs(bwrap_t)
 
 #### Allow: access ~
 #### Allow: access machine-id file
