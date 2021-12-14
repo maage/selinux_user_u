@@ -31,7 +31,6 @@ type bwrap_data_home_t;
 userdom_user_application_domain(bwrap_t, bwrap_exec_t)
 
 bwrap_files(bwrap_sandbox_t)
-sandbox_mountpoint_type(bwrap_sandbox_t)
 # AVC avc:  denied  { associate } for  pid=490277 comm="bwrap" name="newroot" scontext=maage_u:object_r:bwrap_sandbox_t:s0 tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=0
 fs_associate_tmpfs(bwrap_sandbox_t)
 
@@ -144,44 +143,7 @@ allow bwrap_t self:udp_socket { create ioctl };
 allow bwrap_t self:unix_dgram_socket { create ioctl };
 
 ### Allow: mounton
-#optional_policy(`
-	gen_require(`
-		attribute sandbox_mountpoint;
-		attribute user_home_type;
-		type cert_t;
-		type cupsd_etc_t;
-		type cupsd_var_run_t;
-		type etc_t;
-		type home_root_t;
-		type net_conf_t;
-		type pulseaudio_var_lib_t;
-		type root_t;
-		type system_dbusd_var_lib_t;
-		type system_dbusd_var_run_t;
-		type tmp_t;
-		type user_home_dir_t;
-		type usr_t;
-		type var_t;
-		type var_run_t;
-	')
-	sandbox_mountpoint_type(cert_t)
-	sandbox_mountpoint_type(cupsd_etc_t)
-	sandbox_mountpoint_type(cupsd_var_run_t)
-	sandbox_mountpoint_type(etc_t)
-	sandbox_mountpoint_type(home_root_t)
-	sandbox_mountpoint_type(net_conf_t)
-	sandbox_mountpoint_type(pulseaudio_var_lib_t)
-	sandbox_mountpoint_type(root_t)
-	sandbox_mountpoint_type(system_dbusd_var_lib_t)
-	sandbox_mountpoint_type(system_dbusd_var_run_t)
-	sandbox_mountpoint_type(tmp_t)
-	sandbox_mountpoint_type(user_home_dir_t)
-	sandbox_mountpoint_type(usr_t)
-	sandbox_mountpoint_type(var_t)
-	sandbox_mountpoint_type(var_run_t)
-
-	sandbox_generic_mounton(bwrap_t, { sandbox_mountpoint user_home_type })
-#')
+user_sandbox_mounton(bwrap_t)
 
 #### Allow: setup ns
 # AVC avc:  denied  { getattr } for  pid=146660 comm="bwrap" path="user:[4026531837]" dev="nsfs" ino=4026531837 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:nsfs_t:s0 tclass=file permissive=0
