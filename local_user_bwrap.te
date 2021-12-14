@@ -307,27 +307,37 @@ userdom_manage_user_home_content(bwrap_t)
 # AVC avc:  denied  { write } for  pid=121757 comm="soffice.bin" name="OSL_PIPE_1000_SingleOfficeIPC_681b2d38e2b5c9693de54ca467f9bf55" dev="tmpfs" ino=8 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=sock_file permissive=0
 allow user_t bwrap_sandbox_t:sock_file manage_sock_file_perms;
 
-# - xterm
-# AVC avc:  denied  { read write } for  pid=180723 comm="utempter" path="/dev/pts/ptmx" dev="devpts" ino=2 scontext=user_u:user_r:utempter_t:s0-s0:c1.c254 tcontext=user_u:object_r:devpts_t:s0 tclass=chr_file permissive=0
+### Allow: xterm
 # AVC avc:  denied  { getattr } for  pid=181024 comm="utempter" path="/dev/pts/ptmx" dev="devpts" ino=2 scontext=user_u:user_r:utempter_t:s0-s0:c1.c254 tcontext=user_u:object_r:devpts_t:s0 tclass=chr_file permissive=0
-# AVC avc:  denied  { nnp_transition nosuid_transition } for pid=191153 comm="xterm" scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:user_r:utempter_t:s0-s0:c1.c254 tclass=process2 permissive=0
-# AVC avc:  denied  { search } for  pid=191242 comm="utempter" name="newroot" dev="tmpfs" ino=2 scontext=user_u:user_r:utempter_t:s0-s0:c1.c254 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=dir permissive=0
 # AVC avc:  denied  { getattr } for  pid=191408 comm="utempter" path="/" dev="tmpfs" ino=2 scontext=user_u:user_r:utempter_t:s0-s0:c1.c254 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=dir permissive=0
+# AVC avc:  denied  { getattr } for  pid=468443 comm="utempter" path=2F6574632F6E737377697463682E636F6E66202864656C6574656429 dev="tmpfs" ino=48 scontext=maage_u:user_r:utempter_t:s0-s0:c264.c942 tcontext=maage_u:object_r:bwrap_sandbox_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { nnp_transition nosuid_transition } for pid=191153 comm="xterm" scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:user_r:utempter_t:s0-s0:c1.c254 tclass=process2 permissive=0
+# AVC avc:  denied  { open } for  pid=191710 comm="utempter" path=2F6574632F706173737764202864656C6574656429 dev="tmpfs" ino=48 scontext=user_u:user_r:utempter_t:s0-s0:c1.c254 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { read write } for  pid=180723 comm="utempter" path="/dev/pts/ptmx" dev="devpts" ino=2 scontext=user_u:user_r:utempter_t:s0-s0:c1.c254 tcontext=user_u:object_r:devpts_t:s0 tclass=chr_file permissive=0
 # AVC avc:  denied  { read } for  pid=191408 comm="utempter" name="lib64" dev="tmpfs" ino=37 scontext=user_u:user_r:utempter_t:s0-s0:c1.c254 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=lnk_file permissive=0
 # AVC avc:  denied  { read } for  pid=191408 comm="utempter" name="run" dev="tmpfs" ino=4 scontext=user_u:user_r:utempter_t:s0-s0:c1.c254 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=lnk_file permissive=0
-# AVC avc:  denied  { open } for  pid=191710 comm="utempter" path=2F6574632F706173737764202864656C6574656429 dev="tmpfs" ino=48 scontext=user_u:user_r:utempter_t:s0-s0:c1.c254 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=file permissive=0
-#optional_policy(`
+# AVC avc:  denied  { read } for  pid=468443 comm="utempter" dev="tmpfs" ino=44 scontext=maage_u:user_r:utempter_t:s0-s0:c264.c942 tcontext=maage_u:object_r:bwrap_sandbox_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { read } for  pid=468443 comm="utempter" name="lib64" dev="tmpfs" ino=29 scontext=maage_u:user_r:utempter_t:s0-s0:c264.c942 tcontext=maage_u:object_r:bwrap_sandbox_t:s0 tclass=lnk_file permissive=0
+# AVC avc:  denied  { read } for  pid=468443 comm="utempter" name="run" dev="tmpfs" ino=2 scontext=maage_u:user_r:utempter_t:s0-s0:c264.c942 tcontext=maage_u:object_r:bwrap_sandbox_t:s0 tclass=lnk_file permissive=0
+# AVC avc:  denied  { search } for  pid=191242 comm="utempter" name="newroot" dev="tmpfs" ino=2 scontext=user_u:user_r:utempter_t:s0-s0:c1.c254 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=dir permissive=0
+optional_policy(`
 	gen_require(`
 		attribute login_userdomain;
-		type devpts_t;
 		type utempter_t;
 	')
-	allow utempter_t devpts_t:chr_file { getattr ioctl open read write };
 	allow utempter_t bwrap_sandbox_t:dir { getattr search };
 	allow utempter_t bwrap_sandbox_t:lnk_file read;
-	allow utempter_t bwrap_sandbox_t:file open;
+	allow utempter_t bwrap_sandbox_t:file { getattr open read };
+	term_use_generic_ptys(utempter_t)
 	allow login_userdomain utempter_t:process2 { nnp_transition nosuid_transition };
-#')
+')
+# AVC avc:  denied  { read write } for  pid=476773 comm="xterm" name="ptmx" dev="devpts" ino=2 scontext=maage_u:user_r:user_t:s0-s0:c200.c973 tcontext=maage_u:object_r:devpts_t:s0 tclass=chr_file permissive=0
+optional_policy(`
+	gen_require(`
+		attribute login_userdomain;
+	')
+	term_use_generic_ptys(login_userdomain)
+')
 
 #### Deny: ptrace
 # AVC avc:  denied  { sys_ptrace } for  pid=140949 comm="bwrap" capability=19  scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=cap_userns permissive=0
