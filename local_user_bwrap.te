@@ -222,46 +222,6 @@ fs_all_mount_fs_perms_tmpfs(bwrap_t)
 # AVC avc:  denied  { write } for  pid=464820 comm="bwrap" name=".cache" dev="dm-2" ino=1058435 scontext=maage_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=maage_u:object_r:cache_home_t:s0 tclass=dir permissive=0
 userdom_manage_user_home_content(bwrap_t)
 
-#### Allow: access /etc/resolv.conf
-# bwrap: Cant find source path /etc/resolv.conf: Permission denied
-# AVC avc:  denied  { read } for  pid=143278 comm="bwrap" name="resolv.conf" dev="dm-0" ino=15409287 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:net_conf_t:s0 tclass=lnk_file permissive=0
-# AVC avc:  denied  { search } for  pid=143622 comm="bwrap" name="NetworkManager" dev="tmpfs" ino=103 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:NetworkManager_var_run_t:s0 tclass=dir permissive=0
-# AVC avc:  denied  { getattr } for  pid=148387 comm="bwrap" path="/oldroot/run/NetworkManager/resolv.conf" dev="tmpfs" ino=4929 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:net_conf_t:s0 tclass=file permissive=0
-#optional_policy(`
-	gen_require(`
-		type NetworkManager_var_run_t;
-		type net_conf_t;
-	')
-	allow bwrap_t NetworkManager_var_run_t:dir search;
-	allow bwrap_t net_conf_t:file getattr;
-	allow bwrap_t net_conf_t:lnk_file read;
-#')
-
-#### Allow: access log
-# AVC avc:  denied  { read } for  pid=149530 comm="bwrap" name="log" dev="devtmpfs" ino=202 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:devlog_t:s0 tclass=lnk_file permissive=0
-# AVC avc:  denied  { search } for  pid=155617 comm="bwrap" name="journal" dev="tmpfs" ino=55 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:syslogd_var_run_t:s0 tclass=dir permissive=0
-# AVC avc:  denied  { getattr } for  pid=156984 comm="bwrap" path="/run/systemd/journal/dev-log" dev="tmpfs" ino=56 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:devlog_t:s0 tclass=sock_file permissive=0
-#optional_policy(`
-	gen_require(`
-		type devlog_t;
-		type syslogd_var_run_t;
-	')
-	allow bwrap_t devlog_t:lnk_file read;
-	allow bwrap_t devlog_t:sock_file getattr;
-	allow bwrap_t syslogd_var_run_t:dir search;
-#')
-
-# AVC avc:  denied  { getattr } for  pid=149530 comm="bwrap" path="/run/initctl" dev="tmpfs" ino=930 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:initctl_t:s0 tclass=fifo_file permissive=0
-# AVC avc:  denied  { getattr } for  pid=149530 comm="bwrap" path="/proc/kcore" dev="proc" ino=4026532030 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:proc_kcore_t:s0 tclass=file permissive=0
-#optional_policy(`
-	gen_require(`
-		type initctl_t;
-		type proc_kcore_t;
-	')
-	allow bwrap_t initctl_t:fifo_file getattr;
-	allow bwrap_t proc_kcore_t:file getattr;
-#')
-
 #### Allow: cups / printing
 #optional_policy(`
 	cups_stream_connect(bwrap_t)
@@ -275,53 +235,6 @@ userdom_rw_inherited_user_tmp_pipes(bwrap_t)
 #### Regressions
 
 # I wonder why I see this only with bwrap?
-
-#### Access to /dev/pts/ptmx
-# AVC avc:  denied  { getattr } for  pid=178250 comm="firefox" path="/dev/pts/ptmx" dev="devpts" ino=2 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:object_r:devpts_t:s0 tclass=chr_file permissive=0
-# AVC avc:  denied  { getattr } for  pid=178250 comm="run-mozilla.sh" path="/dev/pts/ptmx" dev="devpts" ino=2 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:object_r:devpts_t:s0 tclass=chr_file permissive=0
-# AVC avc:  denied  { getattr } for  pid=178285 comm="lsb_release" path="/dev/pts/ptmx" dev="devpts" ino=2 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:object_r:devpts_t:s0 tclass=chr_file permissive=0
-# AVC avc:  denied  { getattr } for  pid=178639 comm="tty" path="/dev/pts/ptmx" dev="devpts" ino=2 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:object_r:devpts_t:s0 tclass=chr_file permissive=0
-# AVC avc:  denied  { read write } for  pid=180261 comm="xterm" name="ptmx" dev="devpts" ino=2 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:object_r:devpts_t:s0 tclass=chr_file permissive=0
-# AVC avc:  denied  { open } for  pid=180408 comm="xterm" path="/dev/pts/ptmx" dev="devpts" ino=2 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:object_r:devpts_t:s0 tclass=chr_file permissive=0
-# AVC avc:  denied  { ioctl } for  pid=180553 comm="xterm" path="/dev/pts/ptmx" dev="devpts" ino=2 ioctlcmd=0x5430 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:object_r:devpts_t:s0 tclass=chr_file permissive=0
-# AVC avc:  denied  { ioctl } for  pid=180553 comm="xterm" path="/dev/pts/ptmx" dev="devpts" ino=2 ioctlcmd=0x540b scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:object_r:devpts_t:s0 tclass=chr_file permissive=0
-#optional_policy(`
-	gen_require(`
-		attribute login_userdomain;
-		type devpts_t;
-	')
-	allow login_userdomain devpts_t:chr_file { getattr ioctl open read write };
-#')
-
-#### Access to /proc/kcore
-# AVC avc:  denied  { getattr } for  pid=178250 comm="firefox" path="/proc/kcore" dev="proc" ino=4026532030 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=system_u:object_r:proc_kcore_t:s0 tclass=file permissive=0
-# AVC avc:  denied  { getattr } for  pid=178250 comm="run-mozilla.sh" path="/proc/kcore" dev="proc" ino=4026532030 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=system_u:object_r:proc_kcore_t:s0 tclass=file permissive=0
-# AVC avc:  denied  { getattr } for  pid=178285 comm="lsb_release" path="/proc/kcore" dev="proc" ino=4026532030 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=system_u:object_r:proc_kcore_t:s0 tclass=file permissive=0
-# AVC avc:  denied  { getattr } for  pid=178639 comm="tty" path="/proc/kcore" dev="proc" ino=4026532030 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=system_u:object_r:proc_kcore_t:s0 tclass=file permissive=0
-#optional_policy(`
-	gen_require(`
-		attribute login_userdomain;
-		type proc_kcore_t;
-	')
-	allow login_userdomain proc_kcore_t:file getattr;
-#')
-
-#### Access to /run/udev/control
-# AVC avc:  denied  { getattr } for  pid=179483 comm="my-bwrap" path="/run/udev/control" dev="tmpfs" ino=931 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:udev_var_run_t:s0 tclass=sock_file permissive=0
-#optional_policy(`
-	gen_require(`
-		attribute login_userdomain;
-		type udev_var_run_t;
-	')
-	allow login_userdomain udev_var_run_t:sock_file getattr;
-#')
-
-#### Allow: libreoffice to create socket under /tmp
-# libreoffice does not follow TEMP env
-# AVC avc:  denied  { create } for  pid=120747 comm="soffice.bin" name="OSL_PIPE_1000_SingleOfficeIPC_681b2d38e2b5c9693de54ca467f9bf55" scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=sock_file permissive=0
-# AVC avc:  denied  { unlink } for  pid=121736 comm="soffice.bin" name="OSL_PIPE_1000_SingleOfficeIPC_681b2d38e2b5c9693de54ca467f9bf55" dev="tmpfs" ino=8 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=sock_file permissive=0
-# AVC avc:  denied  { write } for  pid=121757 comm="soffice.bin" name="OSL_PIPE_1000_SingleOfficeIPC_681b2d38e2b5c9693de54ca467f9bf55" dev="tmpfs" ino=8 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=sock_file permissive=0
-allow user_t bwrap_sandbox_t:sock_file manage_sock_file_perms;
 
 ### Allow: xterm
 # AVC avc:  denied  { getattr } for  pid=181024 comm="utempter" path="/dev/pts/ptmx" dev="devpts" ino=2 scontext=user_u:user_r:utempter_t:s0-s0:c1.c254 tcontext=user_u:object_r:devpts_t:s0 tclass=chr_file permissive=0
