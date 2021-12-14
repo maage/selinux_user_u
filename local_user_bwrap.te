@@ -28,13 +28,6 @@ fs_associate_tmpfs(bwrap_sandbox_t)
 manage_dirs_pattern(bwrap_t, bwrap_sandbox_t, bwrap_sandbox_t)
 manage_files_pattern(bwrap_t, bwrap_sandbox_t, bwrap_sandbox_t)
 manage_lnk_files_pattern(bwrap_t, bwrap_sandbox_t, bwrap_sandbox_t)
-# AVC avc:  denied  { relabelfrom } for  pid=186247 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=0
-fs_relabelfrom_tmpfs(bwrap_t)
-# AVC avc:  denied  { relabelto } for  pid=186432 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=filesystem permissive=0
-# AVC avc:  denied  { relabelfrom } for  pid=186581 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=filesystem permissive=0
-# AVC avc:  denied  { mount } for  pid=186887 comm="bwrap" name="/" dev="tmpfs" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=filesystem permissive=0
-# AVC avc:  denied  { remount } for  pid=187333 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=filesystem permissive=0
-allow bwrap_t bwrap_sandbox_t:filesystem { mount relabelfrom relabelto remount };
 
 # typealias bwrap_t alias { user_bwrap_t staff_bwrap_t sysadm_bwrap_t };
 userdom_user_application_domain(bwrap_t, bwrap_exec_t)
@@ -58,10 +51,20 @@ bwrap_role_template(staff, staff_r, staff_t)
 # policy/modules/roles/sysadm.te
 bwrap_role_template(sysadm, sysadm_r, sysadm_t)
 
-#### Allow: exec some programs
+#### Allow: --unshare-all --share-net --unshare-net
+# bwrap: No permissions to creating new namespace
+# AVC avc:  denied  { sys_admin } for  pid=140431 comm="bwrap" capability=21  scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=cap_userns permissive=0
+allow bwrap_t self:cap_userns sys_admin;
+
+#### Allow: --cap- options
+# AVC avc:  denied  { setcap } for  pid=140802 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=process permissive=0
+allow bwrap_t self:process setcap;
+
+#### Allow: exec itself
 # AVC avc:  denied  { setexec } for  pid=159141 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=process permissive=0
 allow bwrap_t self:process setexec;
 
+#### Allow: exec some programs
 # AVC avc:  denied  { execute } for  pid=160251 comm="bwrap" name="evince" dev="dm-0" ino=31980270 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:bin_t:s0 tclass=file permissive=0
 # AVC avc:  denied  { execute } for  pid=173226 comm="bwrap" name="bash" dev="dm-0" ino=31807239 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:shell_exec_t:s0 tclass=file permissive=1
 #optional_policy(`
@@ -76,14 +79,16 @@ allow bwrap_t self:process setexec;
 #### Allow: --file-label
 # AVC avc:  denied  { setfscreate } for  pid=185711 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=process permissive=0
 allow bwrap_t self:process setfscreate;
-
-
-#### Allow: access current pty
-# AVC avc:  denied  { getattr } for  pid=146660 comm="bwrap" path="/dev/pts/4" dev="devpts" ino=7 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_devpts_t:s0 tclass=chr_file permissive=0
-# AVC avc:  denied  { read write } for  pid=139137 comm="bwrap" path="/dev/pts/4" dev="devpts" ino=7 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_devpts_t:s0 tclass=chr_file permissive=1
-# AVC avc:  denied  { ioctl } for  pid=139137 comm="bwrap" path="/dev/pts/4" dev="devpts" ino=7 ioctlcmd=0x5401 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_devpts_t:s0 tclass=chr_file permissive=1
-# AVC avc:  denied  { append } for  pid=27548 comm="bwrap" path="/dev/pts/4" dev="devpts" ino=7 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_devpts_t:s0 tclass=chr_file permissive=0
-userdom_use_inherited_user_ptys(bwrap_t)
+# AVC avc:  denied  { relabelfrom } for  pid=186247 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=0
+fs_relabelfrom_tmpfs(bwrap_t)
+# AVC avc:  denied  { relabelto } for  pid=186432 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=filesystem permissive=0
+# AVC avc:  denied  { relabelfrom } for  pid=186581 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=filesystem permissive=0
+# AVC avc:  denied  { mount } for  pid=186887 comm="bwrap" name="/" dev="tmpfs" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=filesystem permissive=0
+# AVC avc:  denied  { remount } for  pid=187333 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=filesystem permissive=0
+allow bwrap_t bwrap_sandbox_t:filesystem { mount relabelfrom relabelto remount };
+# AVC avc:  denied  { remount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:fs_t:s0 tclass=filesystem permissive=1
+# AVC avc:  denied  { unmount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:fs_t:s0 tclass=filesystem permissive=1
+fs_all_mount_fs_perms_xattr_fs(bwrap_t)
 
 #### Allow: --exec-label
 # bwrap: invalid label user_u:user_r:user_t:s0-s0:c1.c254: Permission denied
@@ -93,10 +98,12 @@ userdom_use_inherited_user_ptys(bwrap_t)
 # AVC avc:  denied  { open } for  pid=140293 comm="bwrap" path="/sys/fs/selinux/context" dev="selinuxfs" ino=5 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:security_t:s0 tclass=file permissive=0
 selinux_validate_context(bwrap_t)
 
-#### Allow: --unshare-all --share-net --unshare-net
-# bwrap: No permissions to creating new namespace
-# AVC avc:  denied  { sys_admin } for  pid=140431 comm="bwrap" capability=21  scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=cap_userns permissive=0
-allow bwrap_t self:cap_userns sys_admin;
+#### Allow: access current pty
+# AVC avc:  denied  { getattr } for  pid=146660 comm="bwrap" path="/dev/pts/4" dev="devpts" ino=7 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_devpts_t:s0 tclass=chr_file permissive=0
+# AVC avc:  denied  { read write } for  pid=139137 comm="bwrap" path="/dev/pts/4" dev="devpts" ino=7 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_devpts_t:s0 tclass=chr_file permissive=1
+# AVC avc:  denied  { ioctl } for  pid=139137 comm="bwrap" path="/dev/pts/4" dev="devpts" ino=7 ioctlcmd=0x5401 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_devpts_t:s0 tclass=chr_file permissive=1
+# AVC avc:  denied  { append } for  pid=27548 comm="bwrap" path="/dev/pts/4" dev="devpts" ino=7 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_devpts_t:s0 tclass=chr_file permissive=0
+userdom_use_inherited_user_ptys(bwrap_t)
 
 #### Allow: loopback
 # bwrap: loopback: Failed to look up lo: No such file or directory
@@ -226,20 +233,12 @@ allow bwrap_t self:cap_userns sys_admin;
 	allow bwrap_t sysctl_t:file { open read };
 #')
 
-#### Allow: --cap- options
-# AVC avc:  denied  { setcap } for  pid=140802 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=process permissive=0
-allow bwrap_t self:process setcap;
-
 # AVC avc:  denied  { mount } for  pid=138701 comm="bwrap" name="/" dev="devpts" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:devpts_t:s0 tclass=filesystem permissive=1
 # AVC avc:  denied  { search } for  pid=178789 comm="bwrap" name="/" dev="devpts" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:devpts_t:s0 tclass=dir permissive=0
 # AVC avc:  denied  { setattr } for  pid=194443 comm="bwrap" name="ptmx" dev="devpts" ino=2 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:devpts_t:s0 tclass=chr_file permissive=0
 term_mount_pty_fs(bwrap_t)
 term_search_ptys(bwrap_t)
 term_setattr_generic_ptys(bwrap_t)
-
-# AVC avc:  denied  { remount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:fs_t:s0 tclass=filesystem permissive=1
-# AVC avc:  denied  { unmount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:fs_t:s0 tclass=filesystem permissive=1
-fs_all_mount_fs_perms_xattr_fs(bwrap_t)
 
 # AVC avc:  denied  { mount } for  pid=138701 comm="bwrap" name="/" dev="proc" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:proc_t:s0 tclass=filesystem permissive=1
 kernel_mount_proc(bwrap_t)
