@@ -56,18 +56,18 @@ policy_module(local_dnscrypt_proxy, 1.0.0)
 
 type dnscrypt_proxy_t;
 type dnscrypt_proxy_exec_t;
-init_daemon_domain(dnscrypt_proxy_t, dnscrypt_proxy_exec_t)
-
-# AVC avc:  denied  { nnp_transition } for  pid=381496 comm="(pt- proxy)" scontext=system_u:system_r:init_t:s0 tcontext=system_u:system_r:dnscrypt_proxy_t:s0 tclass=process2 permissive=0
-init_nnp_daemon_domain(dnscrypt_proxy_t)
-
 type dnscrypt_proxy_cache_t;
-files_type(dnscrypt_proxy_cache_t)
 
+optional_policy(`
 ########################################
 #
 # dnscrypt_proxy local policy
 #
+files_type(dnscrypt_proxy_cache_t)
+
+init_daemon_domain(dnscrypt_proxy_t, dnscrypt_proxy_exec_t)
+# AVC avc:  denied  { nnp_transition } for  pid=381496 comm="(pt- proxy)" scontext=system_u:system_r:init_t:s0 tcontext=system_u:system_r:dnscrypt_proxy_t:s0 tclass=process2 permissive=0
+init_nnp_daemon_domain(dnscrypt_proxy_t)
 
 ### Allow: configs are at /etc/dnscrypt-proxy
 files_read_etc_files(dnscrypt_proxy_t)
@@ -112,7 +112,9 @@ corenet_tcp_connect_all_ports(dnscrypt_proxy_t)
 # AVC avc:  denied  { read } for  pid=381665 comm="dnscrypt-proxy" name="postfix.pem" dev="dm-0" ino=20203330 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:cert_t:s0 tclass=file permissive=1
 # AVC avc:  denied  { read } for  pid=381665 comm="dnscrypt-proxy" name="tls-ca-bundle.pem" dev="dm-0" ino=34719024 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=unconfined_u:object_r:cert_t:s0 tclass=file permissive=1
 # AVC avc:  denied  { search } for  pid=381665 comm="dnscrypt-proxy" name="ssl" dev="dm-0" ino=1676 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:cert_t:s0 tclass=dir permissive=1
-miscfiles_read_certs(dnscrypt_proxy_t)
+optional_policy(`
+	miscfiles_read_generic_certs(dnscrypt_proxy_t)
+')
 
 ### Allow: our own cache, init to create
 # AVC avc:  denied  { read } for  pid=381881 comm="dnscrypt-proxy" name="public-resolvers.md" dev="dm-0" ino=34730443 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:var_t:s0 tclass=file permissive=1
@@ -162,3 +164,6 @@ dontaudit dnscrypt_proxy_t systemd_machined_var_run_t:dir search_dir_perms;
 # AVC avc:  denied  { open } for  pid=381665 comm="dnscrypt-proxy" path="/proc/cmdline" dev="proc" ino=4026532019 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:proc_t:s0 tclass=file permissive=1
 # AVC avc:  denied  { read } for  pid=381665 comm="dnscrypt-proxy" name="cmdline" dev="proc" ino=4026532019 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:proc_t:s0 tclass=file permissive=1
 kernel_dontaudit_read_system_state(dnscrypt_proxy_t)
+
+')
+# END
