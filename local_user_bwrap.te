@@ -169,6 +169,37 @@ allow bwrap_t self:unix_dgram_socket { create ioctl };
 	sandbox_generic_mounton(bwrap_t, { sandbox_mountpoint user_home_type })
 #')
 
+#### Allow: setup ns
+# AVC avc:  denied  { getattr } for  pid=146660 comm="bwrap" path="user:[4026531837]" dev="nsfs" ino=4026531837 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:nsfs_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { getattr } for  pid=146660 comm="bwrap" path="cgroup:[4026531835]" dev="nsfs" ino=4026531835 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:nsfs_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { getattr } for  pid=147023 comm="bwrap" path="/proc/sys/user/max_user_namespaces" dev="proc" ino=39962 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:sysctl_t:s0 tclass=file permissive=0
+# AVC avc:  denied  { read } for  pid=139137 comm="bwrap" name="max_user_namespaces" dev="proc" ino=39962 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:sysctl_t:s0 tclass=file permissive=1
+# AVC avc:  denied  { open } for  pid=139137 comm="bwrap" path="/proc/sys/user/max_user_namespaces" dev="proc" ino=39962 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:sysctl_t:s0 tclass=file permissive=1
+fs_getattr_nsfs_files(bwrap_t)
+kernel_read_sysctl(bwrap_t)
+
+### Allow: setup term
+# AVC avc:  denied  { mount } for  pid=138701 comm="bwrap" name="/" dev="devpts" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:devpts_t:s0 tclass=filesystem permissive=1
+# AVC avc:  denied  { search } for  pid=178789 comm="bwrap" name="/" dev="devpts" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:devpts_t:s0 tclass=dir permissive=0
+# AVC avc:  denied  { setattr } for  pid=194443 comm="bwrap" name="ptmx" dev="devpts" ino=2 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:devpts_t:s0 tclass=chr_file permissive=0
+term_mount_pty_fs(bwrap_t)
+term_search_ptys(bwrap_t)
+term_setattr_generic_ptys(bwrap_t)
+
+# AVC avc:  denied  { mount } for  pid=138701 comm="bwrap" name="/" dev="proc" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:proc_t:s0 tclass=filesystem permissive=1
+kernel_mount_proc(bwrap_t)
+
+# AVC avc:  denied  { remount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:security_t:s0 tclass=filesystem permissive=1
+selinux_remount_fs(bwrap_t)
+
+# AVC avc:  denied  { remount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:sysfs_t:s0 tclass=filesystem permissive=1
+dev_remount_sysfs_fs(bwrap_t)
+
+# AVC avc:  denied  { mount } for  pid=138701 comm="bwrap" name="/" dev="tmpfs" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=1
+# AVC avc:  denied  { remount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=1
+# AVC avc:  denied  { unmount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=1
+fs_all_mount_fs_perms_tmpfs(bwrap_t)
+
 #### Allow: access /etc/resolv.conf
 # bwrap: Cant find source path /etc/resolv.conf: Permission denied
 # AVC avc:  denied  { read } for  pid=143278 comm="bwrap" name="resolv.conf" dev="dm-0" ino=15409287 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:net_conf_t:s0 tclass=lnk_file permissive=0
@@ -209,36 +240,6 @@ allow bwrap_t self:unix_dgram_socket { create ioctl };
 	allow bwrap_t proc_kcore_t:file getattr;
 #')
 
-
-#### Allow: setup ns
-# AVC avc:  denied  { getattr } for  pid=146660 comm="bwrap" path="user:[4026531837]" dev="nsfs" ino=4026531837 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:nsfs_t:s0 tclass=file permissive=0
-# AVC avc:  denied  { getattr } for  pid=146660 comm="bwrap" path="cgroup:[4026531835]" dev="nsfs" ino=4026531835 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:nsfs_t:s0 tclass=file permissive=0
-# AVC avc:  denied  { getattr } for  pid=147023 comm="bwrap" path="/proc/sys/user/max_user_namespaces" dev="proc" ino=39962 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:sysctl_t:s0 tclass=file permissive=0
-# AVC avc:  denied  { read } for  pid=139137 comm="bwrap" name="max_user_namespaces" dev="proc" ino=39962 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:sysctl_t:s0 tclass=file permissive=1
-# AVC avc:  denied  { open } for  pid=139137 comm="bwrap" path="/proc/sys/user/max_user_namespaces" dev="proc" ino=39962 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:sysctl_t:s0 tclass=file permissive=1
-fs_getattr_nsfs_files(bwrap_t)
-kernel_read_sysctl(bwrap_t)
-
-# AVC avc:  denied  { mount } for  pid=138701 comm="bwrap" name="/" dev="devpts" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:devpts_t:s0 tclass=filesystem permissive=1
-# AVC avc:  denied  { search } for  pid=178789 comm="bwrap" name="/" dev="devpts" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:devpts_t:s0 tclass=dir permissive=0
-# AVC avc:  denied  { setattr } for  pid=194443 comm="bwrap" name="ptmx" dev="devpts" ino=2 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:devpts_t:s0 tclass=chr_file permissive=0
-term_mount_pty_fs(bwrap_t)
-term_search_ptys(bwrap_t)
-term_setattr_generic_ptys(bwrap_t)
-
-# AVC avc:  denied  { mount } for  pid=138701 comm="bwrap" name="/" dev="proc" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:proc_t:s0 tclass=filesystem permissive=1
-kernel_mount_proc(bwrap_t)
-
-# AVC avc:  denied  { remount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:security_t:s0 tclass=filesystem permissive=1
-selinux_remount_fs(bwrap_t)
-
-# AVC avc:  denied  { remount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:sysfs_t:s0 tclass=filesystem permissive=1
-dev_remount_sysfs_fs(bwrap_t)
-
-# AVC avc:  denied  { mount } for  pid=138701 comm="bwrap" name="/" dev="tmpfs" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=1
-# AVC avc:  denied  { remount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=1
-# AVC avc:  denied  { unmount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=1
-fs_all_mount_fs_perms_tmpfs(bwrap_t)
 
 #### Allow: access ~
 #### Allow: access machine-id file
