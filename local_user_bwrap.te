@@ -200,6 +200,16 @@ dev_remount_sysfs_fs(bwrap_t)
 # AVC avc:  denied  { unmount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=1
 fs_all_mount_fs_perms_tmpfs(bwrap_t)
 
+### Allow: to write files under my-bwrap
+# AVC avc:  denied  { search } for  pid=144244 comm="bwrap" name="user" dev="dm-2" ino=786433 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_home_dir_t:s0 tclass=dir permissive=0
+# AVC avc:  denied  { search } for  pid=145419 comm="bwrap" name=".local" dev="dm-2" ino=786460 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:gconf_home_t:s0 tclass=dir permissive=0
+# AVC avc:  denied  { search } for  pid=145600 comm="bwrap" name="share" dev="dm-2" ino=786461 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=dir permissive=0
+# AVC avc:  denied  { search } for  pid=145768 comm="bwrap" name=".config" dev="dm-2" ino=786443 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:config_home_t:s0 tclass=dir permissive=0
+# AVC avc:  denied  { search } for  pid=463897 comm="bwrap" name=".cache" dev="dm-2" ino=917511 scontext=maage_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=maage_u:object_r:cache_home_t:s0 tclass=dir permissive=0
+# AVC avc:  denied  { write } for  pid=464697 comm="bwrap" name=".config" dev="dm-2" ino=1058425 scontext=maage_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=maage_u:object_r:config_home_t:s0 tclass=dir permissive=0
+# AVC avc:  denied  { write } for  pid=464820 comm="bwrap" name=".cache" dev="dm-2" ino=1058435 scontext=maage_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=maage_u:object_r:cache_home_t:s0 tclass=dir permissive=0
+userdom_manage_user_home_content(bwrap_t)
+
 #### Allow: access /etc/resolv.conf
 # bwrap: Cant find source path /etc/resolv.conf: Permission denied
 # AVC avc:  denied  { read } for  pid=143278 comm="bwrap" name="resolv.conf" dev="dm-0" ino=15409287 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:net_conf_t:s0 tclass=lnk_file permissive=0
@@ -238,34 +248,6 @@ fs_all_mount_fs_perms_tmpfs(bwrap_t)
 	')
 	allow bwrap_t initctl_t:fifo_file getattr;
 	allow bwrap_t proc_kcore_t:file getattr;
-#')
-
-
-#### Allow: access ~
-#### Allow: access machine-id file
-# TODO: contained directory here
-# bwrap: Cant find source path /home/user/.config/dconf/user: Permission denied
-# AVC avc:  denied  { search } for  pid=145768 comm="bwrap" name=".config" dev="dm-2" ino=786443 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:config_home_t:s0 tclass=dir permissive=0
-# AVC avc:  denied  { getattr } for  pid=150655 comm="bwrap" path="/oldroot/home/user/.config/dconf/user" dev="dm-2" ino=790184 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:config_home_t:s0 tclass=file permissive=0
-# AVC avc:  denied  { getattr } for  pid=155210 comm="bwrap" path="/oldroot/home/user/.local/share/my- bwrap/06514ed7439b9f48401d5c4b4a10e92ad969bf4053789ee2aa6d6feef8c233e0/home" dev="dm-2" ino=1070959 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=dir permissive=0
-# AVC avc:  denied  { getattr } for  pid=155636 comm="bwrap" path="/oldroot/home/user/.config/evince" dev="dm-2" ino=1573171 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:config_home_t:s0 tclass=dir permissive=0
-# bwrap: Cant find source path /home/user/.local/share/my-bwrap/machine-id: Permission denied
-# AVC avc:  denied  { getattr } for  pid=149549 comm="bwrap" path="/oldroot/home/user/.local/share/my-bwrap/machine-id" dev="dm-2" ino=1071514 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0
-# AVC avc:  denied  { search } for  pid=144244 comm="bwrap" name="user" dev="dm-2" ino=786433 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_home_dir_t:s0 tclass=dir permissive=0
-# AVC avc:  denied  { search } for  pid=145419 comm="bwrap" name=".local" dev="dm-2" ino=786460 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:gconf_home_t:s0 tclass=dir permissive=0
-# AVC avc:  denied  { search } for  pid=145600 comm="bwrap" name="share" dev="dm-2" ino=786461 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=dir permissive=0
-#optional_policy(`
-	gen_require(`
-		type config_home_t;
-		type data_home_t;
-		type gconf_home_t;
-		type user_home_dir_t;
-	')
-	gnome_read_home_config(bwrap_t)
-	gnome_read_generic_data_home_dirs(bwrap_t)
-	allow bwrap_t data_home_t:file getattr;
-	allow bwrap_t gconf_home_t:dir search;
-	allow bwrap_t user_home_dir_t:dir search;
 #')
 
 #### Allow: cups / printing
