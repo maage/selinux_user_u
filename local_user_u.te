@@ -420,6 +420,12 @@ allow login_userdomain ssh_agent_type:fifo_file write;
 # AVC avc:  denied { send_msg } for  scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_t:s0-s0:c0.c1023 tclass=dbus permissive=0
 allow ssh_t login_userdomain:dbus send_msg;
 
+# AVC avc:  denied  { search } for  pid=509523 comm="fedora-third-pa" name="fedora-third-party" dev="dm-0" ino=31872038 scontext=maage_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:fedoratp_var_lib_t:s0 tclass=dir permissive=0
+require {
+	type fedoratp_var_lib_t;
+}
+allow login_userdomain fedoratp_var_lib_t:dir search;
+
 ### Deny: ls /run/systemd/inaccessible/
 require {
 	type init_var_run_t;
