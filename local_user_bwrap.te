@@ -474,7 +474,7 @@ dontaudit bwrap_t self:cap_userns sys_ptrace;
 # AVC avc:  denied  { write } for  pid=88366 comm="chrome" name="oom_score_adj" dev="proc" ino=425527 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=file permissive=0
 dontaudit login_userdomain bwrap_t:file write;
 
-#### because: --unshare-user-try
+#### Deny: because --unshare-user-try can and should fail
 dontaudit bwrap_t self:cap_userns dac_override;
 
 ')
