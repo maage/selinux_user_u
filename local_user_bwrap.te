@@ -263,10 +263,14 @@ userdom_manage_user_home_content(bwrap_t)
 #')
 
 #### Allow: cups / printing
-# AVC avc:  denied  { getattr } for  pid=362040 comm="bwrap" path="/oldroot/run/cups/cups.sock" dev="tmpfs" ino=2766 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:cupsd_var_run_t:s0 tclass=sock_file permissive=1
 #optional_policy(`
 	cups_stream_connect(bwrap_t)
+	cups_read_config(bwrap_t)
 #')
+
+### Allow: access X0 fifo
+# AVC avc:  denied  { read } for  pid=463344 comm="bwrap" path=2F746D702F746D702E6C6C574447414B7977662F6669666F202864656C6574656429 dev="tmpfs" ino=12851 scontext=maage_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=maage_u:object_r:user_tmp_t:s0 tclass=fifo_file permissive=0
+userdom_rw_inherited_user_tmp_pipes(bwrap_t)
 
 #### Regressions
 
