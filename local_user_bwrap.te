@@ -21,16 +21,6 @@ type bwrap_sandbox_t;
 
 #optional_policy(`
 
-require {
-	attribute login_userdomain;
-	type staff_t;
-	type sysadm_t;
-	type user_t;
-	role staff_r;
-	role sysadm_r;
-	role user_r;
-}
-
 files_type(bwrap_sandbox_t)
 sandbox_mountpoint_type(bwrap_sandbox_t)
 # AVC avc:  denied  { associate } for  pid=490277 comm="bwrap" name="newroot" scontext=maage_u:object_r:bwrap_sandbox_t:s0 tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=0
@@ -48,6 +38,16 @@ allow bwrap_t bwrap_sandbox_t:filesystem { mount relabelfrom relabelto remount }
 
 # typealias bwrap_t alias { user_bwrap_t staff_bwrap_t sysadm_bwrap_t };
 userdom_user_application_domain(bwrap_t, bwrap_exec_t)
+
+require {
+	attribute login_userdomain;
+	type staff_t;
+	type sysadm_t;
+	type user_t;
+	role staff_r;
+	role sysadm_r;
+	role user_r;
+}
 
 # policy/modules/roles/unprivuser.te
 bwrap_role_template(user, user_r, user_t)
