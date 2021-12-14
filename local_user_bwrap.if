@@ -95,3 +95,21 @@ template(`bwrap_role_template',`
 	allow $3 bwrap_sandbox_t:file map;
 
 ')
+
+# Assume not every file_type is meant to be mounted info sandbox, maybe
+# this is actually something already defined but IDK
+interface(`sandbox_mountpoint_type',`
+        gen_require(`
+                attribute sandbox_mountpoint;
+        ')
+	files_type($1)
+	typeattribute $1 sandbox_mountpoint;
+')
+
+# Generic way to do mounton
+interface(`sandbox_generic_mounton',`
+        allow $1 $2:dir { mounton search_dir_perms };
+        allow $1 $2:fifo_file { getattr mounton };
+        allow $1 $2:file { getattr mounton };
+        allow $1 $2:sock_file { getattr mounton };
+')

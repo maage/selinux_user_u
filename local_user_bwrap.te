@@ -11,6 +11,7 @@ policy_module(local_user_bwrap, 1.0.0)
 gen_tunable(local_bwrap_debug, false)
 
 attribute bwrap_type;
+attribute sandbox_mountpoint;
 
 type bwrap_t;
 type bwrap_exec_t;
@@ -31,22 +32,19 @@ require {
 }
 
 files_type(bwrap_sandbox_t)
+sandbox_mountpoint_type(bwrap_sandbox_t)
 # AVC avc:  denied  { associate } for  pid=490277 comm="bwrap" name="newroot" scontext=maage_u:object_r:bwrap_sandbox_t:s0 tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=0
 fs_associate_tmpfs(bwrap_sandbox_t)
 manage_dirs_pattern(bwrap_t, bwrap_sandbox_t, bwrap_sandbox_t)
 manage_files_pattern(bwrap_t, bwrap_sandbox_t, bwrap_sandbox_t)
 manage_lnk_files_pattern(bwrap_t, bwrap_sandbox_t, bwrap_sandbox_t)
-# AVC avc:  denied  { mounton } for  pid=186148 comm="bwrap" path="/tmp/newroot" dev="tmpfs" ino=2 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=dir permissive=0
-allow bwrap_t bwrap_sandbox_t:dir mounton;
 # AVC avc:  denied  { relabelfrom } for  pid=186247 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=0
 fs_relabelfrom_tmpfs(bwrap_t)
 # AVC avc:  denied  { relabelto } for  pid=186432 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=filesystem permissive=0
 # AVC avc:  denied  { relabelfrom } for  pid=186581 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=filesystem permissive=0
 # AVC avc:  denied  { mount } for  pid=186887 comm="bwrap" name="/" dev="tmpfs" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=filesystem permissive=0
 # AVC avc:  denied  { remount } for  pid=187333 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=filesystem permissive=0
-allow bwrap_t bwrap_sandbox_t:filesystem { getattr mount relabelfrom relabelto remount };
-# AVC avc:  denied  { mounton } for  pid=187111 comm="bwrap" path="/newroot/dev/null" dev="tmpfs" ino=2 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=file permissive=0
-allow bwrap_t bwrap_sandbox_t:file mounton;
+allow bwrap_t bwrap_sandbox_t:filesystem { mount relabelfrom relabelto remount };
 
 # typealias bwrap_t alias { user_bwrap_t staff_bwrap_t sysadm_bwrap_t };
 userdom_user_application_domain(bwrap_t, bwrap_exec_t)
@@ -133,44 +131,42 @@ allow bwrap_t self:cap_userns sys_admin;
 	allow bwrap_t sysctl_net_t:dir search;
 #')
 
-#### Allow: access system dbus sockets
-# bwrap: Cant find source path /run/dbus/system_bus_socket: Permission denied
-# AVC avc:  denied  { search } for  pid=142643 comm="bwrap" name="dbus" dev="tmpfs" ino=53 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:system_dbusd_var_run_t:s0 tclass=dir permissive=0
-# bwrap: Cant get type of source /run/dbus/system_bus_socket: Permission denied
-# AVC avc:  denied  { getattr } for  pid=146255 comm="bwrap" path="/oldroot/run/dbus/system_bus_socket" dev="tmpfs" ino=2007 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:system_dbusd_var_run_t:s0 tclass=sock_file permissive=0 "
-# bwrap: Cant get type of source /var/lib/dbus: Permission denied
-# AVC avc:  denied  { getattr } for  pid=146678 comm="bwrap" path="/oldroot/var/lib/dbus" dev="dm-0" ino=33373 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:system_dbusd_var_lib_t:s0 tclass=dir permissive=0
-# AVC avc:  denied  { mounton } for  pid=361849 comm="bwrap" path="/newroot/var/lib/dbus" dev="dm-0" ino=33373 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:system_dbusd_var_lib_t:s0 tclass=dir permissive=1
-# AVC avc:  denied  { mounton } for  pid=361849 comm="bwrap" path="/newroot/run/dbus/system_bus_socket" dev="tmpfs" ino=2092 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:system_dbusd_var_run_t:s0 tclass=sock_file permissive=1
-dbus_system_bus_client(bwrap_t)
+### Allow: mounton
 #optional_policy(`
 	gen_require(`
+		attribute sandbox_mountpoint;
+		attribute user_home_type;
+		type cert_t;
+		type cupsd_etc_t;
+		type cupsd_var_run_t;
+		type etc_t;
+		type home_root_t;
+		type pulseaudio_var_lib_t;
+		type root_t;
 		type system_dbusd_var_lib_t;
 		type system_dbusd_var_run_t;
+		type tmp_t;
+		type user_home_dir_t;
+		type usr_t;
+		type var_t;
+		type var_run_t;
 	')
-	allow bwrap_t system_dbusd_var_lib_t:dir getattr;
-	allow bwrap_t system_dbusd_var_lib_t:dir mounton;
-	allow bwrap_t system_dbusd_var_run_t:sock_file getattr;
-	allow bwrap_t system_dbusd_var_run_t:sock_file mounton;
-#')
-#optional_policy(`
-	gen_require(`
-		type system_dbusd_var_run_t;
-	')
-	allow bwrap_t system_dbusd_var_run_t:dir search;
-#')
+	sandbox_mountpoint_type(cert_t)
+	sandbox_mountpoint_type(cupsd_etc_t)
+	sandbox_mountpoint_type(cupsd_var_run_t)
+	sandbox_mountpoint_type(etc_t)
+	sandbox_mountpoint_type(home_root_t)
+	sandbox_mountpoint_type(pulseaudio_var_lib_t)
+	sandbox_mountpoint_type(root_t)
+	sandbox_mountpoint_type(system_dbusd_var_lib_t)
+	sandbox_mountpoint_type(system_dbusd_var_run_t)
+	sandbox_mountpoint_type(tmp_t)
+	sandbox_mountpoint_type(user_home_dir_t)
+	sandbox_mountpoint_type(usr_t)
+	sandbox_mountpoint_type(var_t)
+	sandbox_mountpoint_type(var_run_t)
 
-#### Allow: access /etc/pki/ca-trust
-# bwrap: Cant find source path /etc/pki/ca-trust: Permission denied
-# AVC avc:  denied  { getattr } for  pid=147043 comm="bwrap" path="/oldroot/etc/pki/ca-trust" dev="dm-0" ino=411240 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:cert_t:s0 tclass=dir permissive=0
-# AVC avc:  denied  { search } for  pid=143132 comm="bwrap" name="pki" dev="dm-0" ino=374 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:cert_t:s0 tclass=dir permissive=0
-# AVC avc:  denied  { mounton } for  pid=368804 comm="bwrap" path="/newroot/etc/pki/ca-trust/extracted" dev="dm-0" ino=411242 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:cert_t:s0 tclass=dir permissive=1
-#optional_policy(`
-	gen_require(`
-		type cert_t;
-	')
-	allow bwrap_t cert_t:dir { getattr search };
-	allow bwrap_t cert_t:dir mounton;
+	sandbox_generic_mounton(bwrap_t, { sandbox_mountpoint user_home_type })
 #')
 
 #### Allow: access /etc/resolv.conf
@@ -214,46 +210,6 @@ dbus_system_bus_client(bwrap_t)
 #')
 
 
-# bwrap: Cant get type of source /run/user/1000/pulse: Permission denied
-# AVC avc:  denied  { getattr } for  pid=365192 comm="bwrap" path="/oldroot/run/user/1000/pipewire-0" dev="tmpfs" ino=48 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:pulseaudio_var_lib_t:s0 tclass=sock_file permissive=1
-# AVC avc:  denied  { getattr } for pid=153109 comm="bwrap" path="/oldroot/run/user/1000/pulse" dev="tmpfs" ino=46 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:pulseaudio_var_lib_t:s0 tclass=dir permissive=0
-#optional_policy(`
-	gen_require(`
-		type pulseaudio_var_lib_t;
-	')
-	allow bwrap_t pulseaudio_var_lib_t:dir getattr;
-	allow bwrap_t pulseaudio_var_lib_t:sock_file getattr;
-#')
-
-# AVC avc:  denied  { search } for  pid=154219 comm="bwrap" name="systemd" dev="tmpfs" ino=2 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:init_var_run_t:s0 tclass=dir permissive=0
-#optional_policy(`
-	gen_require(`
-		type init_var_run_t;
-	')
-	allow bwrap_t init_var_run_t:dir search;
-#')
-
-# AVC avc:  denied  { getattr } for  pid=154237 comm="bwrap" path="/oldroot/tmp/.X11-unix/X0" dev="tmpfs" ino=63 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_tmp_t:s0 tclass=sock_file permissive=0
-#optional_policy(`
-	gen_require(`
-		type user_tmp_t;
-	')
-	allow bwrap_t user_tmp_t:sock_file getattr;
-#')
-
-# AVC avc:  denied  { getattr } for  pid=179820 comm="bwrap" path="/oldroot/run/udev/control" dev="tmpfs" ino=931 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:udev_var_run_t:s0 tclass=sock_file permissive=0
-# AVC avc:  denied  { search } for  pid=179687 comm="bwrap" name="udev" dev="tmpfs" ino=59 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:udev_var_run_t:s0 tclass=dir permissive=0
-#optional_policy(`
-	gen_require(`
-		type udev_var_run_t;
-	')
-	allow bwrap_t udev_var_run_t:dir search;
-	allow bwrap_t udev_var_run_t:sock_file getattr;
-#')
-
-# bwrap: Cant find source path /run/user/<uid>/ICEauthority: Permission denied
-userdom_search_user_tmp_dirs(bwrap_t)
-
 #### Allow: setup ns
 # AVC avc:  denied  { getattr } for  pid=146660 comm="bwrap" path="user:[4026531837]" dev="nsfs" ino=4026531837 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:nsfs_t:s0 tclass=file permissive=0
 # AVC avc:  denied  { getattr } for  pid=146660 comm="bwrap" path="cgroup:[4026531835]" dev="nsfs" ino=4026531835 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:nsfs_t:s0 tclass=file permissive=0
@@ -274,36 +230,12 @@ userdom_search_user_tmp_dirs(bwrap_t)
 # AVC avc:  denied  { setcap } for  pid=140802 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=process permissive=0
 allow bwrap_t self:process setcap;
 
-#### Allow: various --tmpfs --bind etc options
-# AVC avc:  denied  { mounton } for  pid=138701 comm="bwrap" path="/newroot/home/user/.config/evince" dev="dm-2" ino=1199816 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=dir permissive=1
-# AVC avc:  denied  { mounton } for  pid=18007 comm="bwrap" path="/newroot/home/user/Downloads" dev="dm-2" ino=1180372 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_home_t:s0 tclass=dir permissive=0
-# AVC avc:  denied  { mounton } for  pid=365192 comm="bwrap" path="/newroot/home/user/.local/share/applications/mimeapps.list" dev="dm-2" ino=1054847 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=1
-#optional_policy(`
-	gen_require(`
-		attribute gnome_home_type;
-		attribute user_home_type;
-	')
-	allow bwrap_t gnome_home_type:dir mounton;
-	allow bwrap_t gnome_home_type:file mounton;
-	allow bwrap_t user_home_type:dir mounton;
-	allow bwrap_t user_home_type:file mounton;
-#')
-
 # AVC avc:  denied  { mount } for  pid=138701 comm="bwrap" name="/" dev="devpts" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:devpts_t:s0 tclass=filesystem permissive=1
 # AVC avc:  denied  { search } for  pid=178789 comm="bwrap" name="/" dev="devpts" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:devpts_t:s0 tclass=dir permissive=0
 # AVC avc:  denied  { setattr } for  pid=194443 comm="bwrap" name="ptmx" dev="devpts" ino=2 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:devpts_t:s0 tclass=chr_file permissive=0
 term_mount_pty_fs(bwrap_t)
 term_search_ptys(bwrap_t)
 term_setattr_generic_ptys(bwrap_t)
-
-# AVC avc:  denied  { mounton } for  pid=138701 comm="bwrap" path="/newroot/etc/dconf/profile/user" dev="dm-0" ino=31848549 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:etc_t:s0 tclass=file permissive=1
-#optional_policy(`
-	gen_require(`
-		type etc_t;
-	')
-	allow bwrap_t etc_t:dir mounton;
-	allow bwrap_t etc_t:file mounton;
-#')
 
 # AVC avc:  denied  { remount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:fs_t:s0 tclass=filesystem permissive=1
 # AVC avc:  denied  { unmount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:fs_t:s0 tclass=filesystem permissive=1
@@ -312,27 +244,11 @@ fs_all_mount_fs_perms_xattr_fs(bwrap_t)
 # AVC avc:  denied  { mount } for  pid=138701 comm="bwrap" name="/" dev="proc" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:proc_t:s0 tclass=filesystem permissive=1
 kernel_mount_proc(bwrap_t)
 
-# AVC avc:  denied  { mounton } for  pid=138701 comm="bwrap" path="/" dev="dm-0" ino=256 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:root_t:s0 tclass=dir permissive=1
-#optional_policy(`
-	gen_require(`
-		type root_t;
-	')
-	allow bwrap_t root_t:dir mounton;
-#')
-
 # AVC avc:  denied  { remount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:security_t:s0 tclass=filesystem permissive=1
 selinux_remount_fs(bwrap_t)
 
 # AVC avc:  denied  { remount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:sysfs_t:s0 tclass=filesystem permissive=1
 dev_remount_sysfs_fs(bwrap_t)
-
-# AVC avc:  denied  { mounton } for  pid=138701 comm="bwrap" path="/tmp" dev="tmpfs" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:tmp_t:s0 tclass=dir permissive=1
-#optional_policy(`
-	gen_require(`
-		type tmp_t;
-	')
-	allow bwrap_t tmp_t:dir mounton;
-#')
 
 # AVC avc:  denied  { mount } for  pid=138701 comm="bwrap" name="/" dev="tmpfs" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=1
 # AVC avc:  denied  { remount } for  pid=138701 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=1
