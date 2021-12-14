@@ -153,6 +153,7 @@ allow bwrap_t self:unix_dgram_socket { create ioctl };
 		type cupsd_var_run_t;
 		type etc_t;
 		type home_root_t;
+		type net_conf_t;
 		type pulseaudio_var_lib_t;
 		type root_t;
 		type system_dbusd_var_lib_t;
@@ -168,6 +169,7 @@ allow bwrap_t self:unix_dgram_socket { create ioctl };
 	sandbox_mountpoint_type(cupsd_var_run_t)
 	sandbox_mountpoint_type(etc_t)
 	sandbox_mountpoint_type(home_root_t)
+	sandbox_mountpoint_type(net_conf_t)
 	sandbox_mountpoint_type(pulseaudio_var_lib_t)
 	sandbox_mountpoint_type(root_t)
 	sandbox_mountpoint_type(system_dbusd_var_lib_t)
