@@ -5,6 +5,13 @@
 policy_module(local_user_bwrap, 1.0.0)
 ## <desc>
 ## <p>
+## Allow exec of wider variety of programs
+## </p>
+## </desc>
+gen_tunable(local_bwrap_wide_exec, false)
+
+## <desc>
+## <p>
 ## Enable debug helpers
 ## </p>
 ## </desc>
@@ -253,6 +260,26 @@ dontaudit bwrap_t self:cap_userns dac_override;
 ###
 ### Tunables
 ###
+
+### Allow wider exec perms than by default
+#optional_policy(`
+tunable_policy(`local_bwrap_wide_exec',`
+# My skill lacking here
+# This should limit file:execute to something per user_t(/etc) can do respectively
+# But I see no way to do the limiting and there is no attribute of
+# attributes or query here to do it.
+# So this list is just selection from:
+# % sesearch -A -p execute -s user_t
+# With many domains, it just do not make much sense to use bwrap.
+# But still this should cover all major (GUI) applications.
+gen_require(`
+	attribute application_exec_type;
+	attribute base_ro_file_type;
+	type bwrap_t;
+')
+allow bwrap_t { application_exec_type base_ro_file_type }:file execute;
+')
+#')
 
 ### Debug: use strace
 #optional_policy(`
