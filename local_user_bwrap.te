@@ -216,15 +216,8 @@ allow bwrap_t self:unix_dgram_socket { create ioctl };
 # AVC avc:  denied  { getattr } for  pid=147023 comm="bwrap" path="/proc/sys/user/max_user_namespaces" dev="proc" ino=39962 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:sysctl_t:s0 tclass=file permissive=0
 # AVC avc:  denied  { read } for  pid=139137 comm="bwrap" name="max_user_namespaces" dev="proc" ino=39962 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:sysctl_t:s0 tclass=file permissive=1
 # AVC avc:  denied  { open } for  pid=139137 comm="bwrap" path="/proc/sys/user/max_user_namespaces" dev="proc" ino=39962 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:sysctl_t:s0 tclass=file permissive=1
-#optional_policy(`
-	gen_require(`
-		type nsfs_t;
-		type sysctl_t;
-	')
-	allow bwrap_t nsfs_t:file getattr;
-	allow bwrap_t sysctl_t:file getattr;
-	allow bwrap_t sysctl_t:file { open read };
-#')
+fs_getattr_nsfs_files(bwrap_t)
+kernel_read_sysctl(bwrap_t)
 
 # AVC avc:  denied  { mount } for  pid=138701 comm="bwrap" name="/" dev="devpts" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:devpts_t:s0 tclass=filesystem permissive=1
 # AVC avc:  denied  { search } for  pid=178789 comm="bwrap" name="/" dev="devpts" ino=1 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:devpts_t:s0 tclass=dir permissive=0
