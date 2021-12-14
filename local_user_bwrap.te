@@ -14,12 +14,12 @@ optional_policy(`
 
 require {
 	attribute login_userdomain;
-	type user_t;
 	type staff_t;
 	type sysadm_t;
-	role user_r;
+	type user_t;
 	role staff_r;
 	role sysadm_r;
+	role user_r;
 }
 
 attribute bwrap_type;
@@ -201,8 +201,8 @@ optional_policy(`
 # AVC avc:  denied  { getattr } for  pid=148387 comm="bwrap" path="/oldroot/run/NetworkManager/resolv.conf" dev="tmpfs" ino=4929 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:net_conf_t:s0 tclass=file permissive=0
 optional_policy(`
 	gen_require(`
-		type net_conf_t;
 		type NetworkManager_var_run_t;
+		type net_conf_t;
 	')
 	allow bwrap_t net_conf_t:lnk_file read;
 	allow bwrap_t net_conf_t:file getattr;
@@ -258,10 +258,10 @@ optional_policy(`
 # AVC avc:  denied  { getattr } for  pid=365192 comm="bwrap" path="/oldroot/run/user/1000/pipewire-0" dev="tmpfs" ino=48 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:pulseaudio_var_lib_t:s0 tclass=sock_file permissive=1
 optional_policy(`
 	gen_require(`
-		type pulseaudio_var_lib_t;
 		type init_var_run_t;
-		type user_tmp_t;
+		type pulseaudio_var_lib_t;
 		type udev_var_run_t;
+		type user_tmp_t;
 	')
 	allow bwrap_t pulseaudio_var_lib_t:dir getattr;
 	allow bwrap_t pulseaudio_var_lib_t:sock_file getattr;
@@ -285,8 +285,8 @@ dontaudit bwrap_t self:cap_userns dac_override;
 # AVC avc:  denied  { open } for  pid=139137 comm="bwrap" path="/proc/sys/user/max_user_namespaces" dev="proc" ino=39962 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:sysctl_t:s0 tclass=file permissive=1
 optional_policy(`
 	gen_require(`
-		type sysctl_t;
 		type nsfs_t;
+		type sysctl_t;
 	')
 	allow bwrap_t nsfs_t:file getattr;
 	allow bwrap_t sysctl_t:file getattr;
@@ -400,8 +400,8 @@ optional_policy(`
 # AVC avc:  denied  { getattr } for  pid=155636 comm="bwrap" path="/oldroot/home/user/.config/evince" dev="dm-2" ino=1573171 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:config_home_t:s0 tclass=dir permissive=0
 optional_policy(`
 	gen_require(`
-		type data_home_t;
 		type config_home_t;
+		type data_home_t;
 	')
 	userdom_manage_user_home_content(bwrap_t)
 	allow bwrap_t config_home_t:dir search;

@@ -27,21 +27,9 @@
 template(`bwrap_role_template',`
 	gen_require(`
 		attribute bwrap_type;
-		type NetworkManager_var_run_t;
 		type bwrap_t;
 		type bwrap_exec_t;
 		type bwrap_tmp_t;
-		type cert_t;
-		type devlog_t;
-		type devpts_t;
-		type init_var_run_t;
-		type net_conf_t;
-		type proc_net_t;
-		type security_t;
-		type sysctl_net_t;
-		type sysctl_t;
-		type system_dbusd_var_run_t;
-		type root_t;
 	')
 
 	##############################
@@ -97,7 +85,7 @@ template(`bwrap_role_template',`
 	# AVC avc:  denied  { ioctl } for  pid=2289 comm="systemd" path="/proc/168522/cgroup" dev="proc" ino=2200941 ioctlcmd=0x5401 scontext=user_u:user_r:user_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=file permissive=0
 	# AVC avc:  denied  { read } for  pid=177842 comm="pidof" name="exe" dev="proc" ino=2343590 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=lnk_file permissive=0
 	allow $3 bwrap_t:dir { getattr search };
-	allow $3 bwrap_t:file { getattr ioctl open read };
+	allow $3 bwrap_t:file read_file_perms;
 	allow $3 bwrap_t:lnk_file read;
 
 	manage_dirs_pattern($3, bwrap_tmp_t, bwrap_tmp_t)
