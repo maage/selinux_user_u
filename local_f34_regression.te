@@ -32,7 +32,7 @@ require {
 	type xdm_t;
 }
 allow xdm_t tmp_t:sock_file write;
-allow xdm_t tmpfs_t:file { map read write };
+allow xdm_t tmpfs_t:file mmap_rw_inherited_file_perms;
 
 ### What?
 require {
@@ -46,8 +46,8 @@ require {
 	type devlog_t;
 	type journalctl_t;
 }
-allow journalctl_t devlog_t:lnk_file { getattr read };
-allow journalctl_t devlog_t:sock_file { getattr open read };
+allow journalctl_t devlog_t:lnk_file read_lnk_file_perms;
+allow journalctl_t devlog_t:sock_file read_sock_file_perms;
 
 #### Deny: journalctl to probe devices
 require {
