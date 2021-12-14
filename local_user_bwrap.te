@@ -124,19 +124,12 @@ userdom_use_inherited_user_ptys(bwrap_t)
 # AVC avc:  denied  { nlmsg_write } for  pid=142316 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=netlink_route_socket permissive=0
 # AVC avc:  denied  { net_admin } for  pid=142501 comm="bwrap" capability=12  scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=cap_userns permissive=0
 # AVC avc:  denied  { read } for  pid=142501 comm="bwrap" scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tclass=netlink_route_socket permissive=0
-#optional_policy(`
-	gen_require(`
-		type proc_net_t;
-		type sysctl_net_t;
-	')
-	allow bwrap_t proc_net_t:file read;
-	allow bwrap_t self:cap_userns net_admin;
-	allow bwrap_t self:cap_userns setpcap;
-	allow bwrap_t self:netlink_route_socket { bind create nlmsg_write read write };
-	allow bwrap_t self:udp_socket { create ioctl };
-	allow bwrap_t self:unix_dgram_socket { create ioctl };
-	allow bwrap_t sysctl_net_t:dir search;
-#')
+kernel_read_network_state(bwrap_t)
+kernel_search_network_sysctl(bwrap_t)
+allow bwrap_t self:cap_userns { net_admin setpcap };
+allow bwrap_t self:netlink_route_socket { bind create nlmsg_write read write };
+allow bwrap_t self:udp_socket { create ioctl };
+allow bwrap_t self:unix_dgram_socket { create ioctl };
 
 ### Allow: mounton
 #optional_policy(`
