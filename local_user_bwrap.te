@@ -232,6 +232,10 @@ userdom_manage_user_home_content(bwrap_t)
 # AVC avc:  denied  { read } for  pid=463344 comm="bwrap" path=2F746D702F746D702E6C6C574447414B7977662F6669666F202864656C6574656429 dev="tmpfs" ino=12851 scontext=maage_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=maage_u:object_r:user_tmp_t:s0 tclass=fifo_file permissive=0
 userdom_rw_inherited_user_tmp_pipes(bwrap_t)
 
+### Allow: default /etc/resolv.conf bind mirror
+# AVC avc:  denied  { read } for  pid=505833 comm="bwrap" name="resolv.conf" dev="dm-0" ino=15409287 scontext=maage_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:net_conf_t:s0 tclass=lnk_file permissive=0
+sysnet_read_config(bwrap_t)
+
 #### Regressions
 
 # I wonder why I see this only with bwrap?
