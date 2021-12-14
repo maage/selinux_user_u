@@ -26,10 +26,13 @@
 #
 template(`bwrap_role_template',`
 	gen_require(`
+		attribute bwrap_files_type;
 		attribute bwrap_type;
 		type bwrap_t;
+		type bwrap_data_home_t;
 		type bwrap_exec_t;
 		type bwrap_sandbox_t;
+		type data_home_t;
 	')
 
 	##############################
@@ -88,12 +91,23 @@ template(`bwrap_role_template',`
 	allow $3 bwrap_t:file read_file_perms;
 	allow $3 bwrap_t:lnk_file read;
 
-	manage_dirs_pattern($3, bwrap_sandbox_t, bwrap_sandbox_t)
-	manage_files_pattern($3, bwrap_sandbox_t, bwrap_sandbox_t)
-	manage_lnk_files_pattern($3, bwrap_sandbox_t, bwrap_sandbox_t)
+	manage_dirs_pattern($3, bwrap_files_type, bwrap_files_type)
+	manage_files_pattern($3, bwrap_files_type, bwrap_files_type)
+	manage_lnk_files_pattern($3, bwrap_files_type, bwrap_files_type)
+
+	filetrans_pattern($3, data_home_t, bwrap_data_home_t, dir, "my-bwrap")
+
 	# AVC avc:  denied  { map } for  pid=192731 comm="GeckoMain" path="/run/user/100/dconf/user" dev="tmpfs" ino=8 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=file permissive=0
 	allow $3 bwrap_sandbox_t:file map;
+')
 
+## Set bwrap files type
+interface(`bwrap_files',`
+        gen_require(`
+                attribute bwrap_files_type;
+        ')
+	files_type($1)
+	typeattribute $1 bwrap_files_type;
 ')
 
 # Assume not every file_type is meant to be mounted info sandbox, maybe

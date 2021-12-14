@@ -11,6 +11,7 @@ policy_module(local_user_bwrap, 1.0.0)
 gen_tunable(local_bwrap_debug, false)
 
 attribute bwrap_type;
+attribute bwrap_files_type;
 attribute sandbox_mountpoint;
 
 type bwrap_t;
@@ -19,18 +20,29 @@ type bwrap_exec_t;
 # File type for bwrap sandbox
 type bwrap_sandbox_t;
 
+# File type of my-bwrap internal state:
+# - type for directory structure
+# - type for bwrap output files
+# - type for per container staging area for bind mounts
+type bwrap_data_home_t;
+
 #optional_policy(`
 
-files_type(bwrap_sandbox_t)
+userdom_user_application_domain(bwrap_t, bwrap_exec_t)
+
+bwrap_files(bwrap_sandbox_t)
 sandbox_mountpoint_type(bwrap_sandbox_t)
 # AVC avc:  denied  { associate } for  pid=490277 comm="bwrap" name="newroot" scontext=maage_u:object_r:bwrap_sandbox_t:s0 tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=0
 fs_associate_tmpfs(bwrap_sandbox_t)
-manage_dirs_pattern(bwrap_t, bwrap_sandbox_t, bwrap_sandbox_t)
-manage_files_pattern(bwrap_t, bwrap_sandbox_t, bwrap_sandbox_t)
-manage_lnk_files_pattern(bwrap_t, bwrap_sandbox_t, bwrap_sandbox_t)
+
+bwrap_files(bwrap_data_home_t)
+userdom_user_home_content(bwrap_data_home_t)
+
+manage_dirs_pattern(bwrap_t, bwrap_files_type, bwrap_files_type)
+manage_files_pattern(bwrap_t, bwrap_files_type, bwrap_files_type)
+manage_lnk_files_pattern(bwrap_t, bwrap_files_type, bwrap_files_type)
 
 # typealias bwrap_t alias { user_bwrap_t staff_bwrap_t sysadm_bwrap_t };
-userdom_user_application_domain(bwrap_t, bwrap_exec_t)
 
 require {
 	attribute login_userdomain;
