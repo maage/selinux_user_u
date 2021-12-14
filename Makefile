@@ -35,6 +35,7 @@ SELINT_ARGS_te = --disable=C-001 --disable=S-001
 SELINT_ARGS_if =
 define selint_template
 tmp/lint.$(1).flag: $$(all_packages:.pp=.$(1))
+	@mkdir -p tmp
 	$(SELINT) $$(SELINT_ARGS_$(1)) $$?
 	@touch -- $$@
 lint: tmp/lint.$(1).flag
