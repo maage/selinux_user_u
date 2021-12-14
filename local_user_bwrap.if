@@ -29,7 +29,7 @@ template(`bwrap_role_template',`
 		attribute bwrap_type;
 		type bwrap_t;
 		type bwrap_exec_t;
-		type bwrap_tmp_t;
+		type bwrap_sandbox_t;
 	')
 
 	##############################
@@ -88,10 +88,10 @@ template(`bwrap_role_template',`
 	allow $3 bwrap_t:file read_file_perms;
 	allow $3 bwrap_t:lnk_file read;
 
-	manage_dirs_pattern($3, bwrap_tmp_t, bwrap_tmp_t)
-	manage_files_pattern($3, bwrap_tmp_t, bwrap_tmp_t)
-	manage_lnk_files_pattern($3, bwrap_tmp_t, bwrap_tmp_t)
-	# AVC avc:  denied  { map } for  pid=192731 comm="GeckoMain" path="/run/user/100/dconf/user" dev="tmpfs" ino=8 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:object_r:bwrap_tmp_t:s0 tclass=file permissive=0
-	allow $3 bwrap_tmp_t:file map;
+	manage_dirs_pattern($3, bwrap_sandbox_t, bwrap_sandbox_t)
+	manage_files_pattern($3, bwrap_sandbox_t, bwrap_sandbox_t)
+	manage_lnk_files_pattern($3, bwrap_sandbox_t, bwrap_sandbox_t)
+	# AVC avc:  denied  { map } for  pid=192731 comm="GeckoMain" path="/run/user/100/dconf/user" dev="tmpfs" ino=8 scontext=user_u:user_r:user_t:s0-s0:c1.c254 tcontext=user_u:object_r:bwrap_sandbox_t:s0 tclass=file permissive=0
+	allow $3 bwrap_sandbox_t:file map;
 
 ')
