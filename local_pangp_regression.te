@@ -26,4 +26,11 @@ allow pangp_user_ui_t sysfs_t:dir read;
 allow pangp_user_ui_t udev_var_run_t:file read_file_perms;
 allow pangp_user_ui_t var_lib_t:file mmap_read_file_perms;
 
+require {
+	attribute login_userdomain;
+	type pangp_user_file_t;
+}
+# AVC avc:  denied  { watch } for  pid=63283 comm="recollindex" path="/home/maage/.GlobalProtect/defaultbrowser" dev="dm-2" ino=1311095 scontext=maage_u:user_r:user_t:s0-s0:c0.c1023 tcontext=maage_u:object_r:pangp_user_file_t:s0 tclass=dir permissive=0
+allow login_userdomain pangp_user_file_t:dir watch;
+
 ')
