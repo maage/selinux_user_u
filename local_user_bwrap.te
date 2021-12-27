@@ -35,14 +35,18 @@ type bwrap_data_home_t;
 
 #optional_policy(`
 
-userdom_user_application_domain(bwrap_t, bwrap_exec_t)
+optional_policy(`
+	userdom_user_application_domain(bwrap_t, bwrap_exec_t)
+')
 
 bwrap_files(bwrap_sandbox_t)
 # AVC avc:  denied  { associate } for  pid=490277 comm="bwrap" name="newroot" scontext=maage_u:object_r:bwrap_sandbox_t:s0 tcontext=system_u:object_r:tmpfs_t:s0 tclass=filesystem permissive=0
 fs_associate_tmpfs(bwrap_sandbox_t)
 
 bwrap_files(bwrap_data_home_t)
-userdom_user_home_content(bwrap_data_home_t)
+optional_policy(`
+	userdom_user_home_content(bwrap_data_home_t)
+')
 
 manage_dirs_pattern(bwrap_t, bwrap_files_type, bwrap_files_type)
 manage_files_pattern(bwrap_t, bwrap_files_type, bwrap_files_type)
@@ -121,7 +125,9 @@ selinux_validate_context(bwrap_t)
 # AVC avc:  denied  { read write } for  pid=139137 comm="bwrap" path="/dev/pts/4" dev="devpts" ino=7 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_devpts_t:s0 tclass=chr_file permissive=1
 # AVC avc:  denied  { ioctl } for  pid=139137 comm="bwrap" path="/dev/pts/4" dev="devpts" ino=7 ioctlcmd=0x5401 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_devpts_t:s0 tclass=chr_file permissive=1
 # AVC avc:  denied  { append } for  pid=27548 comm="bwrap" path="/dev/pts/4" dev="devpts" ino=7 scontext=user_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_devpts_t:s0 tclass=chr_file permissive=0
-userdom_use_inherited_user_ptys(bwrap_t)
+optional_policy(`
+	userdom_use_inherited_user_ptys(bwrap_t)
+')
 
 #### Allow: loopback
 # bwrap: loopback: Failed to look up lo: No such file or directory
@@ -191,21 +197,27 @@ fs_all_mount_fs_perms_tmpfs(bwrap_t)
 # AVC avc:  denied  { search } for  pid=463897 comm="bwrap" name=".cache" dev="dm-2" ino=917511 scontext=maage_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=maage_u:object_r:cache_home_t:s0 tclass=dir permissive=0
 # AVC avc:  denied  { write } for  pid=464697 comm="bwrap" name=".config" dev="dm-2" ino=1058425 scontext=maage_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=maage_u:object_r:config_home_t:s0 tclass=dir permissive=0
 # AVC avc:  denied  { write } for  pid=464820 comm="bwrap" name=".cache" dev="dm-2" ino=1058435 scontext=maage_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=maage_u:object_r:cache_home_t:s0 tclass=dir permissive=0
-userdom_manage_user_home_content(bwrap_t)
+optional_policy(`
+	userdom_manage_user_home_content(bwrap_t)
+')
 
 #### Allow: cups / printing
-#optional_policy(`
+optional_policy(`
 	cups_stream_connect(bwrap_t)
 	cups_read_config(bwrap_t)
-#')
+')
 
 ### Allow: access X0 fifo
 # AVC avc:  denied  { read } for  pid=463344 comm="bwrap" path=2F746D702F746D702E6C6C574447414B7977662F6669666F202864656C6574656429 dev="tmpfs" ino=12851 scontext=maage_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=maage_u:object_r:user_tmp_t:s0 tclass=fifo_file permissive=0
-userdom_rw_inherited_user_tmp_pipes(bwrap_t)
+optional_policy(`
+	userdom_rw_inherited_user_tmp_pipes(bwrap_t)
+')
 
 ### Allow: default /etc/resolv.conf bind mirror
 # AVC avc:  denied  { read } for  pid=505833 comm="bwrap" name="resolv.conf" dev="dm-0" ino=15409287 scontext=maage_u:user_r:bwrap_t:s0-s0:c0.c1023 tcontext=system_u:object_r:net_conf_t:s0 tclass=lnk_file permissive=0
-sysnet_read_config(bwrap_t)
+optional_policy(`
+	sysnet_read_config(bwrap_t)
+')
 
 #### Regressions
 

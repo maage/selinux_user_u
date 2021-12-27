@@ -45,7 +45,9 @@ template(`bwrap_role_template',`
 	type $1_bwrap_t, bwrap_type;
 	role $2 types $1_bwrap_t;
 
-	userdom_user_application_domain($1_bwrap_t, bwrap_exec_t)
+	optional_policy(`
+		userdom_user_application_domain($1_bwrap_t, bwrap_exec_t)
+	')
 	# domain_interactive_fd($1_bwrap_t)
 
 	##############################
