@@ -101,6 +101,14 @@ allow dnscrypt_proxy_t self:unix_dgram_socket { connect create getattr write };
 # AVC avc:  denied  { name_connect } for  pid=383269 comm="dnscrypt- proxy" dest=453 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:reserved_port_t:s0 tclass=tcp_socket permissive=0
 # AVC avc:  denied  { name_connect } for  pid=383269 comm="dnscrypt- proxy" dest=5053 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:unreserved_port_t:s0 tclass=tcp_socket permissive=0
 corenet_tcp_connect_all_ports(dnscrypt_proxy_t)
+# AVC avc:  denied  { name_bind } for  pid=5809 comm="(sd-listen)" src=53 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:dns_port_t:s0 tclass=tcp_socket permissive=0
+corenet_tcp_bind_dns_port(dnscrypt_proxy_t)
+# AVC avc:  denied  { node_bind } for  pid=1486 comm="(sd-listen)" saddr=127.0.0.53 src=53 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:node_t:s0 tclass=tcp_socket permissive=0
+corenet_tcp_bind_generic_node(dnscrypt_proxy_t)
+# AVC avc:  denied  { name_bind } for  pid=4466 comm="(sd-listen)" src=53 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:dns_port_t:s0 tclass=udp_socket permissive=0
+corenet_udp_bind_dns_port(dnscrypt_proxy_t)
+# AVC avc:  denied  { node_bind } for  pid=5326 comm="(sd-listen)" saddr=127.0.0.53 src=53 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:node_t:s0 tclass=udp_socket permissive=0
+corenet_udp_bind_generic_node(dnscrypt_proxy_t)
 
 # Allow: to read certs from /etc/pki
 # AVC avc:  denied  { getattr } for  pid=381665 comm="dnscrypt-proxy" path="/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem" dev="dm-0" ino=34719024 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=unconfined_u:object_r:cert_t:s0 tclass=file permissive=1
