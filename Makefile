@@ -42,7 +42,7 @@ SEMODULE ?= $(SBINDIR)/semodule -v
 # endef
 # $(foreach suf,fc if te,$(eval $(call selint_template,$(suf))))
 lint:
-	selint -r --context=../selinux-policy --disable=C-001 --disable=S-001 --disable=S-002 --disable=W-001 --disable=W-010 --disable=W-011 .
+	selint -r --context=../selinux-policy --disable={C-001,S-001,S-002,W-011} .
 
 check: lint
 
