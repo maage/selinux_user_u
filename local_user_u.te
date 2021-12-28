@@ -73,6 +73,9 @@ gen_require(`
 ')
 
 ### /run/user/<uid>/bus
+gen_require(`
+	type user_tmp_t;
+')
 manage_sock_files_pattern({ login_userdomain systemd_logind_t }, user_tmp_t, system_dbusd_var_run_t)
 
 ### /run/user/<uid>/gnupg

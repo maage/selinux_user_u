@@ -11,6 +11,9 @@ gen_require(`
         type user_home_dir_t;
 ')
 allow pangp_server_t user_home_dir_t:dir search;
+gen_require(`
+	type var_lib_t;
+')
 allow pangp_server_t var_lib_t:file getattr;
 
 gen_require(`

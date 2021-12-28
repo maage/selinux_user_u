@@ -128,6 +128,10 @@ optional_policy(`
 # AVC avc:  denied  { read } for  pid=381881 comm="dnscrypt-proxy" name="public-resolvers.md" dev="dm-0" ino=34730443 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:var_t:s0 tclass=file permissive=1
 # AVC avc:  denied  { open } for  pid=381881 comm="dnscrypt-proxy" path="/var/cache/dnscrypt-proxy/public-resolvers.md" dev="dm-0" ino=34730443 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:var_t:s0 tclass=file permissive=1
 # AVC avc:  denied  { getattr } for  pid=381881 comm="dnscrypt-proxy" path="/var/cache/dnscrypt-proxy/public-resolvers.md" dev="dm-0" ino=34730443 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:var_t:s0 tclass=file permissive=1
+gen_require(`
+	type init_t;
+	type var_t;
+')
 filetrans_pattern(init_t, var_t, dnscrypt_proxy_cache_t, dir, "dnscrypt-proxy")
 manage_files_pattern(dnscrypt_proxy_t, dnscrypt_proxy_cache_t, dnscrypt_proxy_cache_t)
 
