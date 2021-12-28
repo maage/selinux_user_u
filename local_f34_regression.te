@@ -9,53 +9,53 @@ optional_policy(`
 # contexts used to create the file
 # udev_t: boot
 # unconfined_service_t: sudo udevadm trigger
-require {
+gen_require(`
 	type apmd_lock_t;
 	type udev_t;
 	type unconfined_service_t;
 	type var_lock_t;
-}
+')
 filetrans_pattern({ udev_t unconfined_service_t }, var_lock_t, apmd_lock_t, file, "lmt-req.lock")
 # filetrans_pattern({ udev_t unconfined_service_t }, var_lock_t, apmd_lock_t, file, "lmt-invoc.lock")
 
 ## Allow: iw to write the lock too
-require {
+gen_require(`
 	type apmd_lock_t;
 	type ifconfig_t;
-}
+')
 allow ifconfig_t apmd_lock_t:file write;
 
 ### What?
-require {
+gen_require(`
 	type tmp_t;
 	type tmpfs_t;
 	type xdm_t;
-}
+')
 allow xdm_t tmp_t:sock_file write;
 allow xdm_t tmpfs_t:file mmap_rw_inherited_file_perms;
 
 ### What?
-require {
+gen_require(`
 	type unconfined_service_t;
 	type xdm_t;
-}
+')
 allow xdm_t unconfined_service_t:unix_stream_socket connectto;
 
 #### Allow: journalctl to probe some
-require {
+gen_require(`
 	type devlog_t;
 	type journalctl_t;
-}
+')
 allow journalctl_t devlog_t:lnk_file read_lnk_file_perms;
 allow journalctl_t devlog_t:sock_file read_sock_file_perms;
 
 #### Deny: journalctl to probe devices
-require {
+gen_require(`
 	attribute device_node;
 	type initctl_t;
 	type journalctl_t;
 	type proc_kcore_t;
-}
+')
 dontaudit journalctl_t device_node:blk_file getattr;
 dontaudit journalctl_t device_node:chr_file getattr;
 dontaudit journalctl_t initctl_t:fifo_file getattr;
@@ -64,21 +64,21 @@ dontaudit journalctl_t proc_kcore_t:file getattr;
 optional_policy(`
 #### Allow: faplolicyd to watch
 # mostly mock files
-require {
+gen_require(`
 	type fapolicyd_t;
 	type user_home_t;
 	type user_tmp_t;
-}
+')
 # AVC avc:  denied  { watch_mount watch_with_perm } for  pid=20253 comm="fapolicyd" path="/var/lib/mock/fedora-34-x86_64-bootstrap/root/proc/filesystems" dev="tmpfs" ino=825 scontext=system_u:system_r:fapolicyd_t:s0 tcontext=unconfined_u:object_r:user_tmp_t:s0 tclass=file permissive=0
 allow fapolicyd_t user_tmp_t:file { watch_mount watch_with_perm };
 # AVC avc:  denied  { watch_mount watch_with_perm } for  pid=20253 comm="fapolicyd" path="/var/lib/mock/fedora-34-x86_64-bootstrap/root/home/admin/git/rpm/laptop-mode-tools/results/default" dev="dm-2" ino=1311375 scontext=system_u:system_r:fapolicyd_t:s0 tcontext=unconfined_u:object_r:user_home_t:s0 tclass=dir permissive=0
 allow fapolicyd_t user_home_t:dir { watch_mount watch_with_perm };
 ')
 
-require {
+gen_require(`
 	type abrt_t;
 	type xdm_var_lib_t;
-}
+')
 # AVC avc:  denied  { read } for pid=7366 comm="gdb" name="index" dev="dm-1" ino=14580458 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:xdm_var_lib_t:s0 tclass=file permissive=0
 # AVC avc:  denied  { read } for pid=7366 comm="gdb" name="user" dev="dm-1" ino=17040737 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:xdm_var_lib_t:s0 tclass=file permissive=0
 allow abrt_t xdm_var_lib_t:file read;
@@ -86,17 +86,17 @@ allow abrt_t xdm_var_lib_t:file read;
 # AVC avc:  denied  { open } for pid=9437 comm="gdb" path="/var/lib/gdm/.config/dconf/user" dev="dm-1" ino=17040737 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:xdm_var_lib_t:s0 tclass=file permissive=0
 allow abrt_t xdm_var_lib_t:file open;
 
-require {
+gen_require(`
 	type sssd_t;
 	type var_run_t;
-}
+')
 # AVC avc:  denied  { watch } for pid=1017 comm="sssd" path="/run" dev="tmpfs" ino=1 scontext=system_u:system_r:sssd_t:s0 tcontext=system_u:object_r:var_run_t:s0 tclass=dir permissive=0
 allow sssd_t var_run_t:dir watch;
 
-require {
+gen_require(`
 	type container_file_t;
 	type container_init_t;
-}
+')
 # AVC avc:  denied  { watch } for pid=13888 comm="systemd-resolve" path="/run/dbus/system_bus_socket" dev="tmpfs" ino=95 scontext=system_u:system_r:container_init_t:s0:c621,c893 tcontext=system_u:object_r:container_file_t:s0:c621,c893 tclass=sock_file permissive=0
 # AVC avc:  denied  { watch } for pid=13887 comm="systemd-oomd" path="/run/dbus/system_bus_socket" dev="tmpfs" ino=95 scontext=system_u:system_r:container_init_t:s0:c621,c893 tcontext=system_u:object_r:container_file_t:s0:c621,c893 tclass=sock_file permissive=0
 allow container_init_t container_file_t:sock_file watch;

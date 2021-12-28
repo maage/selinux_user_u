@@ -6,30 +6,30 @@ policy_module(local_pangp_regression, 1.0.0)
 
 optional_policy(`
 
-require {
+gen_require(`
         type pangp_server_t;
         type user_home_dir_t;
-}
+')
 allow pangp_server_t user_home_dir_t:dir search;
 allow pangp_server_t var_lib_t:file getattr;
 
-require {
+gen_require(`
         type bin_t;
         type pangp_user_ui_t;
         type sysfs_t;
         type udev_var_run_t;
         type var_lib_t;
-}
+')
 allow pangp_user_ui_t bin_t:file { execute_no_trans map };
 allow pangp_user_ui_t self:netlink_kobject_uevent_socket { bind create getattr setopt };
 allow pangp_user_ui_t sysfs_t:dir read;
 allow pangp_user_ui_t udev_var_run_t:file read_file_perms;
 allow pangp_user_ui_t var_lib_t:file mmap_read_file_perms;
 
-require {
+gen_require(`
 	attribute login_userdomain;
 	type pangp_user_file_t;
-}
+')
 # AVC avc:  denied  { watch } for  pid=63283 comm="recollindex" path="/home/maage/.GlobalProtect/defaultbrowser" dev="dm-2" ino=1311095 scontext=maage_u:user_r:user_t:s0-s0:c0.c1023 tcontext=maage_u:object_r:pangp_user_file_t:s0 tclass=dir permissive=0
 allow login_userdomain pangp_user_file_t:dir watch;
 

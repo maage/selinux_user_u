@@ -7,25 +7,25 @@ optional_policy(`
 
 #============= fprintd_t ==============
 #### Allow fprintd to access /sys/devices/pci0000:00/0000:00:14.0/usb1/1-7/power/{persist,wakeup}
-require {
+gen_require(`
 	type fprintd_t;
-}
+')
 # AVC avc:  denied  { write } for pid=4118 comm="fprintd" name="wakeup" dev="sysfs" ino=34915 scontext=system_u:system_r:fprintd_t:s0 tcontext=system_u:object_r:sysfs_t:s0 tclass=file permissive=0
 # AVC avc:  denied  { write } for pid=4118 comm="fprintd" name="persist" dev="sysfs" ino=34908 scontext=system_u:system_r:fprintd_t:s0 tcontext=system_u:object_r:sysfs_t:s0 tclass=file permissive=0
 dev_rw_sysfs(fprintd_t)
 
 #============= container_t ==============
 #### Allow container to access home dir
-require {
+gen_require(`
 	type container_t;
 	type user_home_t;
-}
+')
 # AVC avc:  denied  { write } for pid=221435 comm="java" name="logs" dev="dm-3" ino=34664641 scontext=system_u:system_r:container_t:s0:c386,c791 tcontext=unconfined_u:object_r:user_home_t:s0 tclass=dir permissive=0
 userdom_manage_user_home_content_dirs(container_t)
 
-require {
+gen_require(`
 	type ssh_t;
-}
+')
 # AVC avc:  denied  { open } for  pid=36021 comm="gnome-ssh-askpa" path="/home/user/.local/share/mime/mime.cache" dev="dm-2" ino=2625349 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0
 # AVC avc:  denied  { open } for  pid=36021 comm="gnome-ssh-askpa" path="/home/user/.local/share/mime/globs2" dev="dm-2" ino=2625334 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0
 # AVC avc:  denied  { open } for  pid=36021 comm="gnome-ssh-askpa" path="/home/user/.local/share/mime/magic" dev="dm-2" ino=2625335 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0
@@ -35,9 +35,9 @@ require {
 # AVC avc:  denied  { open } for  pid=36021 comm="gnome-ssh-askpa" path="/home/user/.local/share/mime/generic-icons" dev="dm-2" ino=2625346 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:object_r:data_home_t:s0 tclass=file permissive=0
 gnome_read_generic_data_home_files(ssh_t)
 
-require {
+gen_require(`
 	type abrt_t;
-}
+')
 # AVC avc:  denied  { net_admin } for  pid=48545 comm="reporter-system" capability=12  scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tclass=capability permissive=0
 # AVC avc:  denied  { net_admin } for  pid=48722 comm="abrt-server" capability=12  scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tclass=capability permissive=0
 # AVC avc:  denied  { net_admin } for  pid=48732 comm="reporter-system" capability=12  scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tclass=capability permissive=0

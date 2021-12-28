@@ -21,7 +21,7 @@ gen_tunable(local_user_u_journalctl, true)
 optional_policy(`
 
 # TODO: optional_policy stuff missing?
-require {
+gen_require(`
 	# Should always use login_userdomain for all stuff allowed to all
 	attribute login_userdomain;
 	# type sysadm_t;
@@ -30,7 +30,7 @@ require {
 	type user_t;
 	# role user_r;
 	role system_r;
-}
+')
 
 ### login
 ### start: Terminal (gui app)
@@ -38,22 +38,22 @@ require {
 # from: policy/modules/roles/unconfineduser.te
 # dbus_role_template needs these fixes
 # /usr/bin/dbus-broker-launch --scope user
-require {
+gen_require(`
 	attribute systemd_unit_file_type;
 	type user_dbusd_t;
-}
+')
 allow user_dbusd_t login_userdomain:system { reload status };
 allow user_dbusd_t systemd_unit_file_type:service start;
 
 ### Allow: loginctl session-status <id>
-require {
+gen_require(`
 	type init_var_run_t;
-}
+')
 allow login_userdomain init_var_run_t:service status;
 
 ### Allow: login/logout w/ my systemd_logind_var_run_t/systemd_unit_file_t fc
 # systemctl --user daemon-reexec: does not still work, it does not start systemd user instance
-require {
+gen_require(`
 	attribute gkeyringd_domain;
 	type gkeyringd_tmp_t;
 	type gpg_t;
@@ -70,7 +70,7 @@ require {
 	type unconfined_service_t; # /usr/libexec/uresourced
 	type user_dbusd_t;
 	type xdm_t;
-}
+')
 
 ### /run/user/<uid>/bus
 manage_sock_files_pattern({ login_userdomain systemd_logind_t }, user_tmp_t, system_dbusd_var_run_t)
@@ -131,7 +131,7 @@ filetrans_pattern({ init_t systemd_logind_t unconfined_service_t }, init_var_run
 
 
 ### Allow some: ps: /proc/<pid>
-require {
+gen_require(`
 	type fprintd_t;
 	type fwupd_cache_t;
 	type kernel_t;
@@ -139,7 +139,7 @@ require {
 	type systemd_hostnamed_t;
 	type udev_t;
 	type xdm_t;
-}
+')
 dontaudit user_t { fprintd_t udev_t xdm_t }:dir getattr;
 allow login_userdomain fprintd_t:dir getattr;
 allow login_userdomain fwupd_cache_t:dir { getattr open };
@@ -163,9 +163,9 @@ allow login_userdomain self:netlink_generic_socket create;
 systemd_hwdb_mmap_config(login_userdomain)
 
 ### Allow gvfsd-fuse /home/user/.cache/gvfs
-require {
+gen_require(`
 	type cache_home_t;
-}
+')
 allow login_userdomain cache_home_t:dir mounton;
 
 # allow user_t mount_t:process { sigkill signal };
@@ -176,34 +176,34 @@ mount_sigkill(login_userdomain)
 ### LOCAL: Allow: to run ssh-agent with socket in /run/user/<uid>/ssh-agent.socket
 # Moved file from original position
 # Respective line at fc
-require {
+gen_require(`
 	attribute ssh_agent_type;
 	type ssh_agent_tmp_t;
-}
+')
 userdom_user_tmp_filetrans(ssh_agent_type, ssh_agent_tmp_t, sock_file, "ssh-agent.socket")
 
 ### grub2-set-bootflag
-require {
+gen_require(`
 	type boot_t;
-}
+')
 allow login_userdomain boot_t:dir rw_dir_perms;
 allow login_userdomain boot_t:file manage_file_perms;
 
 ### /usr/libexec/flatpak-system-helper via dbus
 optional_policy(`
-	require {
+	gen_require(`
 		type flatpak_helper_t;
-	}
+	')
 	allow login_userdomain flatpak_helper_t:dbus send_msg;
 ')
 
 ### flatpack files: /var/lib/flatpak
 # bwrap
-require {
+gen_require(`
 	type nsfs_t;
 	type user_dbusd_t;
 	type var_lib_t;
-}
+')
 allow login_userdomain nsfs_t:file getattr;
 allow login_userdomain self:cap_userns setpcap;
 allow login_userdomain var_lib_t:file map;
@@ -212,40 +212,40 @@ allow user_dbusd_t var_lib_t:file { open read };
 allow user_dbusd_t var_lib_t:lnk_file read;
 
 ### gnome-software /var/cache/app-info
-require {
+gen_require(`
 	type fwupd_cache_t;
-}
+')
 allow login_userdomain fwupd_cache_t:dir { read search };
 
 ### /usr/lib/polkit-1/polkit-agent-helper-1
-require {
+gen_require(`
 	type policykit_auth_t;
-}
+')
 allow policykit_auth_t login_userdomain:unix_stream_socket { read write };
 
 ### /usr/lib/systemd/systemd-user-runtime-dir
-require {
+gen_require(`
 	type systemd_logind_t;
-}
+')
 allow systemd_logind_t self:capability net_admin;
 
 ### Allow: systemd to kill processes
-require {
+gen_require(`
 	type mount_t;
-}
+')
 allow login_userdomain mount_t:process signal;
 
 ### Allow: nice gnome-shell
 allow login_userdomain self:capability sys_nice;
 
 ### Allow: gnome-terminal something
-require {
+gen_require(`
 	type kernel_t;
-}
+')
 allow login_userdomain kernel_t:process getpgid;
 
 ### watch
-require {
+gen_require(`
 	type bin_t;
 	type fonts_t;
 	type fwupd_cache_t;
@@ -259,7 +259,7 @@ require {
 	type user_dbusd_t;
 	type var_lib_t;
 	type var_run_t;
-}
+')
 allow user_dbusd_t var_lib_t:dir watch;
 allow login_userdomain bin_t:dir watch;
 allow login_userdomain fonts_t:dir watch;
@@ -274,57 +274,57 @@ allow login_userdomain var_run_t:dir watch;
 allow login_userdomain rpm_var_lib_t:dir watch;
 
 ### What?
-require {
+gen_require(`
 	type init_var_run_t;
 	type session_dbusd_tmp_t;
-}
+')
 allow login_userdomain init_var_run_t:file read;
 allow login_userdomain session_dbusd_tmp_t:sock_file write;
 
 ### Allow: use journalctl
-require {
+gen_require(`
 	type journalctl_t;
 	type user_home_t;
 	type user_home_dir_t;
-}
+')
 # without this .lesshst etc has domain user_home_dir_t and that is just wrong
 filetrans_pattern(journalctl_t, user_home_dir_t, user_home_t, file)
 allow journalctl_t user_home_t:file { create open read rename setattr unlink write };
 
 
 ### login
-require {
+gen_require(`
 	type init_var_run_t;
-}
+')
 allow login_userdomain init_var_run_t:file open;
 
 ### systemctl
-require {
+gen_require(`
 	type etc_t;
 	type usr_t;
-}
+')
 allow login_userdomain { etc_t usr_t }:service { reload start status stop };
 
 ### gpg?
-require {
+gen_require(`
 	type gpg_agent_t;
-}
+')
 allow login_userdomain gpg_agent_t:process signull;
 
-require {
+gen_require(`
 	type alsa_var_lib_t;
 	type init_var_run_t;
 	type systemd_machined_var_run_t;
-}
+')
 read_files_pattern(login_userdomain, alsa_var_lib_t, alsa_var_lib_t)
 list_dirs_pattern(login_userdomain, init_var_run_t, systemd_machined_var_run_t)
 watch_dirs_pattern(login_userdomain, init_var_run_t, systemd_machined_var_run_t)
 watch_reads_dirs_pattern(login_userdomain, init_var_run_t, systemd_machined_var_run_t)
 
 ### google chrome
-require {
+gen_require(`
 	type session_dbusd_tmp_t;
-}
+')
 # AVC avc:  denied  { read } for pid=12778 comm="pool-google-chr" name="dbus-N0kGENH6lI" dev="tmpfs" ino=68 scontext=user_u:user_r:user_t:s0-s0:c0.c255 tcontext=user_u:object_r:session_dbusd_tmp_t:s0 tclass=sock_file permissive=0
 allow login_userdomain session_dbusd_tmp_t:sock_file read;
 
@@ -367,19 +367,19 @@ systemd_tmpfiles_exec(login_userdomain)
 gnome_exec_atspi(login_userdomain)
 
 #============= ssh_t ==============
-require {
+gen_require(`
 	attribute ssh_agent_type;
 	type ssh_t;
 	type ssh_exec_t;
-}
+')
 
 ### Allow: ssh -X / gnome-ssh-askpass
 # AVC avc: denied { connectto } for pid=68612 comm="gnome-ssh-askpa" path="/run/user/1000/bus" scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:user_r:user_dbusd_t:s0-s0:c0.c1023 tclass=unix_stream_socket permissive=0
 dbus_session_client(user, ssh_t)
 # AVC avc:  denied  { map } for pid=280133 comm=5B70616E676F5D204663496E6974 path="/home/user/.cache/fontconfig/beeeeb3dfe132a8a0633a017c99ce0c0-le64.cache-7" dev="dm-2" ino=946318 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=user_u:object_r:user_fonts_cache_t:s0 tclass=file permissive=0
-require {
+gen_require(`
 	type user_fonts_cache_t;
-}
+')
 allow ssh_t user_fonts_cache_t:file map;
 # AVC avc: denied { getattr } for pid=68612 comm="gnome-ssh-askpa" path="/var/lib/flatpak/exports/share/icons/hicolor/index.theme" dev="dm-0" ino=18172197 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=system_u:object_r:var_lib_t:s0 tclass=file permissive=0
 # AVC avc: denied { read } for pid=68612 comm="gnome-ssh-askpa" name="icon-theme.cache" dev="dm-0" ino=21033510 scontext=user_u:user_r:ssh_t:s0-s0:c0.c1023 tcontext=system_u:object_r:var_lib_t:s0 tclass=file permissive=0
@@ -396,9 +396,9 @@ allow login_userdomain ssh_t:shm rw_shm_perms;
 
 
 ### Allow: ssh-agent ssh ...
-require {
+gen_require(`
 	type bin_t;
-}
+')
 # AVC avc:  denied  { execute } for  pid=78917 comm="ssh-agent" name="ssh" dev="dm-0" ino=30736058 scontext=user_u:user_r:user_ssh_agent_t:s0-s0:c0.c1023 tcontext=system_u:object_r:ssh_exec_t:s0 tclass=file permissive=0
 read_lnk_files_pattern(ssh_agent_type, bin_t, ssh_exec_t)
 domtrans_pattern(ssh_agent_type, ssh_exec_t, ssh_t)
@@ -421,15 +421,15 @@ allow login_userdomain ssh_agent_type:fifo_file write;
 allow ssh_t login_userdomain:dbus send_msg;
 
 # AVC avc:  denied  { search } for  pid=509523 comm="fedora-third-pa" name="fedora-third-party" dev="dm-0" ino=31872038 scontext=maage_u:user_r:user_t:s0-s0:c0.c1023 tcontext=system_u:object_r:fedoratp_var_lib_t:s0 tclass=dir permissive=0
-require {
+gen_require(`
 	type fedoratp_var_lib_t;
-}
+')
 allow login_userdomain fedoratp_var_lib_t:dir search;
 
 ### Deny: ls /run/systemd/inaccessible/
-require {
+gen_require(`
 	type init_var_run_t;
-}
+')
 dontaudit user_t init_var_run_t:blk_file getattr;
 dontaudit user_t init_var_run_t:chr_file getattr;
 
@@ -437,11 +437,11 @@ dontaudit user_t init_var_run_t:chr_file getattr;
 ### journalctl
 ### login etc
 # prob should not be allowed
-require {
+gen_require(`
 	type dri_device_t;
 	type journalctl_t;
 	type utempter_t;
-}
+')
 # some programs access: /dev/dri/card0
 dontaudit { journalctl_t user_dbusd_t utempter_t } dri_device_t:chr_file { read write };
 
@@ -449,11 +449,11 @@ dontaudit { journalctl_t user_dbusd_t utempter_t } dri_device_t:chr_file { read 
 ### journalctl
 ### login etc
 # dunno if this should be allowed
-require {
+gen_require(`
 	type journalctl_t;
 	type ssh_t;
 	type utempter_t;
-}
+')
 dontaudit { journalctl_t ssh_t utempter_t } login_userdomain:file read;
 
 ### Deny: Xorg
@@ -464,29 +464,29 @@ dontaudit user_t self:capability sys_resource;
 
 ### Deny: write /var/run/sudo/ts/<username> file
 # why is /var/run/sudo pam_var_run_t?
-require {
+gen_require(`
 	type pam_var_run_t;
-}
+')
 dontaudit user_t pam_var_run_t:dir write;
 
 ### Deny: find / -ls
-require {
+gen_require(`
 	type configfs_t;
 	type krb5_keytab_t;
-}
+')
 dontaudit user_t configfs_t:dir read;
 dontaudit user_t krb5_keytab_t:dir read;
 
 ### Deny: run audit2allow
-require {
+gen_require(`
 	type security_t;
-}
+')
 dontaudit user_t security_t:security read_policy;
 
 ### Deny: container stuff for now
-require {
+gen_require(`
 	type container_ro_file_t;
-}
+')
 dontaudit user_t container_ro_file_t:dir mounton;
 
 
@@ -495,11 +495,11 @@ dontaudit user_t container_ro_file_t:dir mounton;
 ### journalctl needs to access: /var/lib/systemd/catalog/database
 optional_policy(`
 tunable_policy(`local_user_u_journalctl',`
-	require {
+	gen_require(`
 		attribute login_userdomain;
 		type init_var_lib_t;
 		type journalctl_t;
-	}
+	')
 	init_read_var_lib_files(login_userdomain)
 	init_read_var_lib_files(journalctl_t)
 	allow login_userdomain init_var_lib_t:dir { read search };
@@ -509,12 +509,12 @@ tunable_policy(`local_user_u_journalctl',`
 ### Debug
 optional_policy(`
 tunable_policy(`local_user_u_debug',`
-require {
+gen_require(`
 	attribute login_userdomain;
 	type journalctl_t;
 	type nsfs_t;
 	type syslogd_t;
-}
+')
 allow login_userdomain journalctl_t:process ptrace;
 allow login_userdomain self:cap_userns sys_ptrace;
 allow login_userdomain nsfs_t:file read_file_perms;

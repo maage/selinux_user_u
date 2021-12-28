@@ -4,7 +4,7 @@
 
 policy_module(local_slack, 1.0.0)
 
-require {
+gen_require(`
 	# selint requires a body
 	type bin_t;
-}
+')

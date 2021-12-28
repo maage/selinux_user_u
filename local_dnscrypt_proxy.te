@@ -136,9 +136,9 @@ manage_files_pattern(dnscrypt_proxy_t, dnscrypt_proxy_cache_t, dnscrypt_proxy_ca
 kernel_dgram_send(dnscrypt_proxy_t)
 # AVC avc:  denied  { read } for  pid=381881 comm="dnscrypt-proxy" name="log" dev="devtmpfs" ino=206 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:devlog_t:s0 tclass=lnk_file permissive=1
 # AVC avc:  denied  { write } for  pid=381881 comm="dnscrypt-proxy" name="dev-log" dev="tmpfs" ino=56 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:devlog_t:s0 tclass=sock_file permissive=1
-require {
+gen_require(`
 	type devlog_t;
-}
+')
 allow dnscrypt_proxy_t devlog_t:lnk_file read;
 allow dnscrypt_proxy_t devlog_t:sock_file write;
 # AVC avc:  denied  { search } for  pid=381881 comm="dnscrypt-proxy" name="journal" dev="tmpfs" ino=55 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:syslogd_var_run_t:s0 tclass=dir permissive=1
@@ -160,9 +160,9 @@ fs_getattr_xattr_fs(dnscrypt_proxy_t)
 
 ### Deny: IDK what is this
 # AVC avc:  denied  { search } for  pid=383269 comm="dnscrypt-proxy" name="machines" dev="tmpfs" ino=97 scontext=system_u:system_r:dnscrypt_proxy_t:s0 tcontext=system_u:object_r:systemd_machined_var_run_t:s0 tclass=dir permissive=0
-require {
+gen_require(`
 	type systemd_machined_var_run_t;
-}
+')
 dontaudit dnscrypt_proxy_t systemd_machined_var_run_t:dir search_dir_perms;
 
 ### Deny: read cmdline

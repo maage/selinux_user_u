@@ -6,15 +6,15 @@ policy_module(local_f33_regression, 1.0.0)
 optional_policy(`
 
 ### regression
-require {
+gen_require(`
 	type geoclue_t;
-}
+')
 allow geoclue_t self:process setsched;
 
 ### Bug???: smartd
-require {
+gen_require(`
 	type fsdaemon_t;
-}
+')
 allow fsdaemon_t self:capability net_admin;
 
 ')

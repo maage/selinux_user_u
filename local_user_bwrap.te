@@ -54,7 +54,7 @@ manage_lnk_files_pattern(bwrap_t, bwrap_files_type, bwrap_files_type)
 
 # typealias bwrap_t alias { user_bwrap_t staff_bwrap_t sysadm_bwrap_t };
 
-require {
+gen_require(`
 	attribute login_userdomain;
 	type staff_t;
 	type sysadm_t;
@@ -62,7 +62,7 @@ require {
 	role staff_r;
 	role sysadm_r;
 	role user_r;
-}
+')
 
 # policy/modules/roles/unprivuser.te
 bwrap_role_template(user, user_r, user_t)
@@ -296,10 +296,10 @@ allow bwrap_t { application_exec_type base_ro_file_type }:file execute;
 ### Debug: use strace
 #optional_policy(`
 tunable_policy(`local_bwrap_debug',`
-require {
+gen_require(`
 	attribute login_userdomain;
 	type bwrap_t;
-}
+')
 allow bwrap_t self:cap_userns sys_ptrace;
 allow login_userdomain bwrap_t:process ptrace;
 ')
