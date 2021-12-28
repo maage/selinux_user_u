@@ -292,8 +292,7 @@ gen_require(`
 ')
 # without this .lesshst etc has domain user_home_dir_t and that is just wrong
 filetrans_pattern(journalctl_t, user_home_dir_t, user_home_t, file)
-allow journalctl_t user_home_t:file { create open read rename setattr unlink write };
-
+rw_files_pattern(journalctl_t, user_home_dir_t, user_home_t)
 
 ### login
 gen_require(`
