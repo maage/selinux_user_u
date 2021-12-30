@@ -56,4 +56,9 @@ allow abrt_t self:capability net_admin;
 # AVC avc:  denied  { setattr } for  pid=48725 comm="abrt-action-sav" name="rpmdb.sqlite-shm" dev="dm-0" ino=18501947 scontext=system_u:system_r:abrt_t:s0-s0:c0.c1023 tcontext=system_u:object_r:rpm_var_lib_t:s0 tclass=file permissive=0
 rpm_manage_db(abrt_t)
 
+# AVC avc:  denied  { dac_read_search } for  pid=3173 comm="firewalld" capability=2  scontext=system_u:system_r:firewalld_t:s0 tcontext=system_u:system_r:firewalld_t:s0 tclass=capability permissive=0
+require {
+	type firewalld_t;
+}
+allow firewalld_t self:capability dac_read_search;
 ')
