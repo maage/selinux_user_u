@@ -1,0 +1,7 @@
+#!/usr/bin/sed -Ef
+
+/^#!!!! This avc (has a dontaudit rule|is allowed) in the current policy/,+1d
+
+/^#============.*============/d
+
+/^$/d
